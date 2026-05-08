@@ -947,3 +947,53 @@ left:0;
   }
 
 }
+
+
+/* v3.6 — mobile footer correction / iOS safe area */
+@media(max-width:680px){
+
+  .main{
+    padding-bottom:calc(150px + env(safe-area-inset-bottom));
+  }
+
+  .system-footer{
+    position:static !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+
+    width:auto;
+    height:auto;
+
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+
+    margin:34px 18px calc(120px + env(safe-area-inset-bottom));
+    padding:16px;
+
+    border:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(13,17,13,.96), rgba(6,8,6,.96));
+
+    font-size:12px;
+    letter-spacing:3px;
+    line-height:1.7;
+    z-index:auto !important;
+  }
+
+  .system-footer div{
+    border:1px solid rgba(154,170,125,.18);
+    background:rgba(154,170,125,.035);
+    padding:14px;
+  }
+
+}
+
+/* very small devices */
+@media(max-width:390px){
+
+  .system-footer{
+    margin-bottom:calc(140px + env(safe-area-inset-bottom));
+  }
+
+}
