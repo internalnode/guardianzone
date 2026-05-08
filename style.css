@@ -997,3 +997,132 @@ left:0;
   }
 
 }
+
+
+/* v3.7 — true mobile PDA corrections and live elements */
+.live-strip{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:24px;
+}
+
+.live-strip div,
+.system-log-panel{
+  border:1px solid var(--line);
+  background:rgba(8,11,8,.82);
+  padding:14px;
+}
+
+.live-strip span{
+  display:block;
+  font-family:"IBM Plex Mono",monospace;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+  margin-bottom:8px;
+}
+
+.live-strip strong{
+  font-family:"IBM Plex Mono",monospace;
+  color:var(--text);
+  font-size:12px;
+  letter-spacing:2px;
+}
+
+.panel-title.mini{
+  margin-bottom:12px;
+  font-size:10px;
+}
+
+#system-log{
+  min-height:92px;
+  font-family:"IBM Plex Mono",monospace;
+  color:#8f9988;
+  font-size:11px;
+  letter-spacing:1.5px;
+  line-height:1.85;
+}
+
+#system-log div:last-child{
+  color:var(--amber);
+}
+
+.pulse-alert{
+  animation:alertPulse 1.4s infinite;
+}
+
+@keyframes alertPulse{
+  0%,100%{opacity:1;}
+  50%{opacity:.45;}
+}
+
+@media(max-width:680px){
+
+  .live-strip{
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:22px;
+  }
+
+  .live-strip div{
+    padding:16px;
+  }
+
+  .live-strip span{
+    font-size:11px;
+    letter-spacing:3px;
+  }
+
+  .live-strip strong{
+    font-size:14px;
+  }
+
+  .system-log-panel{
+    margin-bottom:28px;
+    padding:16px;
+  }
+
+  #system-log{
+    font-size:12px;
+    line-height:1.9;
+  }
+
+  /* Hard override: no floating footer on mobile / Instagram / iOS */
+  .system-footer{
+    position:relative !important;
+    inset:auto !important;
+    left:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    top:auto !important;
+    transform:none !important;
+
+    width:auto !important;
+    max-width:none !important;
+    height:auto !important;
+    min-height:0 !important;
+
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+
+    margin:34px 18px calc(180px + env(safe-area-inset-bottom)) !important;
+    padding:16px !important;
+
+    border:1px solid var(--line) !important;
+    background:#050705 !important;
+    z-index:1 !important;
+  }
+
+  .system-footer div{
+    padding:14px !important;
+    border:1px solid rgba(154,170,125,.18);
+    background:rgba(154,170,125,.035);
+  }
+
+  .main{
+    padding-bottom:40px !important;
+  }
+}
+

@@ -1,11 +1,11 @@
 
 const bootMessages = [
-  "Chargement du noyau local...",
-  "Synchronisation des relais périphériques...",
-  "Lecture des anciennes coordonnées...",
-  "Connexion au réseau basse fréquence...",
-  "Analyse des points actifs...",
-  "Accès limité accordé."
+  "Initializing local kernel...",
+  "Loading restricted archive index...",
+  "Syncing perimeter relays...",
+  "Restoring low frequency channel...",
+  "Scanning active perimeter points...",
+  "Limited authorization granted."
 ];
 
 const bootLines = document.getElementById("boot-lines");
@@ -164,3 +164,64 @@ function showScreen(id){
 document.querySelectorAll(".menu button").forEach(btn => {
   btn.addEventListener("click", () => showScreen(btn.dataset.screen));
 });
+
+
+/* v3.7 live surveillance simulation */
+const liveEvents = [
+  "CAMERA FEED LOST — SECTOR NORTH",
+  "LOW FREQUENCY BURST DETECTED",
+  "PERIMETER RELAY 03 RESPONDING",
+  "UNCONFIRMED MOVEMENT — RESIDENTIAL BLOCK",
+  "DOSIMETER SPIKE NORMALIZED",
+  "SIGNAL DROP — 4 SECONDS",
+  "MYTH TASKING PENDING"
+];
+
+function pad(n){ return String(n).padStart(2, "0"); }
+
+function pushSystemLog(message){
+  const log = document.getElementById("system-log");
+  if(!log) return;
+
+  const now = new Date();
+  const stamp = `[${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}]`;
+  const line = document.createElement("div");
+  line.textContent = `${stamp} ${message}`;
+
+  log.appendChild(line);
+
+  while(log.children.length > 5){
+    log.removeChild(log.firstElementChild);
+  }
+}
+
+function updateLiveStrip(){
+  const signal = document.getElementById("signal-quality");
+  const dosimeter = document.getElementById("dosimeter");
+  const channel = document.getElementById("lf-channel");
+
+  if(signal){
+    const values = ["DEGRADED", "UNSTABLE", "WEAK", "RESTORED"];
+    signal.textContent = values[Math.floor(Math.random()*values.length)];
+  }
+
+  if(dosimeter){
+    const value = (0.28 + Math.random()*0.46).toFixed(2);
+    dosimeter.textContent = `${value} µSv/h`;
+  }
+
+  if(channel){
+    const values = ["OPEN", "NOISY", "DELAYED", "PARTIAL"];
+    channel.textContent = values[Math.floor(Math.random()*values.length)];
+  }
+}
+
+setInterval(() => {
+  pushSystemLog(liveEvents[Math.floor(Math.random()*liveEvents.length)]);
+  updateLiveStrip();
+}, 9000);
+
+setInterval(() => {
+  document.body.classList.add("pulse-alert");
+  setTimeout(() => document.body.classList.remove("pulse-alert"), 500);
+}, 17000);
