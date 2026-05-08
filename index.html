@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>MYTH // EXCLUSION NODE</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,10 +13,10 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 
-<body>
+<body data-build="v3.9-english-boot-cachefix">
 
 <div id="boot">
   <div class="boot-panel">
@@ -165,9 +168,9 @@
         <div class="panel report-panel">
           <div class="panel-title">SELECTED POINT</div>
           <div id="report">
-            <h3>Aucun point sélectionné</h3>
-            <p>Sélectionne un marqueur sur la carte pour afficher les éléments disponibles.</p>
-            <small>Les descriptions restent volontairement simples : certaines alertes sont confirmées, d’autres ne reposent que sur des signaux faibles.</small>
+            <h3>NO POINT SELECTED</h3>
+            <p>Select a map marker to display available field data.</p>
+            <small>Descriptions remain minimal: some alerts are confirmed, others rely only on weak signals.</small>
           </div>
 
           <div class="mini-grid">
@@ -224,7 +227,7 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js?v=8"></script>
+<script src="script.js?v=9"></script>
 
 <div class="system-footer">
 <div>SIGNAL LOSS : 12%</div>

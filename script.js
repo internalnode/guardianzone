@@ -34,46 +34,46 @@ const reports = [
     coords:[51.3890,30.0990],
     title:"CENTRALE",
     severity:"critical",
-    severityLabel:"CRITIQUE",
-    category:"Émission instable",
-    text:"Fluctuations électriques relevées autour des installations principales.",
-    detail:"Aucune présence visuelle confirmée. Le signal pourrait provenir d’un circuit autonome encore actif."
+    severityLabel:"CRITICAL",
+    category:"Unstable emission",
+    text:"Electrical fluctuations detected around the main structures.",
+    detail:"No visual confirmation. Signal may originate from an autonomous circuit still active."
   },
   {
     coords:[51.4048,30.0569],
     title:"PRIPYAT",
     severity:"high",
-    severityLabel:"ÉLEVÉ",
-    category:"Passage récent",
-    text:"Traces de déplacement supposées dans plusieurs bâtiments résidentiels.",
-    detail:"Les éléments reçus sont faibles : capteur de porte, vibration brève, puis silence complet."
+    severityLabel:"HIGH",
+    category:"Recent passage",
+    text:"Possible movement traces detected in several residential buildings.",
+    detail:"Weak input only: door sensor, brief vibration, then complete silence."
   },
   {
     coords:[51.3180,30.0710],
     title:"SECTEUR ROUGE",
     severity:"medium",
-    severityLabel:"MOYEN",
-    category:"Interférences radio",
-    text:"Parasites persistants sur bande courte.",
-    detail:"Vérification recommandée lorsque les conditions météo seront plus stables."
+    severityLabel:"MEDIUM",
+    category:"Radio interference",
+    text:"Persistent shortwave interference.",
+    detail:"Field check recommended when weather conditions stabilize."
   },
   {
     coords:[51.2750,30.2210],
     title:"POINT D’OBSERVATION",
     severity:"low",
-    severityLabel:"FAIBLE",
-    category:"Signal nocturne",
-    text:"Signal court détecté durant la nuit.",
-    detail:"Source indéterminée : relais dégradé, transmission brève ou présence mobile."
+    severityLabel:"LOW",
+    category:"Night signal",
+    text:"Short signal detected during the night.",
+    detail:"Unknown source: degraded relay, brief transmission, or mobile presence."
   },
   {
     coords:[51.3530,29.9800],
     title:"ANCIEN RELAIS",
     severity:"medium",
-    severityLabel:"MOYEN",
-    category:"Alimentation active",
-    text:"Le relais semble encore alimenté malgré l’arrêt officiel du réseau.",
-    detail:"Données irrégulières. Accès terrain difficile. Vérification par MYTH en attente."
+    severityLabel:"MEDIUM",
+    category:"Active power",
+    text:"Relay still appears powered despite official network shutdown.",
+    detail:"Irregular data. Difficult field access. MYTH verification pending."
   }
 ];
 
@@ -81,7 +81,7 @@ function setReport(report){
   const box = document.getElementById("report");
   box.innerHTML = `
     <h3>${report.title}</h3>
-    <p><strong>${report.category}</strong> — GRAVITÉ : ${report.severityLabel}</p>
+    <p><strong>${report.category}</strong> — SEVERITY : ${report.severityLabel}</p>
     <p>${report.text}</p>
     <small>${report.detail}</small>
   `;
@@ -131,7 +131,7 @@ function initMap(){
 
     marker.bindPopup(`
       <div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:10px;color:#d6dccf;">${report.title}</div>
-      <div style="font-size:12px;letter-spacing:2px;color:#9aaa7d;margin-bottom:8px;">GRAVITÉ : ${report.severityLabel}</div>
+      <div style="font-size:12px;letter-spacing:2px;color:#9aaa7d;margin-bottom:8px;">SEVERITY : ${report.severityLabel}</div>
       <div style="font-size:13px;line-height:1.65;color:#aeb6a8;">${report.text}</div>
     `);
 
