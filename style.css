@@ -676,3 +676,274 @@ z-index:120;
 left:0;
 }
 }
+
+
+/* MOBILE FIRST FIXES — PDA FIELD VIEW */
+@media(max-width:680px){
+
+  html, body{
+    overflow-x:hidden;
+  }
+
+  body{
+    font-size:15px;
+  }
+
+  .app{
+    display:block;
+    min-height:auto;
+  }
+
+  .sidebar{
+    position:relative;
+    width:100%;
+    padding:28px 22px 18px;
+    border-right:none;
+    border-bottom:1px solid var(--line);
+    background:rgba(5,7,5,.96);
+  }
+
+  .brand{
+    padding-bottom:22px;
+    margin-bottom:22px;
+  }
+
+  .brand-main{
+    font-size:22px;
+    letter-spacing:7px;
+    line-height:1.4;
+  }
+
+  .brand-sub{
+    font-size:13px;
+    letter-spacing:5px;
+    line-height:1.7;
+  }
+
+  .menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .menu button{
+    min-height:76px;
+    font-size:15px;
+    letter-spacing:5px;
+    padding:0 28px;
+  }
+
+  .menu button span{
+    font-size:15px;
+    min-width:34px;
+  }
+
+  .main{
+    padding:18px 18px 90px;
+  }
+
+  .topline{
+    display:block;
+    height:auto;
+    padding:18px 20px;
+    font-size:13px;
+    line-height:2.1;
+    letter-spacing:4px;
+    margin-bottom:28px;
+  }
+
+  .large{
+    padding:28px 22px;
+    min-height:auto;
+  }
+
+  .panel-title{
+    font-size:14px;
+    letter-spacing:5px;
+    margin-bottom:26px;
+  }
+
+  .hero-name{
+    font-size:78px;
+    letter-spacing:-3px;
+    line-height:.9;
+    margin:26px 0 26px;
+  }
+
+  .classified-line{
+    font-size:12px;
+    letter-spacing:4px;
+    line-height:1.7;
+    padding:14px;
+    width:100%;
+    margin-bottom:34px;
+  }
+
+  .body-text{
+    font-size:17px;
+    line-height:1.85;
+  }
+
+  .body-text p{
+    margin-bottom:22px;
+  }
+
+  .portrait{
+    margin-top:18px;
+  }
+
+  .portrait-box{
+    height:330px;
+  }
+
+  .data-list{
+    padding:14px;
+  }
+
+  .data-list div{
+    padding:16px;
+  }
+
+  .data-list span,
+  .data-list strong{
+    font-size:12px;
+    line-height:1.5;
+  }
+
+  .status-header{
+    margin-bottom:20px;
+  }
+
+  .status-header p{
+    font-size:15px;
+    line-height:1.8;
+  }
+
+  .status-chip{
+    width:100%;
+    text-align:center;
+    font-size:12px;
+    letter-spacing:3px;
+    margin-top:18px;
+  }
+
+  .map-panel,
+  #map{
+    height:560px;
+    min-height:560px;
+  }
+
+  .map-overlay{
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    font-size:9px;
+    letter-spacing:2px;
+    padding:10px;
+  }
+
+  .report-panel{
+    min-height:auto;
+    padding:20px;
+  }
+
+  #report h3{
+    font-size:16px;
+  }
+
+  #report p{
+    font-size:15px;
+  }
+
+  .mini-grid{
+    margin-top:22px;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .mini-grid div{
+    padding:14px;
+  }
+
+  .legend{
+    margin-top:16px;
+  }
+
+  .archive-grid{
+    grid-template-columns:1fr;
+  }
+
+  .archive-grid article{
+    min-height:auto;
+    padding:22px;
+  }
+
+  .archive-grid h3{
+    font-size:16px;
+  }
+
+  .archive-grid p{
+    font-size:15px;
+  }
+
+  .system-footer{
+    position:relative;
+    left:auto;
+    right:auto;
+    bottom:auto;
+    height:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    padding:16px 18px;
+    margin:20px 18px 30px;
+    border:1px solid var(--line);
+    background:#050705;
+    font-size:11px;
+    letter-spacing:3px;
+    line-height:1.7;
+    z-index:auto;
+  }
+
+  .system-footer div{
+    border:1px solid rgba(154,170,125,.16);
+    padding:10px;
+    background:rgba(154,170,125,.035);
+  }
+
+}
+
+/* Very small phones */
+@media(max-width:390px){
+
+  .brand-main{
+    font-size:19px;
+    letter-spacing:6px;
+  }
+
+  .brand-sub{
+    font-size:11px;
+    letter-spacing:4px;
+  }
+
+  .menu button{
+    min-height:68px;
+    font-size:13px;
+    letter-spacing:4px;
+    padding:0 20px;
+  }
+
+  .hero-name{
+    font-size:68px;
+  }
+
+  .body-text{
+    font-size:16px;
+  }
+
+  .mini-grid,
+  .system-footer{
+    grid-template-columns:1fr;
+  }
+
+}
