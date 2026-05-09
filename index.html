@@ -67,12 +67,12 @@
       <div class="card presence-card">
         <div class="card-title">UNSIGNED ACTIVITY</div>
         <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
-        <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
+        <p class="muted-line">Last suspected intervention: manual maintenance on relay 03.</p>
       </div>
 
       <div class="card presence-card stale-card">
         <div class="card-title">PREVIOUS SYSTEM STATE</div>
-        <p id="previous-state">Dernier cycle stable observé avant ouverture du terminal.</p>
+        <p id="previous-state">Last stable cycle detected before terminal access.</p>
         <p class="muted-line" id="previous-state-time">Recovered timestamp : pending...</p>
       </div>
     </section>
@@ -81,7 +81,7 @@
       <div class="map-top">
         <div>
           <div class="card-title">PERIMETER STATUS</div>
-          <p>Carte verrouillée sur la zone d’exclusion. Les points indiquent des alertes à vérifier.</p>
+          <p>Locked view over the exclusion zone. Markers indicate field alerts requiring verification.</p>
         </div>
         <div class="chip">FIELD CHECK</div>
       </div>
@@ -97,8 +97,8 @@
 
       <div class="report-card" id="report">
         <div class="card-title">SELECTED POINT</div>
-        <h3>Aucun point sélectionné</h3>
-        <p>Sélectionne un marqueur pour afficher les éléments reçus.</p>
+        <h3>NO POINT SELECTED</h3>
+        <p>Select a marker to display recovered field data.</p>
       </div>
     </section>
 
@@ -132,9 +132,9 @@
       <div class="files-layout">
 
         <div class="files-list">
-          <button class="file-entry active" data-file="relais03">
+          <button class="file-entry active critical-file" data-file="relais03">
             <span>FILE 01</span>
-            <strong>RELAIS_03</strong>
+            <em>[CRITICAL]</em><strong>RELAIS_03</strong>
           </button>
 
           <button class="file-entry" data-file="tunnel">
@@ -147,14 +147,14 @@
             <strong>INSTALLATION_12</strong>
           </button>
 
-          <button class="file-entry corrupted" data-file="visual">
+          <button class="file-entry corrupted partial-file" data-file="visual">
             <span>FILE 04</span>
-            <strong>VISUAL_RECORD</strong>
+            <em>[PARTIAL]</em><strong>VISUAL_RECORD</strong>
           </button>
 
-          <button class="file-entry missing" data-file="sector">
+          <button class="file-entry missing locked-file" data-file="sector">
             <span>FILE 05</span>
-            <strong>SECTOR_NOTE</strong>
+            <em>[ARCHIVE LOST]</em><strong>SECTOR_NOTE</strong>
           </button>
         </div>
 

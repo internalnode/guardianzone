@@ -3,11 +3,11 @@ const bootLines=document.getElementById("boot-lines");bootMessages.forEach((m,i)
 window.addEventListener("load",()=>setTimeout(()=>{const b=document.getElementById("boot");b.style.opacity="0";setTimeout(()=>b.style.display="none",800)},3900));
 let map,mapReady=false;
 const reports=[
-{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Émission instable",text:"Fluctuations électriques relevées autour des installations principales.",detail:"Aucune présence visuelle confirmée. Priorité élevée pour MYTH."},
-{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Passage récent",text:"Traces de déplacement supposées dans plusieurs bâtiments résidentiels.",detail:"Signal faible : capteur de porte, vibration brève, puis silence."},
-{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Interférences radio",text:"Parasites persistants sur bande courte.",detail:"Contrôle recommandé lorsque les conditions météo seront stables."},
-{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"LOW",category:"Signal nocturne",text:"Signal court détecté durant la nuit.",detail:"Source indéterminée : relais dégradé, transmission ou présence mobile."},
-{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Alimentation active",text:"Relais encore alimenté malgré l’arrêt officiel du réseau.",detail:"Données irrégulières. Accès terrain difficile."}
+{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Unstable emission",text:"Electrical fluctuations detected around the main structures.",detail:"No visual confirmation. High priority verification for MYTH."},
+{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Recent movement",text:"Possible movement traces detected in residential buildings.",detail:"Weak input only: door sensor, brief vibration, then silence."},
+{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Radio interference",text:"Persistent shortwave interference.",detail:"Field verification recommended when weather conditions stabilize."},
+{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"LOW",category:"Night signal",text:"Short signal detected during the night.",detail:"Unknown source: degraded relay, brief transmission or mobile presence."},
+{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Active power",text:"Relay still powered despite official network shutdown.",detail:"Irregular data. Difficult field access."}
 ];
 function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">SELECTED POINT</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — SEVERITY : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
 function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:12px;color:#9aaa7d;margin-bottom:8px;">SEVERITY : ${r.label}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
@@ -54,10 +54,10 @@ const fileData = {
     power:"LOCAL GRID",
     integrity:"74%",
     content:[
-      "Le relais était déjà alimenté avant l’arrivée sur site.",
-      "Aucune présence détectée à proximité immédiate.",
-      "Aucune trace récente observée autour de l’installation.",
-      "Le système a pourtant été redémarré manuellement."
+      "Relay already powered before arrival on site.",
+      "No presence detected near the structure.",
+      "No recent tracks observed around the installation.",
+      "The system was nevertheless restarted manually."
     ],
     note:true
   },
@@ -69,10 +69,10 @@ const fileData = {
     power:"OFFLINE",
     integrity:"58%",
     content:[
-      "Détection nocturne signalée près de l’accès sud.",
-      "Le tunnel semble condamné depuis plusieurs années.",
-      "Un capteur de porte a pourtant brièvement répondu.",
-      "Aucune confirmation visuelle disponible."
+      "Night detection reported near the southern access.",
+      "Tunnel appears sealed for several years.",
+      "A door sensor briefly responded.",
+      "No visual confirmation available."
     ]
   },
 
@@ -83,10 +83,10 @@ const fileData = {
     power:"PARTIAL",
     integrity:"41%",
     content:[
-      "Structure partiellement effondrée.",
-      "Une émission faible persiste sur bande courte.",
-      "Le signal fluctue selon les conditions météo.",
-      "Le secteur reste difficile d’accès."
+      "Structure partially collapsed.",
+      "Weak emission persists on shortwave.",
+      "Signal fluctuates depending on weather conditions.",
+      "Area remains difficult to access."
     ]
   },
 
@@ -97,9 +97,9 @@ const fileData = {
     power:"UNKNOWN",
     integrity:"12%",
     content:[
-      "Segment image récupéré depuis un ancien terminal.",
-      "Plusieurs portions du fichier sont manquantes.",
-      "Une silhouette apparaît brièvement avant la perte du signal.",
+      "Image segment recovered from an old terminal.",
+      "Several sections of the file are missing.",
+      "A silhouette briefly appears before signal loss.",
       "Identification impossible."
     ],
     note:true
@@ -319,3 +319,62 @@ function pushSystemLog(message){
   log.appendChild(line);
   while(log.children.length>5)log.removeChild(log.firstElementChild);
 }
+
+
+/* v9 file access feel */
+function fakeOpenArchive(id, btn){
+  const viewer = document.getElementById("file-viewer");
+  if(!viewer) return;
+
+  viewer.innerHTML = `
+    <div class="file-loading">
+      OPENING ARCHIVE...
+    </div>
+  `;
+
+  setTimeout(()=>{
+    renderFile(id);
+
+    if(Math.random() > 0.55 && btn){
+      btn.classList.add("updated");
+      setTimeout(()=>btn.classList.remove("updated"), 8000);
+    }
+
+  }, 320);
+}
+
+document.querySelectorAll(".file-entry").forEach(btn=>{
+  btn.replaceWith(btn.cloneNode(true));
+});
+
+document.querySelectorAll(".file-entry").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".file-entry").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    fakeOpenArchive(btn.dataset.file, btn);
+  });
+});
+
+const originalRender = renderFile;
+
+renderFile = function(id){
+  originalRender(id);
+
+  const viewer = document.getElementById("file-viewer");
+
+  if(id === "sector"){
+    viewer.innerHTML += `
+      <div class="restricted-banner">
+        RECOVERY IMPOSSIBLE // ENCRYPTED SEGMENT
+      </div>
+    `;
+  }
+
+  if(id === "visual"){
+    viewer.innerHTML += `
+      <div class="restricted-banner">
+        IMAGE FEED PARTIALLY CORRUPTED
+      </div>
+    `;
+  }
+};
