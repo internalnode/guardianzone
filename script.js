@@ -168,3 +168,154 @@ document.querySelectorAll(".file-entry").forEach(btn=>{
     renderFile(btn.dataset.file);
   });
 });
+
+
+/* v8 living system */
+const nodeStart = Date.now();
+const previousStates = [
+  "Relay 03 answered before manual login.",
+  "Camera 12 lost image but kept transmitting audio carrier.",
+  "North gate sensor closed without recorded command.",
+  "Two archive files changed state while terminal was offline.",
+  "Low frequency channel opened for 11 seconds, source unknown."
+];
+
+const rareEvents = [
+  "UNSIGNED MAINTENANCE TRACE — RELAY 03",
+  "THERMAL FEED RETURNED EMPTY",
+  "FIELD MICROPHONE DETECTED METAL IMPACT",
+  "ARCHIVE CHECKSUM MISMATCH",
+  "ACCESS PANEL OPENED — NO USER ID",
+  "OLD CAMERA POWERED FOR 00:00:04",
+  "SENSOR STATE CHANGED BEFORE SYNC"
+];
+
+let audioOn = false;
+let audioContext = null;
+let noiseNode = null;
+let gainNode = null;
+
+function tickClock(){
+  const now = new Date();
+  const clock = document.getElementById("node-clock");
+  if(clock) clock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+  const uptime = document.getElementById("uptime");
+  if(uptime){
+    const elapsed = Math.floor((Date.now() - nodeStart) / 1000);
+    const h = pad(Math.floor(elapsed / 3600));
+    const m = pad(Math.floor((elapsed % 3600) / 60));
+    const s = pad(elapsed % 60);
+    uptime.textContent = `${h}:${m}:${s}`;
+  }
+
+  const prevTime = document.getElementById("previous-state-time");
+  if(prevTime && prevTime.textContent.includes("pending")){
+    const offset = Math.floor(19 + Math.random()*210);
+    prevTime.textContent = `Recovered timestamp : T-${offset} min`;
+  }
+}
+
+function seedPreviousState(){
+  const target = document.getElementById("previous-state");
+  if(target) target.textContent = previousStates[Math.floor(Math.random()*previousStates.length)];
+}
+
+function updateEnvironment(){
+  const fog = document.getElementById("fog");
+  const thermal = document.getElementById("thermal");
+  const grid = document.getElementById("grid-integrity");
+  const field = document.getElementById("field-condition");
+
+  if(fog) fog.textContent = ["LOW","MEDIUM","DENSE","PATCHY"][Math.floor(Math.random()*4)];
+  if(thermal){
+    const value = ["OFFLINE","NO IMAGE","PARTIAL","NOISE ONLY"][Math.floor(Math.random()*4)];
+    thermal.textContent = value;
+    thermal.classList.toggle("system-critical", value === "NO IMAGE" || value === "NOISE ONLY");
+  }
+  if(grid) grid.textContent = Math.floor(25 + Math.random()*31) + "%";
+  if(field) field.textContent = ["STABLE","WET","LOW VISIBILITY","INTERFERENCE"][Math.floor(Math.random()*4)];
+}
+
+function rareSystemEvent(){
+  if(Math.random() > 0.42) return;
+  pushSystemLog(rareEvents[Math.floor(Math.random()*rareEvents.length)]);
+
+  const entries = document.querySelectorAll(".file-entry strong");
+  if(entries.length){
+    const entry = entries[Math.floor(Math.random()*entries.length)];
+    entry.classList.add("archive-updated");
+    setTimeout(()=>entry.classList.remove("archive-updated"), 9000);
+  }
+}
+
+function createNoiseBuffer(ctx){
+  const bufferSize = ctx.sampleRate * 2;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++){
+    data[i] = (Math.random()*2-1) * 0.22;
+  }
+  return buffer;
+}
+
+function startAudio(){
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  noiseNode = audioContext.createBufferSource();
+  noiseNode.buffer = createNoiseBuffer(audioContext);
+  noiseNode.loop = true;
+
+  gainNode = audioContext.createGain();
+  gainNode.gain.value = 0.018;
+
+  const filter = audioContext.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 900;
+  filter.Q.value = 0.7;
+
+  noiseNode.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  noiseNode.start();
+}
+
+function stopAudio(){
+  try{
+    if(noiseNode) noiseNode.stop();
+    if(audioContext) audioContext.close();
+  }catch(e){}
+  noiseNode = null;
+  audioContext = null;
+}
+
+function setupAudioToggle(){
+  const btn = document.getElementById("audio-toggle");
+  if(!btn) return;
+
+  btn.addEventListener("click", ()=>{
+    audioOn = !audioOn;
+    btn.textContent = audioOn ? "AUDIO : ON" : "AUDIO : OFF";
+    if(audioOn) startAudio();
+    else stopAudio();
+  });
+}
+
+setInterval(tickClock, 1000);
+setInterval(updateEnvironment, 14000);
+setInterval(rareSystemEvent, 22000);
+
+window.addEventListener("load", ()=>{
+  seedPreviousState();
+  tickClock();
+  updateEnvironment();
+  setupAudioToggle();
+});
+
+function pushSystemLog(message){
+  const log=document.getElementById("system-log");
+  if(!log)return;
+  const now=new Date(),line=document.createElement("div");
+  line.textContent=`[${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}] ${message}`;
+  log.appendChild(line);
+  while(log.children.length>5)log.removeChild(log.firstElementChild);
+}

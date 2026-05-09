@@ -26,6 +26,7 @@
 
 <div class="noise"></div>
 <div class="scanlines"></div>
+<div class="weather-haze"></div>
 
 <div class="app-shell">
   <header class="app-header">
@@ -33,7 +34,10 @@
       <div class="node">NODE // MYTH</div>
       <div class="subnode">PERIMETER SURVEILLANCE</div>
     </div>
-    <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
+    <div class="header-stack">
+      <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
+      <div class="clock" id="node-clock">--:--:--</div>
+    </div>
   </header>
 
   <nav class="tabs">
@@ -64,6 +68,12 @@
         <div class="card-title">UNSIGNED ACTIVITY</div>
         <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
         <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
+      </div>
+
+      <div class="card presence-card stale-card">
+        <div class="card-title">PREVIOUS SYSTEM STATE</div>
+        <p id="previous-state">Dernier cycle stable observé avant ouverture du terminal.</p>
+        <p class="muted-line" id="previous-state-time">Recovered timestamp : pending...</p>
       </div>
     </section>
 
@@ -102,6 +112,10 @@
         <div class="mini-card live"><span>PRESSURE</span><strong id="pressure">1008 HPA</strong></div>
         <div class="mini-card live"><span>CAMERA INTEGRITY</span><strong id="camera-integrity">31%</strong></div>
         <div class="mini-card live"><span>RELAY LATENCY</span><strong id="latency">418 MS</strong></div>
+        <div class="mini-card live"><span>FOG DENSITY</span><strong id="fog">LOW</strong></div>
+        <div class="mini-card live"><span>THERMAL FEED</span><strong id="thermal">OFFLINE</strong></div>
+        <div class="mini-card live"><span>GRID INTEGRITY</span><strong id="grid-integrity">38%</strong></div>
+        <div class="mini-card live"><span>FIELD CONDITION</span><strong id="field-condition">STABLE</strong></div>
       </div>
 
       <div class="card log-card">
@@ -172,8 +186,8 @@
 
   <footer class="bottom-status">
     <div>SIGNAL LOSS : <b id="loss">12%</b></div>
-    <div>ARCHIVE : <b>43%</b></div>
-    <div>LAST CONTACT : <b>UNKNOWN</b></div>
+    <div>UPTIME : <b id="uptime">00:00:00</b></div>
+    <div><button id="audio-toggle">AUDIO : OFF</button></div>
   </footer>
 </div>
 
