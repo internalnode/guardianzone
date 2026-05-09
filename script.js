@@ -748,8 +748,6 @@ function incidentPopupV79(incident){
     <div class="popup-incident-v79">
       <div class="popup-title-v79">${incident.title}</div>
       <div class="popup-meta-v79">GPS : ${gpsTextV79(incident.coords)}</div>
-      <div class="popup-meta-v79">TYPE : ${incident.category} // SEVERITY : ${incident.label}</div>
-      <div class="popup-meta-v79">STATUS : ${incident.status || "ACTIF"} // FIABILITÉ : ${incident.confidence || "--"}%</div>
       <div class="popup-meta-v79">LAST PING : ${formatTimeV80(incident.updatedAt || Date.now())}</div>
       <div class="popup-body-v79">${incident.text}</div>
       <div class="popup-detail-v79">${incident.detail}</div>
@@ -780,7 +778,15 @@ function renderAutonomousIncidentsV80(forceNew=false){
   state.incidents.forEach(incident=>{
     const icon = L.divIcon({className:"",html:`<div class="severity-marker ${incident.severity} live-incident-marker"></div>`,iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-13]});
     const marker = L.marker(incident.coords,{icon}).addTo(map);
-    marker.bindPopup(incidentPopupV79(incident),{closeButton:false,autoPan:true});
+    marker.bindPopup(incidentPopupV79(incident),{
+      closeButton:false,
+      autoPan:true,
+      keepInView:true,
+      maxWidth:220,
+      minWidth:178,
+      autoPanPaddingTopLeft:[42,42],
+      autoPanPaddingBottomRight:[42,42]
+    });
     liveIncidentMarkersV79.push(marker);
   });
   updateIncidentHudV80(state);
@@ -793,7 +799,12 @@ function schedulePopupAutoplayV80(){
   const openRandom = ()=>{
     if(!document.getElementById("map")?.classList.contains("active")) return;
     const marker = liveIncidentMarkersV79[Math.floor(Math.random() * liveIncidentMarkersV79.length)];
-    if(marker) marker.openPopup();
+    if(marker){
+      marker.openPopup();
+      setTimeout(()=>{
+        if(map && marker.getLatLng) map.panTo(marker.getLatLng(), {animate:true, duration:.35});
+      },80);
+    }
   };
   setTimeout(openRandom, randomBetweenV80(1200, 2600));
   popupAutoplayTimerV80 = setInterval(openRandom, randomBetweenV80(35000, 85000));
