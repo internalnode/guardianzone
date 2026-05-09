@@ -144,7 +144,7 @@ function renderFile(id){
   }).join("");
 
   viewer.innerHTML = `
-    <div class="card-title">ПЕРЕГЛЯД АРХІВУ</div>
+    <div class="card-title">ARCHIVE VIEWER</div>
 
     <div class="file-header">
       <h3>${data.title}</h3>
