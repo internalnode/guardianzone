@@ -1268,3 +1268,31 @@ height:150px;
     height:320px;
   }
 }
+
+
+/* v34 — smaller tabs and selected safehouse only */
+.tabs button{
+  font-size:9px !important;
+  letter-spacing:1.2px !important;
+  padding-left:4px;
+  padding-right:4px;
+}
+
+@media(max-width:420px){
+  .tabs button{
+    font-size:7.5px !important;
+    letter-spacing:.7px !important;
+  }
+}
+
+#safehouses .primary-node-panel{
+  display:none !important;
+}
+
+.safehouse-detail{
+  min-height:360px;
+}
+
+.safe-point.active{
+  transform:translate(-50%,-50%) scale(1.04);
+}
