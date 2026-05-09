@@ -115,12 +115,57 @@
     </section>
 
     <section id="archives" class="screen">
-      <div class="file-list">
-        <article><span>FILE 01</span><h3>RELAIS 03</h3><p>Ancien relais de surveillance. Retour d’alimentation observé par intermittence.</p></article>
-        <article><span>FILE 02</span><h3>TUNNEL SUD</h3><p>Accès fermé après plusieurs détections nocturnes. Origine non confirmée.</p></article>
-        <article><span>FILE 03</span><h3>INSTALLATION 12</h3><p>Structure partiellement effondrée. Émission faible relevée sur bande courte.</p></article>
-        <article class="corrupted"><span>FILE 04</span><h3>VISUAL RECORD</h3><p>Segment image récupéré. Données instables. Identification impossible.</p></article>
-        <article class="missing"><span>FILE 05</span><h3>SECTOR NOTE</h3><p>ARCHIVE SEGMENT MISSING // RECOVERY FAILED</p></article>
+      <div class="files-layout">
+
+        <div class="files-list">
+          <button class="file-entry active" data-file="relais03">
+            <span>FILE 01</span>
+            <strong>RELAIS_03</strong>
+          </button>
+
+          <button class="file-entry" data-file="tunnel">
+            <span>FILE 02</span>
+            <strong>TUNNEL_SUD</strong>
+          </button>
+
+          <button class="file-entry" data-file="install12">
+            <span>FILE 03</span>
+            <strong>INSTALLATION_12</strong>
+          </button>
+
+          <button class="file-entry corrupted" data-file="visual">
+            <span>FILE 04</span>
+            <strong>VISUAL_RECORD</strong>
+          </button>
+
+          <button class="file-entry missing" data-file="sector">
+            <span>FILE 05</span>
+            <strong>SECTOR_NOTE</strong>
+          </button>
+        </div>
+
+        <div class="file-viewer" id="file-viewer">
+          <div class="card-title">ARCHIVE VIEWER</div>
+
+          <div class="file-header">
+            <h3>RELAIS_03</h3>
+            <div class="file-state">STATUS : ACTIVE</div>
+          </div>
+
+          <div class="file-meta">
+            <div><span>LAST ACCESS</span><strong>UNKNOWN</strong></div>
+            <div><span>POWER SOURCE</span><strong>LOCAL GRID</strong></div>
+            <div><span>ARCHIVE INTEGRITY</span><strong>74%</strong></div>
+          </div>
+
+          <div class="file-content">
+            <p>Le relais était déjà alimenté avant l’arrivée sur site.</p>
+            <p>Aucune présence détectée à proximité immédiate.</p>
+            <p>Aucune trace récente observée autour de l’installation.</p>
+            <p class="terminal-note">Le système a pourtant été redémarré manuellement.</p>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>

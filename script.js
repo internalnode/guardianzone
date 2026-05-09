@@ -43,3 +43,128 @@ if(lat)lat.textContent=Math.floor(240+Math.random()*390)+" MS";
 if(mu){const now=new Date();mu.textContent=`LAST UPDATE : ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`}
 }
 setInterval(()=>{pushLog();updateSystems()},11000);
+
+
+/* v7 interactive files */
+const fileData = {
+  relais03:{
+    title:"RELAIS_03",
+    status:"ACTIVE",
+    access:"UNKNOWN",
+    power:"LOCAL GRID",
+    integrity:"74%",
+    content:[
+      "Le relais était déjà alimenté avant l’arrivée sur site.",
+      "Aucune présence détectée à proximité immédiate.",
+      "Aucune trace récente observée autour de l’installation.",
+      "Le système a pourtant été redémarré manuellement."
+    ],
+    note:true
+  },
+
+  tunnel:{
+    title:"TUNNEL_SUD",
+    status:"RESTRICTED",
+    access:"02:14",
+    power:"OFFLINE",
+    integrity:"58%",
+    content:[
+      "Détection nocturne signalée près de l’accès sud.",
+      "Le tunnel semble condamné depuis plusieurs années.",
+      "Un capteur de porte a pourtant brièvement répondu.",
+      "Aucune confirmation visuelle disponible."
+    ]
+  },
+
+  install12:{
+    title:"INSTALLATION_12",
+    status:"UNSTABLE",
+    access:"UNKNOWN",
+    power:"PARTIAL",
+    integrity:"41%",
+    content:[
+      "Structure partiellement effondrée.",
+      "Une émission faible persiste sur bande courte.",
+      "Le signal fluctue selon les conditions météo.",
+      "Le secteur reste difficile d’accès."
+    ]
+  },
+
+  visual:{
+    title:"VISUAL_RECORD",
+    status:"CORRUPTED",
+    access:"FILE DAMAGE",
+    power:"UNKNOWN",
+    integrity:"12%",
+    content:[
+      "Segment image récupéré depuis un ancien terminal.",
+      "Plusieurs portions du fichier sont manquantes.",
+      "Une silhouette apparaît brièvement avant la perte du signal.",
+      "Identification impossible."
+    ],
+    note:true
+  },
+
+  sector:{
+    title:"SECTOR_NOTE",
+    status:"MISSING",
+    access:"RECOVERY FAILED",
+    power:"N/A",
+    integrity:"0%",
+    content:[
+      "ARCHIVE SEGMENT MISSING",
+      "RECOVERY FAILED",
+      "NO ADDITIONAL DATA AVAILABLE"
+    ],
+    note:true
+  }
+};
+
+function renderFile(id){
+  const data = fileData[id];
+  const viewer = document.getElementById("file-viewer");
+  if(!viewer || !data) return;
+
+  const content = data.content.map((line,index)=>{
+    const cls = data.note && index === data.content.length-1 ? 'terminal-note' : '';
+    return `<p class="${cls}">${line}</p>`;
+  }).join("");
+
+  viewer.innerHTML = `
+    <div class="card-title">ARCHIVE VIEWER</div>
+
+    <div class="file-header">
+      <h3>${data.title}</h3>
+      <div class="file-state">STATUS : ${data.status}</div>
+    </div>
+
+    <div class="file-meta">
+      <div>
+        <span>LAST ACCESS</span>
+        <strong>${data.access}</strong>
+      </div>
+
+      <div>
+        <span>POWER SOURCE</span>
+        <strong>${data.power}</strong>
+      </div>
+
+      <div>
+        <span>ARCHIVE INTEGRITY</span>
+        <strong>${data.integrity}</strong>
+      </div>
+    </div>
+
+    <div class="file-content">
+      ${content}
+    </div>
+  `;
+}
+
+document.querySelectorAll(".file-entry").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".file-entry").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    renderFile(btn.dataset.file);
+  });
+});
