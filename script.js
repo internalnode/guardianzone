@@ -44,7 +44,6 @@ if(mu){const now=new Date();mu.textContent=`LAST UPDATE : ${pad(now.getHours())}
 }
 setInterval(()=>{pushLog();updateSystems()},11000);
 
-
 /* v7 interactive files */
 const fileData = {
   relais03:{
@@ -183,12 +182,10 @@ document.querySelectorAll(".file-entry").forEach(btn=>{
   });
 });
 
-
 /* v8 living system */
 const nodeStart = Date.now();
 const previousStates = [
   "Le relais 03 a répondu avant l’ouverture manuelle du terminal.",
-  "La caméra 12 a perdu l’image mais a continué d’émettre un signal audio.",
   "Le capteur du portail nord s’est fermé sans commande enregistrée.",
   "Deux fichiers d’archives ont changé d’état pendant que le terminal était hors ligne.",
   "Le canal basse fréquence s’est ouvert durant 11 secondes. Source inconnue."
@@ -204,8 +201,6 @@ const rareEvents = [
   "État du capteur modifié avant synchronisation"
 ];
 
-let audioOn = false;
-let audioContext = null;
 let noiseNode = null;
 let gainNode = null;
 
@@ -273,44 +268,28 @@ function createNoiseBuffer(ctx){
   return buffer;
 }
 
-function startAudio(){
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  noiseNode = audioContext.createBufferSource();
-  noiseNode.buffer = createNoiseBuffer(audioContext);
   noiseNode.loop = true;
 
-  gainNode = audioContext.createGain();
   gainNode.gain.value = 0.018;
 
-  const filter = audioContext.createBiquadFilter();
   filter.type = "bandpass";
   filter.frequency.value = 900;
   filter.Q.value = 0.7;
 
   noiseNode.connect(filter);
   filter.connect(gainNode);
-  gainNode.connect(audioContext.destination);
   noiseNode.start();
 }
 
-function stopAudio(){
   try{
     if(noiseNode) noiseNode.stop();
-    if(audioContext) audioContext.close();
   }catch(e){}
   noiseNode = null;
-  audioContext = null;
 }
 
-function setupAudioToggle(){
-  const btn = document.getElementById("audio-toggle");
   if(!btn) return;
 
   btn.addEventListener("click", ()=>{
-    audioOn = !audioOn;
-    btn.textContent = audioOn ? "AUDIO : ON" : "AUDIO : OFF";
-    if(audioOn) startAudio();
-    else stopAudio();
   });
 }
 
@@ -322,7 +301,6 @@ window.addEventListener("load", ()=>{
   seedPreviousState();
   tickClock();
   updateEnvironment();
-  setupAudioToggle();
 });
 
 function pushSystemLog(message){
@@ -333,7 +311,6 @@ function pushSystemLog(message){
   log.appendChild(line);
   while(log.children.length>5)log.removeChild(log.firstElementChild);
 }
-
 
 /* v9 file access feel */
 function fakeOpenArchive(id, btn){
@@ -393,7 +370,6 @@ renderFile = function(id){
   }
 };
 
-
 /* v14 map-first boot */
 window.addEventListener("load", ()=>{
   setTimeout(()=>{
@@ -402,7 +378,6 @@ window.addEventListener("load", ()=>{
     }
   }, 450);
 });
-
 
 /* v15 — active incidents and credibility layer */
 const incidentStates = [
@@ -430,7 +405,6 @@ function updateIncidents(){
 
 setInterval(updateIncidents, 18000);
 window.addEventListener("load", updateIncidents);
-
 
 /* v17 exploration fragments */
 const feedFragments = [
