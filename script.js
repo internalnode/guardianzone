@@ -416,3 +416,36 @@ window.addEventListener("load", ()=>{
     files.appendChild(btn);
   }, 45000);
 });
+
+
+/* v31 primary node dynamics */
+const nodeUpdates = [
+  "Maintenance trace detected near NODE-01.",
+  "Long range relay briefly synchronized.",
+  "Manual lock state changed at RAIL_DEPOT.",
+  "FOREST BUNKER responded for 4 seconds.",
+  "Unregistered maintenance cycle detected.",
+  "Secondary generator briefly active."
+];
+
+function injectNodeUpdate(){
+  const feed = document.getElementById("system-log") || document.getElementById("field-feed");
+  if(!feed) return;
+
+  const line = document.createElement("div");
+  line.className = "system-log-entry-live";
+  const d = new Date();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+
+  line.textContent = `[${hh}:${mm}] ${nodeUpdates[Math.floor(Math.random()*nodeUpdates.length)]}`;
+  feed.prepend(line);
+
+  while(feed.children.length > 8){
+    feed.removeChild(feed.lastElementChild);
+  }
+}
+
+window.addEventListener("load", ()=>{
+  setInterval(injectNodeUpdate, 120000);
+});
