@@ -3,25 +3,25 @@ const bootLines=document.getElementById("boot-lines");bootMessages.forEach((m,i)
 window.addEventListener("load",()=>setTimeout(()=>{const b=document.getElementById("boot");b.style.opacity="0";setTimeout(()=>b.style.display="none",800)},3900));
 let map,mapReady=false;
 const reports=[
-{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Unstable emission",text:"Alimentation relevée hors cycle prévu autour des structures principales.",detail:"Caméras indisponibles. Vérification terrain prioritaire."},
-{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Recent movement",text:"Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",detail:"Signal faible : contact porte, vibration brève, perte de flux."},
-{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Radio interference",text:"Parasitage constant sur bande courte. Origine non isolée.",detail:"Contrôle différé recommandé. Conditions de visibilité insuffisantes."},
-{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"СЛАБКИЙ",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
-{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
+{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITIQUE",category:"Unstable emission",text:"Alimentation relevée hors cycle prévu autour des structures principales.",detail:"Caméras indisponibles. Vérification terrain prioritaire."},
+{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"ÉLEVÉ",category:"Recent movement",text:"Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",detail:"Signal faible : contact porte, vibration brève, perte de flux."},
+{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MOYEN",category:"Radio interference",text:"Parasitage constant sur bande courte. Origine non isolée.",detail:"Contrôle différé recommandé. Conditions de visibilité insuffisantes."},
+{coords:[51.2750,30.2210],title:"OBSERVATIACTIF EAST",severity:"low",label:"СЛАБКИЙ",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
+{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MOYEN",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
 ];
-function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">SELECTED POINT</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — SEVERITY : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
-function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:12px;color:#9aaa7d;margin-bottom:8px;">SEVERITY : ${r.label}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
+function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">ОБРАНА ТОЧКА</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — GRAVITÉ : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
+function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:12px;color:#9aaa7d;margin-bottom:8px;">GRAVITÉ : ${r.label}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));if(id==="map"){if(!mapReady)initMap();else setTimeout(()=>map.invalidateSize(),250)}window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>showScreen(btn.dataset.screen)));
 const events=[
 "CAMERA FEED LOST — SECTOR NORTH",
 "СЛАБКИЙ FREQUENCY BURST DETECTED",
-"PERIMETER RELAY 03 RESPONDING",
-"UNCONFIRMED MOVEMENT — RESIDENTIAL BLOCK",
-"DOSIMETER SPIKE NORMALIZED",
-"SIGNAL DROP — 4 SECONDS",
+"PERIMETER RELAY 03 RESPACTIFDING",
+"UNCACTIFFIRMED MOVEMENT — RESIDENTIAL BLOCK",
+"ДОЗИМЕТР SPIKE NORMALIZED",
+"СИГНАЛ DROP — 4 SECACTIFDS",
 "UNSIGNED ACCESS — RELAY 03",
-"ARCHIVE SEGMENT CORRUPTED",
+"ARCHIVE SEGMENT CORROMPU",
 "DOOR SENSOR TRIGGERED — EMPTY FEED",
 "MYTH TASKING PENDING"
 ];
@@ -30,13 +30,13 @@ function pushLog(){const log=document.getElementById("system-log");if(!log)retur
 function updateSystems(){
 const q=document.getElementById("quality"),d=document.getElementById("dosimeter"),c=document.getElementById("channel"),s=document.getElementById("signal-state"),l=document.getElementById("loss");
 const wind=document.getElementById("wind"),pressure=document.getElementById("pressure"),cam=document.getElementById("camera-integrity"),lat=document.getElementById("latency"),mu=document.getElementById("map-update");
-const qualities=["DEGRADED","UNSTABLE","СЛАБКИЙ","RESTORED"],quality=qualities[Math.floor(Math.random()*qualities.length)];
-if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="UNSTABLE"||quality==="СЛАБКИЙ")}
-if(s)s.textContent="SIGNAL "+quality;
-if(c)c.textContent=["OPEN","PARASITÉ","ЧАСТКОВИЙ","DELAYED"][Math.floor(Math.random()*4)];
+const qualities=["DÉGRADÉ","INSTABLE","СЛАБКИЙ","RÉTABLI"],quality=qualities[Math.floor(Math.random()*qualities.length)];
+if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="INSTABLE"||quality==="СЛАБКИЙ")}
+if(s)s.textContent="СИГНАЛ "+quality;
+if(c)c.textContent=["OUVERT","PARASITÉ","ЧАСТКОВИЙ","RETARDÉ"][Math.floor(Math.random()*4)];
 if(d)d.textContent=(0.28+Math.random()*0.46).toFixed(2)+" µSv/h";
 if(l)l.textContent=Math.floor(8+Math.random()*19)+"%";
-if(wind)wind.textContent=["N/NE 11 KM/H","E 07 KM/H","NW 18 KM/H","CALM","S 14 KM/H"][Math.floor(Math.random()*5)];
+if(wind)wind.textContent=["N/NE 11 KM/H","E 07 KM/H","NW 18 KM/H","CALME","S 14 KM/H"][Math.floor(Math.random()*5)];
 if(pressure)pressure.textContent=Math.floor(1001+Math.random()*18)+" HPA";
 if(cam)cam.textContent=Math.floor(22+Math.random()*31)+"%";
 if(lat)lat.textContent=Math.floor(240+Math.random()*390)+" MS";
@@ -49,9 +49,9 @@ setInterval(()=>{pushLog();updateSystems()},11000);
 const fileData = {
   relais03:{
     title:"RELAIS_03",
-    status:"ACTIVE",
-    access:"UNKNOWN",
-    power:"LOCAL GRID",
+    status:"ACTIF",
+    access:"INCACTIFNU",
+    power:"RÉSEAU LOCAL",
     integrity:"74%",
     content:[
       "Relais alimenté hors cycle prévu.",
@@ -64,7 +64,7 @@ const fileData = {
 
   tunnel:{
     title:"TUNNEL_SUD",
-    status:"RESTRICTED",
+    status:"RESTREINT",
     access:"02:14",
     power:"HORS LIGNE",
     integrity:"58%",
@@ -77,9 +77,9 @@ const fileData = {
   },
 
   install12:{
-    title:"INSTALLATION_12",
-    status:"UNSTABLE",
-    access:"UNKNOWN",
+    title:"INSTALLATIACTIF_12",
+    status:"INSTABLE",
+    access:"INCACTIFNU",
     power:"ЧАСТКОВИЙ",
     integrity:"41%",
     content:[
@@ -92,9 +92,9 @@ const fileData = {
 
   visual:{
     title:"VISUAL_RECORD",
-    status:"CORRUPTED",
-    access:"FILE DAMAGE",
-    power:"UNKNOWN",
+    status:"CORROMPU",
+    access:"FICHIER ENDOMMAGÉ",
+    power:"INCACTIFNU",
     integrity:"12%",
     content:[
       "Segment image récupéré depuis terminal ancien.",
@@ -107,14 +107,14 @@ const fileData = {
 
   sector:{
     title:"SECTOR_NOTE",
-    status:"MISSING",
-    access:"RECOVERY FAILED",
+    status:"MANQUANT",
+    access:"ÉCHEC RÉCUPÉRATIACTIF",
     power:"N/A",
     integrity:"0%",
     content:[
-      "ARCHIVE SEGMENT MISSING",
-      "RECOVERY FAILED",
-      "NO ADDITIONAL DATA AVAILABLE"
+      "SEGMENT D’ARCHIVE MANQUANT",
+      "ÉCHEC RÉCUPÉRATIACTIF",
+      "NO ADDITIACTIFAL DATA AVAILABLE"
     ],
     note:true
   },
@@ -122,13 +122,13 @@ const fileData = {
   locked:{
     title:"BLACK_CHANNEL",
     status:"ЗАБЛОКОВАНО",
-    access:"DENIED",
-    power:"UNKNOWN",
+    access:"REFUSÉ",
+    power:"INCACTIFNU",
     integrity:"--",
     content:[
-      "ACCESS DENIED",
-      "KEY FRAGMENT MISSING",
-      "LAST HANDSHAKE : UNKNOWN"
+      "ACCESS REFUSÉ",
+      "FRAGMENT DE CLÉ MANQUANT",
+      "LAST HANDSHAKE : INCACTIFNU"
     ],
     note:true
   }
@@ -145,7 +145,7 @@ function renderFile(id){
   }).join("");
 
   viewer.innerHTML = `
-    <div class="card-title">ARCHIVE VIEWER</div>
+    <div class="card-title">ПЕРЕГЛЯД АРХІВУ</div>
 
     <div class="file-header">
       <h3>${data.title}</h3>
@@ -241,14 +241,14 @@ function updateEnvironment(){
   const grid = document.getElementById("grid-integrity");
   const field = document.getElementById("field-condition");
 
-  if(fog) fog.textContent = ["СЛАБКИЙ","MEDIUM","ГУСТИЙ","PATCHY"][Math.floor(Math.random()*4)];
+  if(fog) fog.textContent = ["СЛАБКИЙ","MOYEN","ГУСТИЙ","IRRÉGULIER"][Math.floor(Math.random()*4)];
   if(thermal){
-    const value = ["HORS LIGNE","NO IMAGE","ЧАСТКОВИЙ","NOISE ONLY"][Math.floor(Math.random()*4)];
+    const value = ["HORS LIGNE","AUCUNE IMAGE","ЧАСТКОВИЙ","PARASITES SEULS"][Math.floor(Math.random()*4)];
     thermal.textContent = value;
-    thermal.classList.toggle("system-critical", value === "NO IMAGE" || value === "NOISE ONLY");
+    thermal.classList.toggle("system-critical", value === "AUCUNE IMAGE" || value === "PARASITES SEULS");
   }
   if(grid) grid.textContent = Math.floor(25 + Math.random()*31) + "%";
-  if(field) field.textContent = ["STABLE","WET","СЛАБКИЙ VISIBILITY","INTERFERENCE"][Math.floor(Math.random()*4)];
+  if(field) field.textContent = ["STABLE","HUMIDE","СЛАБКИЙ VISIBILITY","INTERFÉRENCES"][Math.floor(Math.random()*4)];
 }
 
 function rareSystemEvent(){
@@ -308,7 +308,7 @@ function setupAudioToggle(){
 
   btn.addEventListener("click", ()=>{
     audioOn = !audioOn;
-    btn.textContent = audioOn ? "AUDIO : ON" : "AUDIO : OFF";
+    btn.textContent = audioOn ? "АУДІО : ACTIF" : "АУДІО : COUPÉ";
     if(audioOn) startAudio();
     else stopAudio();
   });
@@ -387,7 +387,7 @@ renderFile = function(id){
   if(id === "visual"){
     viewer.innerHTML += `
       <div class="restricted-banner">
-        IMAGE FEED // ЧАСТКОВИЙLY CORRUPTED
+        IMAGE FEED // ЧАСТКОВИЙLY CORROMPU
       </div>
     `;
   }
@@ -409,10 +409,10 @@ const incidentStates = [
   ["RELAY_03","Alimenté hors cycle"],
   ["SOUTH_TUNNEL","Contact perdu"],
   ["PRIPYAT_BLOCK","Mouvement non confirmé"],
-  ["CAMERA_07","HORS LIGNE / SENSOR ACTIVE"],
+  ["CAMERA_07","HORS LIGNE / SENSOR ACTIF"],
   ["NORTH_GATE","ЗАБЛОКОВАНО / PING RECEIVED"],
-  ["ARCHIVE_12","CORRUPTED / RECENT CHANGE"],
-  ["BLACK_CHANNEL","HANDSHAKE FAILED"]
+  ["ARCHIVE_12","CORROMPU / MODIFICATIACTIF RÉCENTE"],
+  ["BLACK_CHANNEL","ÉCHEC DE LIAISACTIF"]
 ];
 
 function updateIncidents(){
@@ -436,7 +436,7 @@ window.addEventListener("load", updateIncidents);
 const feedFragments = [
 "04:18 — Transmission brève sur bande courte.",
 "04:41 — Mouvement non confirmé dans bloc résidentiel.",
-"05:02 — Camera_07 revenue ONLINE durant 3 secondes.",
+"05:02 — Camera_07 revenue ACTIFLINE durant 3 secondes.",
 "05:37 — Verrou secondaire refermé sans commande.",
 "06:11 — Relais 03 inaccessible puis réinitialisé.",
 "06:42 — Bruit métallique détecté sur microphone terrain."
@@ -483,10 +483,10 @@ window.addEventListener("load", ()=>{
 
 /* v19 restored — living zone, non destructive */
 const restoredZoneConditions = {
-  fog:["СЛАБКИЙ","СЕРЕДНІЙ","ГУСТИЙ"],
-  rain:["ВІДСУТНІЙ","СЛАБКИЙ","СИЛЬНИЙ"],
+  fog:["FAIBLE","MOYEN","DENSE"],
+  rain:["AUCUNE","FAIBLE","FORTE"],
   visibility:["STABLE","ОБМЕЖЕНА","TRÈS СЛАБКИЙ"],
-  network:["НЕСТАБІЛЬНИЙ","НЕСТІЙКИЙ","ПОШКОДЖЕНИЙ","ЧАСТКОВИЙ"]
+  network:["INTERMITTENT","INSTABLE","DÉGRADÉ","PARTIEL"]
 };
 
 const restoredZoneEvents = [
