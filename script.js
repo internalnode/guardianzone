@@ -655,7 +655,7 @@ function makeIncidentV81(base, now=Date.now()){
 
 function buildIncidentStateV80(){
   const now = Date.now();
-  const amount = randomBetweenV80(2,4);
+  const amount = randomBetweenV80(0,4);
   const selected = [...autonomousIncidentPoolV79]
     .sort(()=>Math.random() - .5)
     .slice(0, amount)
@@ -761,13 +761,33 @@ function clearLiveIncidentsV79(){
   liveIncidentMarkersV79 = [];
 }
 
+
+const ambientSystemLogsV84 = [
+  "SYNC NODE_04 ........ OK",
+  "THERMAL POLL ACTIVE",
+  "CACHE PURGED",
+  "UPLINK RESTORED",
+  "PASSIVE SCAN COMPLETE",
+  "RELAY CHECK ......... OK",
+  "LOW VISIBILITY // RAIN INTERFERENCE",
+  "BACKGROUND TELEMETRY ACTIVE"
+];
+
+function pushAmbientLogV84(){
+  const el = document.getElementById("map-update");
+  if(!el) return;
+  const msg = ambientSystemLogsV84[Math.floor(Math.random()*ambientSystemLogsV84.length)];
+  if(Math.random() > .55){
+    el.textContent = msg;
+  }
+}
 function updateIncidentHudV80(state){
   const update = document.getElementById("map-update");
-  if(update) update.textContent = `INCIDENT FEED : RANDOM / AUTONOMOUS`;
+  if(update) update.textContent = `FIELD NETWORK // LIVE INCIDENT FEED`;
   const stateEl = document.getElementById("incident-cycle-state");
   if(stateEl){
     const remaining = Number(state.nextAt) - Date.now();
-    stateEl.textContent = `${state.incidents.length} ACTIVE // NEXT FIELD CHANGE : ${formatDelayV80(remaining)}`;
+    stateEl.textContent = state.incidents.length ? `${state.incidents.length} ACTIVE INCIDENTS // NEXT FIELD CHANGE : ${formatDelayV80(remaining)}` : `NO ACTIVE INCIDENTS // PASSIVE MONITORING`;
   }
 }
 
@@ -775,6 +795,7 @@ function renderAutonomousIncidentsV80(forceNew=false){
   if(!mapReady || !map || typeof L === "undefined") return;
   clearLiveIncidentsV79();
   const state = ensureIncidentStateV80(forceNew);
+  if(!state.incidents.length){ updateIncidentHudV80(state); return; }
   state.incidents.forEach(incident=>{
     const icon = L.divIcon({className:"",html:`<div class="severity-marker ${incident.severity} live-incident-marker"></div>`,iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-13]});
     const marker = L.marker(incident.coords,{icon}).addTo(map);
@@ -817,6 +838,7 @@ function startIncidentCycleV79(){
     const state = ensureIncidentStateV80(false);
     if(before !== state.lastMutationAt) renderAutonomousIncidentsV80(false);
     else updateIncidentHudV80(state);
+    pushAmbientLogV84();
   },60000);
 }
 
