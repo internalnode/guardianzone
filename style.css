@@ -2496,53 +2496,94 @@ button[data-screen="dossier"],
 }
 
 
+/* v74 — real tab isolation fix */
+body{
+  overflow-x:hidden;
+}
 
-
-
-/* v73 — isolate tabs and stop map bleed */
+/* Only active screen can be visible */
+main > .screen,
 .screen{
   display:none !important;
-}
-
-.screen.active{
-  display:block !important;
-}
-
-#map.screen.active #leaflet-map,
-#map.screen.active .leaflet-container{
-  display:block !important;
-  height:420px !important;
-  min-height:420px !important;
-}
-
-#map:not(.active) #leaflet-map,
-#map:not(.active) .leaflet-container,
-#map:not(.active) .map-card{
-  display:none !important;
-}
-
-/* Remove incident placeholder without touching map containers */
-#map-incident-detail,
-.map-incident-detail{
-  display:none !important;
+  visibility:hidden !important;
   height:0 !important;
   min-height:0 !important;
   max-height:0 !important;
+  overflow:hidden !important;
   margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+main > .screen.active,
+.screen.active{
+  display:block !important;
+  visibility:visible !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:visible !important;
+  margin:0 !important;
+  padding-bottom:18px !important;
+}
+
+/* Map is only visible inside active MAP screen */
+#map:not(.active) .map-card,
+#map:not(.active) #leaflet-map,
+#map:not(.active) .leaflet-container{
+  display:none !important;
+  height:0 !important;
+  min-height:0 !important;
   overflow:hidden !important;
 }
 
-/* Prevent old empty spacer effect */
-#map .map-card{
+#map.active .map-card{
+  display:block !important;
+  height:auto !important;
+  min-height:0 !important;
   margin-top:12px !important;
 }
 
+#map.active #leaflet-map,
+#map.active .leaflet-container{
+  display:block !important;
+  height:420px !important;
+  min-height:420px !important;
+  max-height:420px !important;
+}
+
+/* Remove external incident detail panel forever */
+#map-incident-detail,
+.map-incident-detail,
+.incident-detail,
+.selected-incident,
+.selected-incident-panel{
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+
+/* remove empty black spacers */
+.screen > div:empty,
+.screen > section:empty{
+  display:none !important;
+  height:0 !important;
+  min-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
 @media(max-width:760px){
-  #map.screen.active #leaflet-map,
-  #map.screen.active .leaflet-container{
+  #map.active #leaflet-map,
+  #map.active .leaflet-container{
     height:360px !important;
     min-height:360px !important;
+    max-height:360px !important;
   }
 }

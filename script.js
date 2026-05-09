@@ -1490,38 +1490,29 @@ function majorPopupHTMLV65(point){
 }
 
 
-/* v72 — no external incident panel, popups only */
-function updateIncidentDetailPanelV64(){ return; }
-function renderIncidentDetailV62(){ return; }
-function renderIncidentDetailV61(){ return; }
-function renderIncidentDetailV60(){ return; }
+/* v74 — authoritative tab controller */
+(function(){
+  function getScreenButtons(){
+    return Array.from(document.querySelectorAll(".tabs button[data-screen]"));
+  }
 
-/* force Leaflet map refresh after load to avoid blank tiles */
-window.addEventListener("load", ()=>{
-  setTimeout(()=>{
-    try{
-      const mapInstance = (typeof map !== "undefined" && map) ? map : window.map;
-      if(mapInstance && typeof mapInstance.invalidateSize === "function"){
-        mapInstance.invalidateSize();
-      }
-    }catch(e){}
-  }, 600);
-});
+  function getScreens(){
+    return Array.from(document.querySelectorAll(".screen"));
+  }
 
+  function activateScreenV74(target){
+    if(!target) target = "map";
 
-/* v73 — tab isolation and map refresh */
-window.addEventListener("load", ()=>{
-  const buttons = document.querySelectorAll(".tabs button");
-  const screens = document.querySelectorAll(".screen");
-
-  function activateScreen(target){
-    if(!target) return;
-
-    screens.forEach(screen=>{
-      screen.classList.toggle("active", screen.id === target);
+    getScreens().forEach(screen=>{
+      const active = screen.id === target;
+      screen.classList.toggle("active", active);
+      screen.style.display = active ? "block" : "none";
+      screen.style.visibility = active ? "visible" : "hidden";
+      screen.style.height = active ? "auto" : "0";
+      screen.style.overflow = active ? "visible" : "hidden";
     });
 
-    buttons.forEach(btn=>{
+    getScreenButtons().forEach(btn=>{
       btn.classList.toggle("active", btn.dataset.screen === target);
     });
 
@@ -1535,19 +1526,29 @@ window.addEventListener("load", ()=>{
         }catch(e){}
       }, 250);
     }
+
+    window.scrollTo({top:0, behavior:"smooth"});
   }
 
-  buttons.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      activateScreen(btn.dataset.screen);
-      window.scrollTo({top:0, behavior:"smooth"});
+  window.activateScreenV74 = activateScreenV74;
+
+  window.addEventListener("load", ()=>{
+    getScreenButtons().forEach(btn=>{
+      btn.addEventListener("click", (event)=>{
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        activateScreenV74(btn.dataset.screen);
+      }, true);
     });
-  });
 
-  const active = document.querySelector(".screen.active");
-  if(active){
-    activateScreen(active.id);
-  }else{
-    activateScreen("map");
-  }
-});
+    const activeButton = document.querySelector(".tabs button.active[data-screen]");
+    const activeScreen = document.querySelector(".screen.active");
+    activateScreenV74(activeButton?.dataset.screen || activeScreen?.id || "map");
+  });
+})();
+
+/* v74 — no external incident detail panel */
+function updateIncidentDetailPanelV64(){ return; }
+function renderIncidentDetailV62(){ return; }
+function renderIncidentDetailV61(){ return; }
+function renderIncidentDetailV60(){ return; }
