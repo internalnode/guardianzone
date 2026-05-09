@@ -368,3 +368,26 @@ window.addEventListener("load", ()=>{
     });
   });
 });
+
+
+/* v52 — measured fixed HUD spacing */
+function updateFixedHudSpacing(){
+  const header = document.querySelector(".app-header, .header, .topbar");
+  const tabs = document.querySelector(".tabs");
+  const bottom = document.querySelector(".bottom-status, .footer-status, .system-footer");
+
+  const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+  const tabsHeight = tabs ? Math.ceil(tabs.getBoundingClientRect().height) : 0;
+  const bottomHeight = bottom ? Math.ceil(bottom.getBoundingClientRect().height) : 0;
+
+  document.documentElement.style.setProperty("--fixed-header-height", headerHeight + "px");
+  document.documentElement.style.setProperty("--hud-top-height", (headerHeight + tabsHeight) + "px");
+  document.documentElement.style.setProperty("--hud-bottom-height", bottomHeight + "px");
+}
+
+window.addEventListener("load", updateFixedHudSpacing);
+window.addEventListener("resize", updateFixedHudSpacing);
+window.addEventListener("orientationchange", ()=>{
+  setTimeout(updateFixedHudSpacing, 250);
+});
+setTimeout(updateFixedHudSpacing, 600);
