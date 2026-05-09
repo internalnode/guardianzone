@@ -2494,3 +2494,39 @@ button[data-screen="dossier"],
   font-size:10px !important;
   letter-spacing:.8px;
 }
+
+
+/* v68 cleanup */
+#map-incident-detail,
+.map-incident-detail,
+.incident-detail,
+.selected-incident,
+.incident-placeholder{
+    display:none !important;
+    height:0 !important;
+    min-height:0 !important;
+    margin:0 !important;
+    padding:0 !important;
+    border:none !important;
+}
+
+.map-wrapper,
+.map-card,
+.leaflet-container{
+    margin-top:0 !important;
+}
+
+.map-section{
+    padding-top:0 !important;
+}
+
+/* Remove black void above map */
+.map-container,
+.map-card{
+    min-height:auto !important;
+    height:auto !important;
+}
+
+.leaflet-container{
+    background:#111 !important;
+}
