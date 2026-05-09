@@ -1361,3 +1361,21 @@ height:150px;
 .tabs{
   grid-template-columns:repeat(4,1fr) !important;
 }
+
+
+/* v41 — FILES/ARCHIVES fully removed */
+button[data-screen="files"],
+button[data-screen="archives"],
+#files,
+#archives,
+.file-list,
+.files-layout,
+.archive-layout,
+.archive-sidebar,
+.archive-viewer{
+  display:none !important;
+}
+
+.tabs{
+  grid-template-columns:repeat(4,1fr) !important;
+}

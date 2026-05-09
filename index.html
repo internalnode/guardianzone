@@ -46,7 +46,7 @@
     <button data-screen="dossier">OPERATOR</button>
     <button class="active" data-screen="map">MAP</button>
     <button data-screen="systems">SYSTEM</button>
-    <button data-screen="archives">FILES</button>
+    
   <button data-screen="safehouses">SAFEHOUSES</button>
 </nav>
 
@@ -130,68 +130,6 @@
         </div>
       </div>
     </section>
-
-    <section id="archives" class="screen">
-      <div class="files-layout">
-
-        <div class="files-list">
-          <button class="file-entry active critical-file" data-file="relais03">
-            <span>FILE 01</span>
-            <em>[CRITICAL] // SRC: RELAY</em><strong>RELAIS_03</strong><small>T-42 MIN // REL: 0.74</small>
-          </button>
-
-          <button class="file-entry" data-file="tunnel">
-            <span>FILE 02</span>
-            <strong>TUNNEL_SUD</strong><small>T-03 H // REL: 0.58</small>
-          </button>
-
-          <button class="file-entry" data-file="install12">
-            <span>FILE 03</span>
-            <strong>INSTALLATION_12</strong><small>T-11 H // REL: 0.41</small>
-          </button>
-
-          <button class="file-entry corrupted partial-file" data-file="visual">
-            <span>FILE 04</span>
-            <em>[PARTIEL] // SRC: CAMERA</em><strong>VISUAL_RECORD</strong><small>T-19 MIN // REL: 0.12</small>
-          </button>
-
-          <button class="file-entry missing locked-file" data-file="sector">
-            <span>FILE 05</span>
-            <em>[ARCHIVE LOST]</em><strong>SECTOR_NOTE</strong><small>NO TIMESTAMP // REL: 0.00</small>
-          </button>
-
-          <button class="file-entry missing locked-file" data-file="locked">
-            <span>FILE 06</span>
-            <em>[VERROUILLÉ]</em><strong>BLACK_CHANNEL</strong><small>ACCESS REFUSÉ // REL: --</small>
-          </button>
-        </div>
-
-        <div class="file-viewer" id="file-viewer">
-          <div class="card-title">ARCHIVE VIEWER</div>
-
-          <div class="file-header">
-            <h3>RELAIS_03</h3>
-            <div class="file-state">STATUS : ACTIF</div>
-          </div>
-
-          <div class="file-meta">
-            <div><span>LAST ACCESS</span><strong>INCONNU</strong></div>
-            <div><span>POWER SOURCE</span><strong>RÉSEAU LOCAL</strong></div>
-            <div><span>ARCHIVE INTEGRITY</span><strong>74%</strong></div>
-          </div>
-
-          <div class="file-content">
-            <p>Le relais était déjà alimenté avant l’arrivée sur site.</p>
-            <p>Aucune présence détectée à proximité immédiate.</p>
-            <p>Aucune trace récente observée autour de l’installation.</p>
-            <p class="terminal-note">Le système a pourtant été redémarré manuellement.</p>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  
-
 <section id="safehouses" class="screen">
   <div class="safehouses-layout">
 
