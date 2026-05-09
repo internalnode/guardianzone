@@ -430,3 +430,52 @@ function updateIncidents(){
 
 setInterval(updateIncidents, 18000);
 window.addEventListener("load", updateIncidents);
+
+
+/* v17 exploration fragments */
+const feedFragments = [
+"04:18 — Transmission brève sur bande courte.",
+"04:41 — Mouvement non confirmé dans bloc résidentiel.",
+"05:02 — Camera_07 revenue ONLINE durant 3 secondes.",
+"05:37 — Verrou secondaire refermé sans commande.",
+"06:11 — Relais 03 inaccessible puis réinitialisé.",
+"06:42 — Bruit métallique détecté sur microphone terrain."
+];
+
+function pushFieldFragment(){
+  const feed = document.getElementById("field-feed");
+  if(!feed) return;
+
+  const entry = document.createElement("div");
+  entry.textContent = feedFragments[Math.floor(Math.random()*feedFragments.length)];
+  entry.classList.add("new-fragment");
+
+  feed.prepend(entry);
+
+  while(feed.children.length > 6){
+    feed.removeChild(feed.lastElementChild);
+  }
+
+  setTimeout(()=>entry.classList.remove("new-fragment"), 5000);
+}
+
+setInterval(pushFieldFragment, 26000);
+
+/* hidden archive evolution */
+window.addEventListener("load", ()=>{
+  setTimeout(()=>{
+    const files = document.querySelector(".files-list");
+    if(!files) return;
+
+    const btn = document.createElement("button");
+    btn.className = "file-entry hidden-fragment";
+    btn.innerHTML = `
+      <span>FILE 07</span>
+      <em>[UNINDEXED]</em>
+      <strong>REPEATER_NODE</strong>
+      <small>T-07 MIN // REL: 0.21</small>
+    `;
+
+    files.appendChild(btn);
+  }, 45000);
+});
