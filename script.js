@@ -449,3 +449,84 @@ function injectNodeUpdate(){
 window.addEventListener("load", ()=>{
   setInterval(injectNodeUpdate, 120000);
 });
+
+
+/* v33 safehouses tab */
+const safehouseData = {
+  node01:{
+    title:"NODE-01 // PRIMARY RELAY",
+    status:"ACTIF",
+    power:"RÉSEAU LOCAL",
+    signal:"STABLE",
+    access:"01:42",
+    body:[
+      "Ancien site technique réutilisé comme point d’ancrage principal.",
+      "Relais longue portée actif. Maintenance récente confirmée.",
+      "Réserve opérationnelle maintenue. Inventaire détaillé absent du terminal."
+    ]
+  },
+  forest:{
+    title:"FOREST_BUNKER",
+    status:"INSTABLE",
+    power:"HORS LIGNE",
+    signal:"INTERMITTENT",
+    access:"INCONNU",
+    body:[
+      "Humidité importante dans les accès bas.",
+      "Porte verrouillée manuellement.",
+      "Présence récente non confirmée."
+    ]
+  },
+  rail:{
+    title:"RAIL_DEPOT",
+    status:"RESTREINT",
+    power:"PARTIEL",
+    signal:"FAIBLE",
+    access:"03:18",
+    body:[
+      "Réserve opérationnelle maintenue.",
+      "Accès verrouillé manuellement.",
+      "Transmission courte détectée cette nuit."
+    ]
+  },
+  north:{
+    title:"NORTH_SHELTER",
+    status:"SCELLÉ",
+    power:"BATTERIE LOCALE",
+    signal:"FAIBLE",
+    access:"INCONNU",
+    body:[
+      "Abri secondaire utilisé comme point de repli.",
+      "Alimentation faible. Relais local silencieux.",
+      "Ouverture non recommandée sans vérification terrain."
+    ]
+  }
+};
+
+function renderSafehouse(id){
+  const data = safehouseData[id];
+  const box = document.getElementById("safehouse-detail");
+  if(!box || !data) return;
+
+  box.innerHTML = `
+    <div class="card-title">SELECTED CACHE</div>
+    <h3>${data.title}</h3>
+    <div class="node-meta">
+      <div><label>POWER</label><p>${data.power}</p></div>
+      <div><label>SIGNAL</label><p>${data.signal}</p></div>
+      <div><label>LAST ACCESS</label><p>${data.access}</p></div>
+      <div><label>STATUS</label><p>${data.status}</p></div>
+    </div>
+    <div class="node-description">
+      ${data.body.map(p=>`<p>${p}</p>`).join("")}
+    </div>
+  `;
+}
+
+document.querySelectorAll(".safe-point").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".safe-point").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    renderSafehouse(btn.dataset.node);
+  });
+});

@@ -47,7 +47,7 @@
     <button class="active" data-screen="map">ВУЗОЛ</button>
     <button data-screen="systems">СИСТЕМИ</button>
     <button data-screen="archives">АРХІВ</button>
-  <button class="nav-btn" data-target="safehouses-panel">SAFEHOUSES</button>
+  <button data-screen="safehouses">SAFEHOUSES</button>
 </nav>
 
   <main class="screen-wrap">
@@ -193,22 +193,47 @@
   
 
 
-</main>
 
-  <footer class="bottom-status">
-    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
-    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
-    
-  </footer>
-</div>
+<section id="safehouses" class="screen">
+  <div class="safehouses-layout">
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js"></script>
+    <div class="safehouse-map-panel">
+      <div class="card-title">СХОВИЩА // SAFEHOUSE NETWORK</div>
 
-<section class="overlay-panel hidden-panel" id="safehouses-panel">
-  <div class="overlay-header">
-    <div class="card-title">СХОВИЩА // SAFEHOUSES</div>
-    <button class="close-overlay" onclick="document.getElementById('safehouses-panel').classList.remove('active')">✕</button>
+      <div class="safehouse-map">
+        <div class="zone-ring ring-a"></div>
+        <div class="zone-ring ring-b"></div>
+
+        <button class="safe-point primary" data-node="node01" style="left:48%;top:42%;">NODE-01</button>
+        <button class="safe-point unstable" data-node="forest" style="left:29%;top:58%;">FOREST</button>
+        <button class="safe-point restricted" data-node="rail" style="left:64%;top:68%;">RAIL</button>
+        <button class="safe-point sealed" data-node="north" style="left:38%;top:24%;">NORTH</button>
+
+        <div class="safe-grid-label top-left">GRID 51N</div>
+        <div class="safe-grid-label bottom-right">LOGISTICS MAP // APPROX.</div>
+      </div>
+
+      <div class="safehouse-warning">
+        Carte volontairement imprécise. Les coordonnées exactes ne sont pas conservées sur ce terminal.
+      </div>
+    </div>
+
+    <div class="safehouse-detail" id="safehouse-detail">
+      <div class="card-title">SELECTED CACHE</div>
+      <h3>NODE-01 // PRIMARY RELAY</h3>
+      <div class="node-meta">
+        <div><label>POWER</label><p>RÉSEAU LOCAL</p></div>
+        <div><label>SIGNAL</label><p>STABLE</p></div>
+        <div><label>LAST ACCESS</label><p>01:42</p></div>
+        <div><label>STATUS</label><p>ACTIF</p></div>
+      </div>
+      <div class="node-description">
+        <p>Ancien site technique réutilisé comme point d’ancrage principal.</p>
+        <p>Relais longue portée actif. Maintenance récente confirmée.</p>
+        <p>Réserve opérationnelle maintenue. Inventaire détaillé absent du terminal.</p>
+      </div>
+    </div>
+
   </div>
 
   <section class="primary-node-panel">
@@ -276,16 +301,23 @@
 </section>
 </section>
 
+</main>
 
-<script>
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelectorAll('[data-target="safehouses-panel"]').forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      document.getElementById("safehouses-panel").classList.add("active");
-    });
-  });
-});
-</script>
+  <footer class="bottom-status">
+    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
+    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
+    
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+
+</section>
+
+
+
 
 </body>
 </html>
