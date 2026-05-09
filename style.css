@@ -2527,3 +2527,44 @@ button[data-screen="dossier"],
     min-height:360px;
   }
 }
+
+
+/* v70 — remove incident detail placeholder and empty vertical gap */
+#map-incident-detail,
+.map-incident-detail,
+.incident-detail,
+.selected-incident,
+.selected-incident-panel,
+[data-incident-detail],
+div:has(> h3:first-child):has(+ p),
+div:has(h3):has(p){
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+}
+
+/* Keep map immediately after perimeter intro */
+.map-card{
+  margin-top:12px !important;
+}
+
+.map-top,
+.map-intro,
+.perimeter-intro{
+  margin-bottom:10px !important;
+}
+
+/* Remove large empty space if a hidden placeholder was between intro and map */
+#map .spacer,
+#map .empty-panel{
+  display:none !important;
+  height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+}

@@ -15,53 +15,6 @@
 </head>
 <body class="fixed-hud-layout">
 
-<div id="boot">
-  <div class="boot-panel">
-    <div class="boot-kicker">EXCLUSION NODE // COLD START</div>
-    <div id="boot-lines"></div>
-    <div class="boot-bar"><span></span></div>
-    <div class="boot-foot">ДОСТУП : обмежений</div>
-  </div>
-</div>
-
-<div class="noise"></div>
-<div class="scanlines"></div>
-<div class="weather-haze"></div>
-<div class="device-glass"></div>
-<div class="ghost-map-layer"></div>
-
-<div class="app-shell">
-  <header class="app-header">
-    <div>
-      <div class="node">MAP СПОСТЕРЕЖЕННЯ</div>
-      <div class="subnode">EXCLUSION NODE</div>
-    </div>
-    <div class="header-stack">
-      <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
-      <div class="clock" id="node-clock">--:--:--</div>
-    </div>
-  </header>
-
-  <nav class="tabs">
-<button class="active" data-screen="map" class="active">MAP</button>
-    <button data-screen="systems">SYSTEM</button>
-    
-  <button data-screen="safehouses">SAFEHOUSES</button>
-</nav>
-
-  <main class="screen-wrap">
-<section id="map" class="screen active">
-      <div class="map-top">
-        <div>
-          <div class="card-title">PERIMETER STATUS</div>
-          <p>Vue verrouillée sur la zone d’exclusion. Les points indiquent des alertes nécessitant une vérification sur le terrain.</p>
-        </div>
-        <div class="chip">FIELD CHECK</div>
-      </div>
-<h3>Aucun incident sélectionné</h3>
-  <p>Sélectionne un marqueur sur la carte.</p>
-</div>
-
 <div class="map-card">
         <div id="leaflet-map"></div>
         <div class="tactical-grid"></div>

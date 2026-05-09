@@ -401,7 +401,6 @@ window.addEventListener("load", ()=>{
   }
 });
 
-
 /* v58 — daily randomized incidents */
 const incidentsPoolV58 = [
   {
@@ -574,7 +573,6 @@ function renderDailyIncidentsV58(){
 
 window.addEventListener("load", renderDailyIncidentsV58);
 
-
 /* v59 — persistent incidents over 24-48h */
 const incidentPersistencePoolV59 = [
   {
@@ -718,7 +716,6 @@ window.addEventListener("load", ()=>{
   setTimeout(renderPersistentIncidentsV59, 100);
 });
 
-
 /* v60 — render persistent incidents on map instead of a separate panel */
 const incidentMapPositionsV60 = {
   RELAY_03:{x:46,y:43},
@@ -744,23 +741,7 @@ function incidentAgeLabelFRV60(startedAt){
   return `Statut inchangé depuis ${elapsed} h.`;
 }
 
-function renderIncidentDetailV60(incident){
-  const box = document.getElementById("map-incident-detail");
-  if(!box) return;
-
-  box.innerHTML = `
-    <div class="card-title">INCIDENT DETAIL</div>
-    <h3>${incident.id} // ${incident.sector}</h3>
-
-    <div class="meta">
-      <div>SEVERITY : ${incident.severity}</div>
-      <div>STATUS : ${incident.status}</div>
-    </div>
-
-    <p>${incident.detail}</p>
-    <p class="muted-line">${incidentAgeLabelFRV60(incident.startedAt)}</p>
-  `;
-}
+function renderIncidentDetailV60(incident){ return; }
 
 function renderPersistentIncidentsOnMapV60(){
   const layer = document.getElementById("map-incident-layer");
@@ -808,7 +789,6 @@ function renderDailyIncidentsV58(){
 window.addEventListener("load", ()=>{
   setTimeout(renderPersistentIncidentsOnMapV60, 250);
 });
-
 
 /* v61 — semi-random credible incident placement */
 const incidentBasePositionsV61 = {
@@ -867,24 +847,7 @@ function severityClassV61(severity){
   return "low";
 }
 
-function renderIncidentDetailV61(incident, pos){
-  const box = document.getElementById("map-incident-detail");
-  if(!box) return;
-
-  box.innerHTML = `
-    <div class="card-title">INCIDENT DETAIL</div>
-    <h3>${incident.id} // ${incident.sector}</h3>
-
-    <div class="meta">
-      <div>SEVERITY : ${incident.severity}</div>
-      <div>STATUS : ${incident.status}</div>
-    </div>
-
-    <p>${incident.detail}</p>
-    <p class="muted-line">${typeof incidentAgeLabelFRV60 === "function" ? incidentAgeLabelFRV60(incident.startedAt) : ""}</p>
-    <p class="coord-line">MAP OFFSET : ${pos.x.toFixed(1)} / ${pos.y.toFixed(1)}</p>
-  `;
-}
+function renderIncidentDetailV61(incident, pos){ return; }
 
 function renderPersistentIncidentsOnMapV61(){
   const layer = document.getElementById("map-incident-layer");
@@ -934,7 +897,6 @@ window.addEventListener("load", ()=>{
   setTimeout(renderPersistentIncidentsOnMapV61, 350);
   setInterval(renderPersistentIncidentsOnMapV61, 10 * 60 * 1000);
 });
-
 
 /* v62 — incidents as real Leaflet markers, not CSS overlay */
 let incidentLayerV62 = null;
@@ -1008,24 +970,7 @@ function incidentAgeLabelV62(startedAt){
   return `Statut inchangé depuis ${elapsed} h.`;
 }
 
-function renderIncidentDetailV62(incident, latlng){
-  const box = document.getElementById("map-incident-detail");
-  if(!box) return;
-
-  box.innerHTML = `
-    <div class="card-title">INCIDENT DETAIL</div>
-    <h3>${incident.id} // ${incident.sector}</h3>
-
-    <div class="meta">
-      <div>SEVERITY : ${incident.severity}</div>
-      <div>STATUS : ${incident.status}</div>
-    </div>
-
-    <p>${incident.detail}</p>
-    <p class="muted-line">${incidentAgeLabelV62(incident.startedAt)}</p>
-    <p class="coord-line">POSITION : ${latlng[0].toFixed(4)} / ${latlng[1].toFixed(4)}</p>
-  `;
-}
+function renderIncidentDetailV62(incident, latlng){ return; }
 
 function getMapInstanceV62(){
   if(typeof map !== "undefined" && map && typeof map.addLayer === "function") return map;
@@ -1106,7 +1051,6 @@ window.addEventListener("load", ()=>{
   }, 300);
 });
 
-
 /* v63 — robust click/touch handling for incident markers */
 function attachIncidentEventsV63(marker, incident, latlng){
   const openIncident = ()=>{
@@ -1178,7 +1122,6 @@ function renderLeafletIncidentsV62(){
   return true;
 }
 
-
 /* v64 — definitive incident marker/popup renderer */
 function getActiveIncidentSetV64(){
   if(typeof getPersistentIncidentSetV59 === "function"){
@@ -1197,25 +1140,7 @@ function getActiveIncidentSetV64(){
   ];
 }
 
-function updateIncidentDetailPanelV64(incident, latlng){
-  const box = document.getElementById("map-incident-detail");
-  if(!box) return;
-
-  const age =
-    typeof incidentAgeLabelV62 === "function"
-      ? incidentAgeLabelV62(incident.startedAt)
-      : "Statut en cours.";
-
-  box.innerHTML = `
-    <div class="card-title">INCIDENT DETAIL</div>
-    <h3>${incident.id} // ${incident.sector}</h3>
-    <p><strong>SEVERITY :</strong> ${incident.severity}</p>
-    <p><strong>STATUS :</strong> ${incident.status}</p>
-    <p>${incident.detail}</p>
-    <p class="muted-line">${age}</p>
-    <p class="coord-line">POSITION : ${latlng[0].toFixed(4)} / ${latlng[1].toFixed(4)}</p>
-  `;
-}
+function updateIncidentDetailPanelV64(incident, latlng){ return; }
 
 function incidentPopupHTMLV64(incident, latlng){
   const age =
@@ -1306,7 +1231,6 @@ window.addEventListener("load", ()=>{
     }
   }, 300);
 });
-
 
 /* v65 — native Leaflet popups for all major map points */
 const majorMapPointsV65 = [
@@ -1436,20 +1360,9 @@ window.addEventListener("load", ()=>{
   }, 300);
 });
 
-
 /* v66 — disable external incident detail panel updates */
 function updateIncidentDetailPanelV64(){ return; }
-function renderIncidentDetailV62(){ return; }
-function renderIncidentDetailV61(){ return; }
-function renderIncidentDetailV60(){ return; }
-
-/* Ensure popup remains the only information display */
-document.addEventListener("click", (event)=>{
-  if(event.target.closest(".leaflet-incident-marker")){
-    return;
-  }
-});
-
+);
 
 /* v67 — GPS coordinates in all map popups */
 function formatGPSV67(latlng){
@@ -1488,7 +1401,6 @@ function majorPopupHTMLV65(point){
     </div>
   `;
 }
-
 
 /* v69 — popups only, no external incident detail panel */
 function updateIncidentDetailPanelV64(){ return; }
