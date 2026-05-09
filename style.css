@@ -2184,3 +2184,118 @@ button[data-screen="dossier"],
   letter-spacing:1px;
   margin-top:8px;
 }
+
+
+/* v62 — real map-bound incident markers */
+.map-incident-layer,
+.map-incident-marker{
+  display:none !important;
+}
+
+.leaflet-incident-marker{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  border:2px solid #050605;
+  box-shadow:
+    0 0 0 1px rgba(215,221,209,.5),
+    0 0 16px rgba(192,163,95,.68);
+  background:#c0a35f;
+}
+
+.leaflet-incident-marker::after{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border:1px solid rgba(192,163,95,.35);
+  border-radius:50%;
+  animation:incidentPulse 3.8s infinite;
+}
+
+.leaflet-incident-marker.severity-high{
+  background:#b86f55;
+  box-shadow:
+    0 0 0 1px rgba(215,221,209,.5),
+    0 0 18px rgba(184,111,85,.74);
+}
+
+.leaflet-incident-marker.severity-low{
+  background:#9aaa7d;
+}
+
+.leaflet-incident-marker.selected{
+  outline:2px solid #d7ddd1;
+  outline-offset:4px;
+}
+
+.leaflet-marker-icon{
+  pointer-events:auto !important;
+}
+
+.map-incident-detail{
+  border:1px solid rgba(154,170,125,.18);
+  background:linear-gradient(180deg,rgba(8,10,8,.96),rgba(4,5,4,.98));
+  padding:14px;
+  margin-top:12px;
+  margin-bottom:12px;
+  position:relative;
+}
+
+.map-incident-detail::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:#c0a35f;
+}
+
+.map-incident-detail h3{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:13px;
+  letter-spacing:1.5px;
+  margin:10px 0 8px;
+  color:#d7ddd1;
+}
+
+.map-incident-detail p{
+  margin:0 0 8px;
+  line-height:1.5;
+  color:#bfc6b9;
+}
+
+.map-incident-detail .meta{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin:10px 0;
+}
+
+.map-incident-detail .meta div{
+  border:1px solid rgba(154,170,125,.12);
+  background:rgba(154,170,125,.025);
+  padding:8px;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+}
+
+.map-incident-detail .muted-line,
+.map-incident-detail .coord-line{
+  color:#8f9988;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:.8px;
+}
+
+@media(max-width:420px){
+  .leaflet-incident-marker{
+    width:20px;
+    height:20px;
+  }
+
+  .map-incident-detail .meta{
+    grid-template-columns:1fr;
+  }
+}

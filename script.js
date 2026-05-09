@@ -934,3 +934,174 @@ window.addEventListener("load", ()=>{
   setTimeout(renderPersistentIncidentsOnMapV61, 350);
   setInterval(renderPersistentIncidentsOnMapV61, 10 * 60 * 1000);
 });
+
+
+/* v62 — incidents as real Leaflet markers, not CSS overlay */
+let incidentLayerV62 = null;
+let selectedIncidentElementV62 = null;
+
+const incidentBaseLatLngV62 = {
+  RELAY_03:[51.388,30.085],
+  FOREST_BUNKER:[51.355,30.045],
+  CAMERA_07:[51.398,30.105],
+  NORTH_GATE:[51.430,30.060],
+  RAIL_DEPOT:[51.335,30.135],
+  NODE_01:[51.392,30.088],
+  "NODE-01":[51.392,30.088],
+  TUNNEL_SUD:[51.345,30.080],
+  REPEATER_NODE:[51.378,30.125],
+  NORTH_SHELTER:[51.422,30.050],
+  BLACK_CHANNEL:[51.370,30.095]
+};
+
+function seededRandomV62(seed){
+  let h = 2166136261 >>> 0;
+  for(let i=0;i<seed.length;i++){
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+
+  return function(){
+    h += h << 13; h ^= h >>> 7;
+    h += h << 3; h ^= h >>> 17;
+    h += h << 5;
+    return ((h >>> 0) / 4294967295);
+  };
+}
+
+function incidentLatLngV62(incident){
+  const base = incidentBaseLatLngV62[incident.sector] || [51.37,30.09];
+
+  let seedSuffix = "default";
+  try{
+    const payload = JSON.parse(localStorage.getItem("myth_persistent_incidents_v59") || "null");
+    seedSuffix = String(payload?.createdAt || "default");
+  }catch(e){}
+
+  const rand = seededRandomV62(`${incident.id}_${incident.sector}_${seedSuffix}`);
+  const latOffset = (rand() - 0.5) * 0.018;
+  const lngOffset = (rand() - 0.5) * 0.026;
+
+  return [base[0] + latOffset, base[1] + lngOffset];
+}
+
+function incidentIconV62(incident){
+  let sev = "severity-medium";
+  if(incident.severity === "Élevée") sev = "severity-high";
+  if(incident.severity === "Faible") sev = "severity-low";
+
+  return L.divIcon({
+    className:"",
+    html:`<div class="leaflet-incident-marker ${sev}"></div>`,
+    iconSize:[22,22],
+    iconAnchor:[11,11]
+  });
+}
+
+function incidentAgeLabelV62(startedAt){
+  const elapsed = Math.floor((Date.now() - startedAt) / (1000 * 60 * 60));
+
+  if(elapsed <= 1){
+    return "Statut mis à jour récemment.";
+  }
+
+  return `Statut inchangé depuis ${elapsed} h.`;
+}
+
+function renderIncidentDetailV62(incident, latlng){
+  const box = document.getElementById("map-incident-detail");
+  if(!box) return;
+
+  box.innerHTML = `
+    <div class="card-title">INCIDENT DETAIL</div>
+    <h3>${incident.id} // ${incident.sector}</h3>
+
+    <div class="meta">
+      <div>SEVERITY : ${incident.severity}</div>
+      <div>STATUS : ${incident.status}</div>
+    </div>
+
+    <p>${incident.detail}</p>
+    <p class="muted-line">${incidentAgeLabelV62(incident.startedAt)}</p>
+    <p class="coord-line">POSITION : ${latlng[0].toFixed(4)} / ${latlng[1].toFixed(4)}</p>
+  `;
+}
+
+function getMapInstanceV62(){
+  if(typeof map !== "undefined" && map && typeof map.addLayer === "function") return map;
+  if(window.map && typeof window.map.addLayer === "function") return window.map;
+  return null;
+}
+
+function renderLeafletIncidentsV62(){
+  const mapInstance = getMapInstanceV62();
+  if(!mapInstance || typeof L === "undefined") return false;
+
+  if(incidentLayerV62){
+    incidentLayerV62.clearLayers();
+  }else{
+    incidentLayerV62 = L.layerGroup().addTo(mapInstance);
+  }
+
+  const incidents =
+    typeof getPersistentIncidentSetV59 === "function"
+      ? getPersistentIncidentSetV59()
+      : [];
+
+  incidents.forEach(incident=>{
+    const latlng = incidentLatLngV62(incident);
+
+    const marker = L.marker(latlng, {
+      icon: incidentIconV62(incident),
+      keyboard:false,
+      riseOnHover:true
+    });
+
+    marker.on("click", ()=>{
+      if(selectedIncidentElementV62){
+        selectedIncidentElementV62.classList.remove("selected");
+      }
+
+      setTimeout(()=>{
+        const el = marker.getElement()?.querySelector(".leaflet-incident-marker");
+        if(el){
+          el.classList.add("selected");
+          selectedIncidentElementV62 = el;
+        }
+      },0);
+
+      renderIncidentDetailV62(incident, latlng);
+    });
+
+    marker.addTo(incidentLayerV62);
+  });
+
+  return true;
+}
+
+/* Stop old overlay renderers from doing anything visible */
+function renderPersistentIncidentsOnMapV61(){
+  return renderLeafletIncidentsV62();
+}
+
+function renderPersistentIncidentsOnMapV60(){
+  return renderLeafletIncidentsV62();
+}
+
+function renderPersistentIncidentsV59(){
+  return renderLeafletIncidentsV62();
+}
+
+function renderDailyIncidentsV58(){
+  return renderLeafletIncidentsV62();
+}
+
+window.addEventListener("load", ()=>{
+  let tries = 0;
+  const timer = setInterval(()=>{
+    tries++;
+    if(renderLeafletIncidentsV62() || tries > 20){
+      clearInterval(timer);
+    }
+  }, 300);
+});
