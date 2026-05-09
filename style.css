@@ -2496,126 +2496,47 @@ button[data-screen="dossier"],
 }
 
 
-/* v69 — restore map, remove selected-incident placeholder only */
+/* v72 — restore map from v67 and hide only incident placeholder */
 #map-incident-detail,
-.map-incident-detail,
-.incident-detail,
-.selected-incident,
-.selected-incident-panel{
+.map-incident-detail{
   display:none !important;
-  visibility:hidden !important;
   height:0 !important;
   min-height:0 !important;
   max-height:0 !important;
-  overflow:hidden !important;
   margin:0 !important;
   padding:0 !important;
   border:0 !important;
+  overflow:hidden !important;
 }
 
-/* keep Leaflet/map dimensions intact */
-.map-card,
+/* restore map dimensions */
 #leaflet-map,
 .leaflet-container{
-  min-height:420px;
+  display:block !important;
+  min-height:420px !important;
+  height:420px !important;
 }
 
-@media(max-width:760px){
-  .map-card,
-  #leaflet-map,
-  .leaflet-container{
-    min-height:360px;
-  }
-}
-
-
-/* v70 — remove incident detail placeholder and empty vertical gap */
-#map-incident-detail,
-.map-incident-detail,
-.incident-detail,
-.selected-incident,
-.selected-incident-panel,
-[data-incident-detail],
-div:has(> h3:first-child):has(+ p),
-div:has(h3):has(p){
-  display:none !important;
-  visibility:hidden !important;
-  height:0 !important;
-  min-height:0 !important;
-  max-height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-}
-
-/* Keep map immediately after perimeter intro */
 .map-card{
+  display:block !important;
+  min-height:420px !important;
+  height:auto !important;
   margin-top:12px !important;
 }
 
-.map-top,
-.map-intro,
-.perimeter-intro{
-  margin-bottom:10px !important;
-}
-
-/* Remove large empty space if a hidden placeholder was between intro and map */
-#map .spacer,
-#map .empty-panel{
-  display:none !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-
-
-/* v71 — definitive removal of selected incident placeholder */
-#map-incident-detail,
-.map-incident-detail,
-.incident-detail,
-.selected-incident,
-.selected-incident-panel,
-[data-incident-detail],
-[data-panel="incident-detail"]{
-  display:none !important;
-  visibility:hidden !important;
-  height:0 !important;
-  min-height:0 !important;
-  max-height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  overflow:hidden !important;
-}
-
-/* Force normal map flow */
-#map .map-card,
-#map .map-wrapper,
-#map #leaflet-map,
-#leaflet-map,
-.leaflet-container{
-  margin-top:0 !important;
-}
-
-/* Remove any oversized empty block inside map screen */
-#map > div:empty,
-#map section:empty,
-#map article:empty{
-  display:none !important;
-  height:0 !important;
-  margin:0 !important;
-  padding:0 !important;
-}
-
-/* The map must stay visible */
-#leaflet-map{
-  display:block !important;
-  min-height:420px !important;
+/* keep footer from covering map */
+body{
+  min-height:100vh;
 }
 
 @media(max-width:760px){
-  #leaflet-map{
+  #leaflet-map,
+  .leaflet-container{
+    min-height:360px !important;
+    height:360px !important;
+  }
+
+  .map-card{
     min-height:360px !important;
   }
 }
