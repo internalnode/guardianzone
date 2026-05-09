@@ -2299,3 +2299,15 @@ button[data-screen="dossier"],
     grid-template-columns:1fr;
   }
 }
+
+
+/* v63 — stronger marker interaction */
+.leaflet-marker-icon,
+.leaflet-incident-marker{
+  pointer-events:auto !important;
+  touch-action:manipulation;
+}
+
+.leaflet-incident-marker{
+  cursor:pointer;
+}

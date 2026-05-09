@@ -1105,3 +1105,75 @@ window.addEventListener("load", ()=>{
     }
   }, 300);
 });
+
+
+/* v63 — robust click/touch handling for incident markers */
+function attachIncidentEventsV63(marker, incident, latlng){
+  const openIncident = ()=>{
+    if(selectedIncidentElementV62){
+      selectedIncidentElementV62.classList.remove("selected");
+    }
+
+    setTimeout(()=>{
+      const el = marker.getElement()?.querySelector(".leaflet-incident-marker");
+      if(el){
+        el.classList.add("selected");
+        selectedIncidentElementV62 = el;
+      }
+    }, 0);
+
+    renderIncidentDetailV62(incident, latlng);
+  };
+
+  marker.on("click", openIncident);
+  marker.on("touchstart", openIncident);
+  marker.on("mousedown", openIncident);
+
+  marker.on("add", ()=>{
+    const el = marker.getElement();
+    if(!el) return;
+
+    el.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      openIncident();
+    });
+
+    el.addEventListener("touchstart", (e)=>{
+      e.stopPropagation();
+      openIncident();
+    }, {passive:true});
+  });
+}
+
+/* override renderer with fixed interactions */
+function renderLeafletIncidentsV62(){
+  const mapInstance = getMapInstanceV62();
+  if(!mapInstance || typeof L === "undefined") return false;
+
+  if(incidentLayerV62){
+    incidentLayerV62.clearLayers();
+  }else{
+    incidentLayerV62 = L.layerGroup().addTo(mapInstance);
+  }
+
+  const incidents =
+    typeof getPersistentIncidentSetV59 === "function"
+      ? getPersistentIncidentSetV59()
+      : [];
+
+  incidents.forEach(incident=>{
+    const latlng = incidentLatLngV62(incident);
+
+    const marker = L.marker(latlng, {
+      icon: incidentIconV62(incident),
+      keyboard:false,
+      riseOnHover:true
+    });
+
+    attachIncidentEventsV63(marker, incident, latlng);
+
+    marker.addTo(incidentLayerV62);
+  });
+
+  return true;
+}
