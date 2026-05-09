@@ -34,7 +34,6 @@ body{background:radial-gradient(circle at 70% 10%,rgba(154,170,125,.08),transpar
 @media(min-width:760px){.app-shell{height:100dvh;overflow:hidden}.screen-wrap{overflow:auto}#dossier.active{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.hero-card{min-height:460px}.map-card{height:calc(100dvh - 320px);min-height:430px}#systems.active{display:grid;grid-template-columns:.85fr 1.15fr;gap:12px}#systems .grid-2{margin-top:0}#systems .log-card{margin-top:0}.file-list{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:420px){.app-shell{padding:12px;gap:10px}.app-header{padding:14px;align-items:flex-start}.node{font-size:13px;letter-spacing:3px}.signal{font-size:9px;padding:8px}.tabs{gap:6px}.tabs button{height:44px;font-size:9px;letter-spacing:1.5px}.card{padding:18px}.hero-card h1{font-size:66px}.map-card{height:50dvh;min-height:320px}.bottom-status{grid-template-columns:1fr}.bottom-status div{text-align:left;padding-left:12px}}
 
-
 /* v6 — credibility and immersion upgrades */
 .presence-card{
   margin-top:12px;
@@ -129,7 +128,6 @@ body{background:radial-gradient(circle at 70% 10%,rgba(154,170,125,.08),transpar
     background-size:48px 48px;
   }
 }
-
 
 /* v7 interactive files */
 .files-layout{
@@ -296,7 +294,6 @@ margin-top:12px;
 
 }
 
-
 /* v8 living system */
 .header-stack{
   display:flex;
@@ -310,18 +307,6 @@ margin-top:12px;
   font-size:10px;
   letter-spacing:2px;
   color:var(--muted);
-}
-
-#audio-toggle{
-  appearance:none;
-  background:none;
-  border:none;
-  color:var(--text);
-  font:inherit;
-  letter-spacing:inherit;
-  cursor:pointer;
-  width:100%;
-  text-align:center;
 }
 
 .stale-card{
@@ -382,11 +367,8 @@ body.field-rain{
     font-size:9px;
   }
 
-  #audio-toggle{
-    text-align:left;
-  }
+  
 }
-
 
 /* v9 clearer files */
 .file-entry{
@@ -480,8 +462,6 @@ letter-spacing:2px;
 color:#d15b49;
 background:rgba(209,91,73,.04);
 }
-
-
 
 /* v14 — field device redesign */
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
@@ -658,7 +638,6 @@ body{
   }
 }
 
-
 /* v15 — final field credibility pass */
 #map.active .map-card{
   height:58dvh;
@@ -789,7 +768,6 @@ body{
   }
 }
 
-
 /* v16 surveillance center */
 #map.active{
 display:grid!important;
@@ -895,7 +873,6 @@ grid-template-columns:repeat(4,1fr);
 
 }
 
-
 /* v17 exploration layer */
 .recovered-frame{
 margin-top:10px;
@@ -963,4 +940,9 @@ color:#c0a35f!important;
 .recovered-frame img{
 height:150px;
 }
+}
+
+/* v30 — audio removed safely */
+.bottom-status{
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
 }

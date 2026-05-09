@@ -186,6 +186,7 @@ document.querySelectorAll(".file-entry").forEach(btn=>{
 const nodeStart = Date.now();
 const previousStates = [
   "Le relais 03 a répondu avant l’ouverture manuelle du terminal.",
+  "La caméra 12 a perdu l’image mais a continué d’émettre un signal audio.",
   "Le capteur du portail nord s’est fermé sans commande enregistrée.",
   "Deux fichiers d’archives ont changé d’état pendant que le terminal était hors ligne.",
   "Le canal basse fréquence s’est ouvert durant 11 secondes. Source inconnue."
@@ -200,9 +201,6 @@ const rareEvents = [
   "Ancienne caméra alimentée durant 00:00:04",
   "État du capteur modifié avant synchronisation"
 ];
-
-let noiseNode = null;
-let gainNode = null;
 
 function tickClock(){
   const now = new Date();
@@ -256,41 +254,6 @@ function rareSystemEvent(){
     entry.classList.add("archive-updated");
     setTimeout(()=>entry.classList.remove("archive-updated"), 9000);
   }
-}
-
-function createNoiseBuffer(ctx){
-  const bufferSize = ctx.sampleRate * 2;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for(let i=0;i<bufferSize;i++){
-    data[i] = (Math.random()*2-1) * 0.22;
-  }
-  return buffer;
-}
-
-  noiseNode.loop = true;
-
-  gainNode.gain.value = 0.018;
-
-  filter.type = "bandpass";
-  filter.frequency.value = 900;
-  filter.Q.value = 0.7;
-
-  noiseNode.connect(filter);
-  filter.connect(gainNode);
-  noiseNode.start();
-}
-
-  try{
-    if(noiseNode) noiseNode.stop();
-  }catch(e){}
-  noiseNode = null;
-}
-
-  if(!btn) return;
-
-  btn.addEventListener("click", ()=>{
-  });
 }
 
 setInterval(tickClock, 1000);
