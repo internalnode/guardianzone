@@ -2311,3 +2311,57 @@ button[data-screen="dossier"],
 .leaflet-incident-marker{
   cursor:pointer;
 }
+
+
+/* v64 — reliable Leaflet incident popup/details */
+.leaflet-popup-content-wrapper{
+  background:#060806 !important;
+  color:#d7ddd1 !important;
+  border:1px solid rgba(154,170,125,.3) !important;
+  border-radius:0 !important;
+}
+
+.leaflet-popup-tip{
+  background:#060806 !important;
+}
+
+.incident-popup{
+  font-family:"IBM Plex Mono",monospace;
+  min-width:180px;
+}
+
+.incident-popup h4{
+  margin:0 0 8px;
+  color:#c0a35f;
+  font-size:12px;
+  letter-spacing:1px;
+}
+
+.incident-popup p{
+  margin:4px 0;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.incident-popup .muted{
+  color:#8f9988;
+}
+
+.map-incident-detail{
+  display:block !important;
+  border:1px solid rgba(154,170,125,.18);
+  background:linear-gradient(180deg,rgba(8,10,8,.96),rgba(4,5,4,.98));
+  padding:14px;
+  margin:12px 0;
+  position:relative;
+}
+
+.map-incident-detail::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:#c0a35f;
+}

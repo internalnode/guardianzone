@@ -1177,3 +1177,132 @@ function renderLeafletIncidentsV62(){
 
   return true;
 }
+
+
+/* v64 — definitive incident marker/popup renderer */
+function getActiveIncidentSetV64(){
+  if(typeof getPersistentIncidentSetV59 === "function"){
+    return getPersistentIncidentSetV59();
+  }
+
+  return [
+    {
+      id:"INC-041",
+      sector:"RELAY_03",
+      status:"Signal intermittent",
+      severity:"Élevée",
+      detail:"Réponse courte du relais. Vérification terrain recommandée.",
+      startedAt:Date.now()
+    }
+  ];
+}
+
+function updateIncidentDetailPanelV64(incident, latlng){
+  const box = document.getElementById("map-incident-detail");
+  if(!box) return;
+
+  const age =
+    typeof incidentAgeLabelV62 === "function"
+      ? incidentAgeLabelV62(incident.startedAt)
+      : "Statut en cours.";
+
+  box.innerHTML = `
+    <div class="card-title">INCIDENT DETAIL</div>
+    <h3>${incident.id} // ${incident.sector}</h3>
+    <p><strong>SEVERITY :</strong> ${incident.severity}</p>
+    <p><strong>STATUS :</strong> ${incident.status}</p>
+    <p>${incident.detail}</p>
+    <p class="muted-line">${age}</p>
+    <p class="coord-line">POSITION : ${latlng[0].toFixed(4)} / ${latlng[1].toFixed(4)}</p>
+  `;
+}
+
+function incidentPopupHTMLV64(incident, latlng){
+  const age =
+    typeof incidentAgeLabelV62 === "function"
+      ? incidentAgeLabelV62(incident.startedAt)
+      : "Statut en cours.";
+
+  return `
+    <div class="incident-popup">
+      <h4>${incident.id}</h4>
+      <p><strong>${incident.sector}</strong></p>
+      <p>${incident.status}</p>
+      <p class="muted">${incident.detail}</p>
+      <p class="muted">${age}</p>
+    </div>
+  `;
+}
+
+function renderIncidentsLeafletNativeV64(){
+  const mapInstance = getMapInstanceV62 ? getMapInstanceV62() : (typeof map !== "undefined" ? map : null);
+  if(!mapInstance || typeof L === "undefined") return false;
+
+  if(window.incidentLayerV64){
+    window.incidentLayerV64.clearLayers();
+  }else{
+    window.incidentLayerV64 = L.layerGroup().addTo(mapInstance);
+  }
+
+  const incidents = getActiveIncidentSetV64();
+
+  incidents.forEach(incident=>{
+    const latlng =
+      typeof incidentLatLngV62 === "function"
+        ? incidentLatLngV62(incident)
+        : [51.38, 30.09];
+
+    const icon =
+      typeof incidentIconV62 === "function"
+        ? incidentIconV62(incident)
+        : L.divIcon({
+            className:"",
+            html:`<div class="leaflet-incident-marker"></div>`,
+            iconSize:[22,22],
+            iconAnchor:[11,11]
+          });
+
+    const marker = L.marker(latlng, {
+      icon,
+      keyboard:false,
+      bubblingMouseEvents:false,
+      riseOnHover:true
+    });
+
+    marker.bindPopup(incidentPopupHTMLV64(incident, latlng), {
+      closeButton:true,
+      autoPan:true,
+      className:"incident-popup-shell"
+    });
+
+    marker.on("click", ()=>{
+      updateIncidentDetailPanelV64(incident, latlng);
+      marker.openPopup();
+    });
+
+    marker.on("popupopen", ()=>{
+      updateIncidentDetailPanelV64(incident, latlng);
+    });
+
+    marker.addTo(window.incidentLayerV64);
+  });
+
+  return true;
+}
+
+/* Override all previous incident renderers */
+renderLeafletIncidentsV62 = renderIncidentsLeafletNativeV64;
+renderPersistentIncidentsOnMapV61 = renderIncidentsLeafletNativeV64;
+renderPersistentIncidentsOnMapV60 = renderIncidentsLeafletNativeV64;
+renderPersistentIncidentsV59 = renderIncidentsLeafletNativeV64;
+renderDailyIncidentsV58 = renderIncidentsLeafletNativeV64;
+
+window.addEventListener("load", ()=>{
+  let tries = 0;
+  const t = setInterval(()=>{
+    tries++;
+    if(renderIncidentsLeafletNativeV64() || tries > 30){
+      clearInterval(t);
+    }
+  }, 300);
+});
