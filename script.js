@@ -117,6 +117,20 @@ const fileData = {
       "NO ADDITIONAL DATA AVAILABLE"
     ],
     note:true
+  },
+
+  locked:{
+    title:"BLACK_CHANNEL",
+    status:"LOCKED",
+    access:"DENIED",
+    power:"UNKNOWN",
+    integrity:"--",
+    content:[
+      "ACCESS DENIED",
+      "KEY FRAGMENT MISSING",
+      "LAST HANDSHAKE : UNKNOWN"
+    ],
+    note:true
   }
 };
 
@@ -378,3 +392,13 @@ renderFile = function(id){
     `;
   }
 };
+
+
+/* v14 map-first boot */
+window.addEventListener("load", ()=>{
+  setTimeout(()=>{
+    if(document.getElementById("map")?.classList.contains("active")){
+      initMap();
+    }
+  }, 450);
+});

@@ -27,6 +27,8 @@
 <div class="noise"></div>
 <div class="scanlines"></div>
 <div class="weather-haze"></div>
+<div class="device-glass"></div>
+<div class="ghost-map-layer"></div>
 
 <div class="app-shell">
   <header class="app-header">
@@ -41,20 +43,20 @@
   </header>
 
   <nav class="tabs">
-    <button class="active" data-screen="dossier">ДОСЬЄ</button>
-    <button data-screen="map">КАРТА</button>
+    <button data-screen="dossier">ДОСЬЄ</button>
+    <button class="active" data-screen="map">КАРТА</button>
     <button data-screen="systems">СИСТЕМИ</button>
     <button data-screen="archives">АРХІВ</button>
   </nav>
 
   <main class="screen-wrap">
-    <section id="dossier" class="screen active">
+    <section id="dossier" class="screen">
       <div class="card hero-card">
         <div class="card-title">ДОСЬЄ ОПЕРАТОРА</div>
         <h1>MYTH</h1>
         <div class="tagline">ОСОБОВИЙ ФАЙЛ // RÉCUPÉRATION PARTIELLE</div>
-        <p>Ancien opérateur affecté au périmètre d’exclusion. Son identité complète n’apparaît plus dans les registres accessibles.</p>
-        <p>Plusieurs relais, caméras isolées et accès secondaires semblent encore maintenus manuellement.</p>
+        <p>Ancien opérateur affecté au périmètre d’exclusion. Identité complète absente des registres accessibles.</p>
+        <p>Plusieurs relais et accès secondaires semblent encore entretenus manuellement. Aucune signature conservée.</p>
       </div>
 
       <div class="grid-2">
@@ -77,7 +79,7 @@
       </div>
     </section>
 
-    <section id="map" class="screen">
+    <section id="map" class="screen active">
       <div class="map-top">
         <div>
           <div class="card-title">СТАН ПЕРИМЕТРА</div>
@@ -155,6 +157,11 @@
           <button class="file-entry missing locked-file" data-file="sector">
             <span>FILE 05</span>
             <em>[ARCHIVE LOST]</em><strong>SECTOR_NOTE</strong>
+          </button>
+
+          <button class="file-entry missing locked-file" data-file="locked">
+            <span>FILE 06</span>
+            <em>[LOCKED]</em><strong>BLACK_CHANNEL</strong>
           </button>
         </div>
 

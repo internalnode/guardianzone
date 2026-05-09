@@ -481,3 +481,179 @@ color:#d15b49;
 background:rgba(209,91,73,.04);
 }
 
+
+
+/* v14 — field device redesign */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600&display=swap');
+
+body{
+  font-family:Rajdhani, Inter, system-ui, sans-serif;
+  letter-spacing:.2px;
+}
+
+.device-glass{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:995;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(210,230,190,.05), transparent 28%),
+    linear-gradient(90deg, rgba(255,255,255,.025), transparent 18%, transparent 82%, rgba(255,255,255,.018));
+  mix-blend-mode:screen;
+  opacity:.7;
+}
+
+.ghost-map-layer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.035;
+  background:
+    linear-gradient(30deg, transparent 0 48%, rgba(154,170,125,.8) 49%, transparent 50%),
+    linear-gradient(120deg, transparent 0 46%, rgba(154,170,125,.55) 47%, transparent 48%),
+    repeating-linear-gradient(90deg, transparent 0 78px, rgba(154,170,125,.45) 79px, transparent 80px);
+  filter:blur(.2px);
+}
+
+.app-shell{
+  position:relative;
+  z-index:2;
+}
+
+.card,.mini-card,.report-card,.file-list article,.file-viewer,.map-card,.app-header,.bottom-status{
+  border-color:rgba(154,170,125,.28)!important;
+  box-shadow:
+    inset 0 0 28px rgba(154,170,125,.026),
+    0 0 0 1px rgba(0,0,0,.55);
+}
+
+.card,.report-card,.file-viewer{
+  background:
+    linear-gradient(90deg, rgba(154,170,125,.025), transparent 22%),
+    linear-gradient(180deg,rgba(9,13,9,.96),rgba(4,6,4,.97));
+}
+
+.card::before,.report-card::before,.file-list article::before,.file-viewer::before{
+  width:32%;
+  opacity:.85;
+}
+
+.app-header{
+  transform:skewX(-.4deg);
+}
+
+.tabs button{
+  transform:skewX(-.8deg);
+}
+
+.tabs button:nth-child(2){
+  border-color:rgba(154,170,125,.5);
+}
+
+.hero-card h1{
+  filter:contrast(1.08);
+  text-shadow:
+    0 0 8px rgba(154,170,125,.20),
+    2px 0 rgba(160,255,190,.035),
+    -2px 0 rgba(255,120,90,.025);
+}
+
+.map-card{
+  outline:1px solid rgba(154,170,125,.09);
+  outline-offset:-8px;
+}
+
+#leaflet-map{
+  filter:grayscale(.78) sepia(.26) brightness(.62) contrast(1.22);
+}
+
+.tactical-grid{
+  opacity:.26!important;
+  background-size:52px 52px!important;
+}
+
+.map-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:470;
+  background:
+    radial-gradient(circle at center, transparent 0 42%, rgba(0,0,0,.38) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.035), transparent 20%, transparent 80%, rgba(0,0,0,.18));
+}
+
+.dead-module{
+  opacity:.58;
+  border-style:dashed!important;
+}
+
+.dead-module strong{
+  color:#8c6962!important;
+}
+
+.dead-module::after{
+  content:"OFFLINE";
+  position:absolute;
+  top:8px;
+  right:8px;
+  color:#8c6962;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+}
+
+.file-entry{
+  background:
+    linear-gradient(90deg, rgba(154,170,125,.035), transparent 40%),
+    linear-gradient(180deg,rgba(9,13,9,.96),rgba(4,6,4,.97));
+}
+
+.file-entry.active{
+  box-shadow:inset 0 0 24px rgba(154,170,125,.04);
+}
+
+.file-content p{
+  max-width:62ch;
+}
+
+.noise{
+  opacity:.065;
+}
+
+.scanlines{
+  opacity:.13;
+}
+
+.screen{
+  min-height:0;
+}
+
+@media(max-width:420px){
+  .app-shell{
+    padding:10px;
+  }
+
+  .map-card{
+    height:56dvh;
+    min-height:360px;
+  }
+
+  .card p,.report-card p,.file-list p{
+    font-size:15px;
+    line-height:1.62;
+  }
+
+  .hero-card h1{
+    font-size:72px;
+  }
+
+  .grid-2{
+    gap:8px;
+  }
+
+  .mini-card{
+    min-height:68px;
+  }
+}
