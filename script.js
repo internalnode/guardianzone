@@ -1435,3 +1435,56 @@ window.addEventListener("load", ()=>{
     }
   }, 300);
 });
+
+
+/* v66 — disable external incident detail panel updates */
+function updateIncidentDetailPanelV64(){ return; }
+function renderIncidentDetailV62(){ return; }
+function renderIncidentDetailV61(){ return; }
+function renderIncidentDetailV60(){ return; }
+
+/* Ensure popup remains the only information display */
+document.addEventListener("click", (event)=>{
+  if(event.target.closest(".leaflet-incident-marker")){
+    return;
+  }
+});
+
+
+/* v67 — GPS coordinates in all map popups */
+function formatGPSV67(latlng){
+  if(!latlng || latlng.length < 2) return "COORD : --";
+  return `GPS : ${latlng[0].toFixed(5)} / ${latlng[1].toFixed(5)}`;
+}
+
+/* Override incident popup with GPS */
+function incidentPopupHTMLV64(incident, latlng){
+  const age =
+    typeof incidentAgeLabelV62 === "function"
+      ? incidentAgeLabelV62(incident.startedAt)
+      : "Statut en cours.";
+
+  return `
+    <div class="incident-popup">
+      <h4>${incident.id}</h4>
+      <p><strong>${incident.sector}</strong></p>
+      <p>${incident.status}</p>
+      <p class="muted">${incident.detail}</p>
+      <p class="gps-line">${formatGPSV67(latlng)}</p>
+      <p class="muted">${age}</p>
+    </div>
+  `;
+}
+
+/* Override major point popup with GPS */
+function majorPopupHTMLV65(point){
+  return `
+    <div class="map-point-popup">
+      <h4>${point.id}</h4>
+      <p><strong>${point.status}</strong></p>
+      <p class="severity">SEVERITY : ${point.severity}</p>
+      ${point.body.map(line=>`<p class="muted">${line}</p>`).join("")}
+      <p class="gps-line">${formatGPSV67(point.latlng)}</p>
+    </div>
+  `;
+}
