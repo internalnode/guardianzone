@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>MYTH // ВУЗОЛ ВИКЛЮЧЕННЯ</title>
+<title>MYTH // EXCLUSION NODE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -17,10 +17,10 @@
 
 <div id="boot">
   <div class="boot-panel">
-    <div class="boot-kicker">ВУЗОЛ ВИКЛЮЧЕННЯ // COLD START</div>
+    <div class="boot-kicker">EXCLUSION NODE // COLD START</div>
     <div id="boot-lines"></div>
     <div class="boot-bar"><span></span></div>
-    <div class="boot-foot">AUTHORIZATIACTIF : LIMITED</div>
+    <div class="boot-foot">ДОСТУП : обмежений</div>
   </div>
 </div>
 
@@ -34,10 +34,10 @@
   <header class="app-header">
     <div>
       <div class="node">ВУЗОЛ СПОСТЕРЕЖЕННЯ</div>
-      <div class="subnode">ВУЗОЛ ВИКЛЮЧЕННЯ</div>
+      <div class="subnode">EXCLUSION NODE</div>
     </div>
     <div class="header-stack">
-      <div class="signal" id="signal-state">SIGNAL DÉGRADÉ</div>
+      <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
       <div class="clock" id="node-clock">--:--:--</div>
     </div>
   </header>
@@ -54,15 +54,15 @@
       <div class="card hero-card">
         <div class="card-title">ДОСЬЄ ОПЕРАТОРА</div>
         <h1>MYTH</h1>
-        <div class="tagline">ОСОБОВИЙ ФАЙЛ // RÉCUPÉRATIACTIF PARTIELLE</div>
+        <div class="tagline">ОСОБОВИЙ ФАЙЛ // RÉCUPÉRATION PARTIELLE</div>
         <p>Ancien opérateur rattaché au dispositif de confinement. Identité complète absente des registres consultables.</p>
         <p>Relais, verrous secondaires et capteurs isolés présentent des interventions manuelles récentes. Signature absente.</p>
       </div>
 
       <div class="grid-2">
-        <div class="mini-card"><span>STATUS</span><strong>ACTIF / NACTIF CACTIFFIRMÉ</strong></div>
+        <div class="mini-card"><span>STATUS</span><strong>ACTIF / NON CONFIRMÉ</strong></div>
         <div class="mini-card"><span>AREA</span><strong>PÉRIMÈTRE NORD</strong></div>
-        <div class="mini-card"><span>ROLE</span><strong>КОНТROLE ПЕРИМЕТРА</strong></div>
+        <div class="mini-card"><span>ROLE</span><strong>SURVEILLANCE CONFINEMENT</strong></div>
         <div class="mini-card"><span>CONTACT</span><strong>AUCUN</strong></div>
       </div>
 
@@ -102,24 +102,14 @@
         <h3>ТОЧКУ НЕ ОБРАНО</h3>
         <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
       </div>
-
-      <div class="report-card zone-conditions" id="zone-conditions">
-        <div class="card-title">УМОВИ ЗОНИ</div>
-        <div class="env-grid">
-          <div><span>FOG</span><strong id="fog-state">FAIBLE</strong></div>
-          <div><span>RAIN</span><strong id="rain-state">AUCUNE</strong></div>
-          <div><span>VISIBILITY</span><strong id="visibility-state">STABLE</strong></div>
-          <div><span>NETWORK</span><strong id="network-state">INTERMITTENT</strong></div>
-        </div>
-      </div>
     </section>
 
     <section id="systems" class="screen">
       <div class="grid-2">
-        <div class="mini-card live"><span>SIGNAL</span><strong id="quality">DÉGRADÉ</strong></div>
+        <div class="mini-card live"><span>SIGNAL</span><strong id="quality">DEGRADED</strong></div>
         <div class="mini-card live"><span>DOSIMETER</span><strong id="dosimeter">0.42 µSv/h</strong></div>
-        <div class="mini-card live"><span>FAIBLE FREQ CHANNEL</span><strong id="channel">OUVERT</strong></div>
-        <div class="mini-card live"><span>POWER</span><strong>МЕРЕЖА BATTERIE</strong></div>
+        <div class="mini-card live"><span>LOW FREQ CHANNEL</span><strong id="channel">OPEN</strong></div>
+        <div class="mini-card live"><span>POWER</span><strong>RÉSEAU BATTERIE</strong></div>
         <div class="mini-card live"><span>WIND</span><strong id="wind">N/NE 11 KM/H</strong></div>
         <div class="mini-card live"><span>PRESSURE</span><strong id="pressure">1008 HPA</strong></div>
         <div class="mini-card live"><span>CAMERA INTEGRITY</span><strong id="camera-integrity">31%</strong></div>
@@ -133,9 +123,9 @@
       <div class="card log-card">
         <div class="card-title">СИСТЕМНИЙ ПОТІК</div>
         <div id="system-log">
-          <div>[00:00:01] NODE ACTIFLINE</div>
+          <div>[00:00:01] NODE ONLINE</div>
           <div>[00:00:04] PERIMETER DATA SYNC</div>
-          <div>[00:00:08] WARNING : SIGNAL DEGRADATIACTIF</div>
+          <div>[00:00:08] WARNING : SIGNAL DEGRADATION</div>
         </div>
       </div>
     </section>
@@ -146,7 +136,7 @@
         <div class="files-list">
           <button class="file-entry active critical-file" data-file="relais03">
             <span>FILE 01</span>
-            <em>[CRITIQUE] // SRC: RELAY</em><strong>RELAIS_03</strong><small>T-42 MIN // REL: 0.74</small>
+            <em>[CRITICAL] // SRC: RELAY</em><strong>RELAIS_03</strong><small>T-42 MIN // REL: 0.74</small>
           </button>
 
           <button class="file-entry" data-file="tunnel">
@@ -156,7 +146,7 @@
 
           <button class="file-entry" data-file="install12">
             <span>FILE 03</span>
-            <strong>INSTALLATIACTIF_12</strong><small>T-11 H // REL: 0.41</small>
+            <strong>INSTALLATION_12</strong><small>T-11 H // REL: 0.41</small>
           </button>
 
           <button class="file-entry corrupted partial-file" data-file="visual">
@@ -171,7 +161,7 @@
 
           <button class="file-entry missing locked-file" data-file="locked">
             <span>FILE 06</span>
-            <em>[VERROUILLÉ]</em><strong>BLACK_CHANNEL</strong><small>ACCESS REFUSÉ // REL: --</small>
+            <em>[VERROUILLÉ]</em><strong>BLACK_CHANNEL</strong><small>ACCESS DENIED // REL: --</small>
           </button>
         </div>
 
@@ -180,11 +170,11 @@
 
           <div class="file-header">
             <h3>RELAIS_03</h3>
-            <div class="file-state">STATUS : ACTIF</div>
+            <div class="file-state">STATUS : ACTIVE</div>
           </div>
 
           <div class="file-meta">
-            <div><span>LAST ACCESS</span><strong>INCACTIFNU</strong></div>
+            <div><span>LAST ACCESS</span><strong>INCONNU</strong></div>
             <div><span>POWER SOURCE</span><strong>RÉSEAU LOCAL</strong></div>
             <div><span>ARCHIVE INTEGRITY</span><strong>74%</strong></div>
           </div>
@@ -202,9 +192,9 @@
   </main>
 
   <footer class="bottom-status">
-    <div>SIGNAL LOSS : <b id="loss">12%</b></div>
-    <div>UPTIME : <b id="uptime">00:00:00</b></div>
-    <div><button id="audio-toggle">АУДІО : coupé</button></div>
+    <div>ВТРАТА SIGNALУ : <b id="loss">12%</b></div>
+    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
+    <div><button id="audio-toggle">АУДІО : OFF</button></div>
   </footer>
 </div>
 
