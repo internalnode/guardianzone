@@ -459,6 +459,8 @@ const safehouseData = {
     power:"RÉSEAU LOCAL",
     signal:"STABLE",
     access:"01:42",
+    image:"https://images.unsplash.com/photo-1513828583688-c52646db42da?q=80&w=1200&auto=format&fit=crop",
+    caption:"NODE-01 // cliché récupéré depuis caméra interne — image partielle",
     body:[
       "Ancien site technique réutilisé comme point d’ancrage principal.",
       "Relais longue portée actif. Maintenance récente confirmée.",
@@ -471,6 +473,8 @@ const safehouseData = {
     power:"HORS LIGNE",
     signal:"INTERMITTENT",
     access:"INCONNU",
+    image:"https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&auto=format&fit=crop",
+    caption:"FOREST_BUNKER // cliché extérieur — visibilité réduite",
     body:[
       "Humidité importante dans les accès bas.",
       "Porte verrouillée manuellement.",
@@ -483,6 +487,8 @@ const safehouseData = {
     power:"PARTIEL",
     signal:"FAIBLE",
     access:"03:18",
+    image:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
+    caption:"RAIL_DEPOT // cliché longue distance — source non confirmée",
     body:[
       "Réserve opérationnelle maintenue.",
       "Accès verrouillé manuellement.",
@@ -495,6 +501,8 @@ const safehouseData = {
     power:"BATTERIE LOCALE",
     signal:"FAIBLE",
     access:"INCONNU",
+    image:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+    caption:"NORTH_SHELTER // cliché périmètre — coordonnées masquées",
     body:[
       "Abri secondaire utilisé comme point de repli.",
       "Alimentation faible. Relais local silencieux.",
@@ -517,6 +525,11 @@ function renderSafehouse(id){
       <div><label>LAST ACCESS</label><p>${data.access}</p></div>
       <div><label>STATUS</label><p>${data.status}</p></div>
     </div>
+    <div class="safehouse-photo">
+      <img src="${data.image}" alt="${data.title}">
+      <div class="photo-caption">${data.caption}</div>
+    </div>
+
     <div class="node-description">
       ${data.body.map(p=>`<p>${p}</p>`).join("")}
     </div>
