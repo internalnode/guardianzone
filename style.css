@@ -788,3 +788,109 @@ body{
     margin-top:6px;
   }
 }
+
+
+/* v16 surveillance center */
+#map.active{
+display:grid!important;
+grid-template-columns:260px minmax(0,1fr) 260px;
+gap:12px;
+align-items:start;
+}
+
+#map.active .map-top{
+grid-column:1/-1;
+}
+
+#map.active .map-card{
+grid-column:2;
+grid-row:2 / span 2;
+height:calc(100dvh - 210px);
+min-height:620px;
+}
+
+#map.active #report{
+grid-column:2;
+}
+
+.surveillance-grid{
+display:contents;
+}
+
+.side-panel{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.archive-mini,
+.mini-feed{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.archive-mini div,
+.mini-feed div{
+border:1px solid rgba(154,170,125,.16);
+background:rgba(154,170,125,.03);
+padding:10px;
+font-family:"IBM Plex Mono",monospace;
+font-size:10px;
+letter-spacing:1px;
+line-height:1.6;
+}
+
+.archive-mini span{
+color:#aeb6a8;
+}
+
+.archive-mini b{
+float:right;
+font-weight:500;
+color:#c0a35f;
+}
+
+.app-header{
+padding:14px 16px;
+}
+
+.node{
+font-size:14px;
+}
+
+.subnode{
+font-size:10px;
+}
+
+.tabs{
+grid-template-columns:repeat(4,160px);
+justify-content:start;
+}
+
+.tabs button{
+height:42px;
+}
+
+@media(max-width:900px){
+
+#map.active{
+grid-template-columns:1fr!important;
+}
+
+#map.active .map-card,
+#map.active #report{
+grid-column:auto;
+grid-row:auto;
+}
+
+#map.active .map-card{
+height:56dvh;
+min-height:380px;
+}
+
+.tabs{
+grid-template-columns:repeat(4,1fr);
+}
+
+}
