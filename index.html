@@ -32,7 +32,7 @@
   <header class="app-header">
     <div>
       <div class="node">NODE // MYTH</div>
-      <div class="subnode">PERIMETER SURVEILLANCE</div>
+      <div class="subnode">ПЕРИМЕТР // SURVEILLANCE</div>
     </div>
     <div class="header-stack">
       <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
@@ -41,18 +41,18 @@
   </header>
 
   <nav class="tabs">
-    <button class="active" data-screen="dossier">DOSSIER</button>
-    <button data-screen="map">MAP</button>
-    <button data-screen="systems">SYSTEMS</button>
-    <button data-screen="archives">FILES</button>
+    <button class="active" data-screen="dossier">ДОСЬЄ</button>
+    <button data-screen="map">КАРТА</button>
+    <button data-screen="systems">СИСТЕМИ</button>
+    <button data-screen="archives">АРХІВ</button>
   </nav>
 
   <main class="screen-wrap">
     <section id="dossier" class="screen active">
       <div class="card hero-card">
-        <div class="card-title">OPERATOR FILE</div>
+        <div class="card-title">ДОСЬЄ ОПЕРАТОРА</div>
         <h1>MYTH</h1>
-        <div class="tagline">IDENTITY FILE // PARTIAL RECOVERY</div>
+        <div class="tagline">ОСОБОВИЙ ФАЙЛ // PARTIAL RECOVERY</div>
         <p>Ancien opérateur affecté au périmètre d’exclusion. Son identité complète n’apparaît plus dans les registres accessibles.</p>
         <p>Plusieurs relais, caméras isolées et accès secondaires semblent encore maintenus manuellement.</p>
       </div>
@@ -65,14 +65,14 @@
       </div>
 
       <div class="card presence-card">
-        <div class="card-title">UNSIGNED ACTIVITY</div>
+        <div class="card-title">НЕПІДПИСАНА АКТИВНІСТЬ</div>
         <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
-        <p class="muted-line">Last suspected intervention: manual maintenance on relay 03.</p>
+        <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
       </div>
 
       <div class="card presence-card stale-card">
-        <div class="card-title">PREVIOUS SYSTEM STATE</div>
-        <p id="previous-state">Last stable cycle detected before terminal access.</p>
+        <div class="card-title">ПОПЕРЕДНІЙ СТАН СИСТЕМИ</div>
+        <p id="previous-state">Dernier cycle stable détecté avant l’ouverture du terminal.</p>
         <p class="muted-line" id="previous-state-time">Recovered timestamp : pending...</p>
       </div>
     </section>
@@ -80,10 +80,10 @@
     <section id="map" class="screen">
       <div class="map-top">
         <div>
-          <div class="card-title">PERIMETER STATUS</div>
-          <p>Locked view over the exclusion zone. Markers indicate field alerts requiring verification.</p>
+          <div class="card-title">СТАН ПЕРИМЕТРА</div>
+          <p>Vue verrouillée sur la zone d’exclusion. Les points indiquent des alertes nécessitant une vérification sur le terrain.</p>
         </div>
-        <div class="chip">FIELD CHECK</div>
+        <div class="chip">ПОЛЬОВА ПЕРЕВІРКА</div>
       </div>
 
       <div class="map-card">
@@ -96,30 +96,30 @@
       </div>
 
       <div class="report-card" id="report">
-        <div class="card-title">SELECTED POINT</div>
-        <h3>NO POINT SELECTED</h3>
-        <p>Select a marker to display recovered field data.</p>
+        <div class="card-title">ОБРАНА ТОЧКА</div>
+        <h3>ТОЧКУ НЕ ОБРАНО</h3>
+        <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
       </div>
     </section>
 
     <section id="systems" class="screen">
       <div class="grid-2">
-        <div class="mini-card live"><span>SIGNAL QUALITY</span><strong id="quality">DEGRADED</strong></div>
+        <div class="mini-card live"><span>СИГНАЛ</span><strong id="quality">DEGRADED</strong></div>
         <div class="mini-card live"><span>DOSIMETER</span><strong id="dosimeter">0.42 µSv/h</strong></div>
-        <div class="mini-card live"><span>LOW FREQ CHANNEL</span><strong id="channel">OPEN</strong></div>
-        <div class="mini-card live"><span>LOCAL POWER</span><strong>BATTERY GRID</strong></div>
-        <div class="mini-card live"><span>WIND</span><strong id="wind">N/NE 11 KM/H</strong></div>
-        <div class="mini-card live"><span>PRESSURE</span><strong id="pressure">1008 HPA</strong></div>
-        <div class="mini-card live"><span>CAMERA INTEGRITY</span><strong id="camera-integrity">31%</strong></div>
-        <div class="mini-card live"><span>RELAY LATENCY</span><strong id="latency">418 MS</strong></div>
-        <div class="mini-card live"><span>FOG DENSITY</span><strong id="fog">LOW</strong></div>
-        <div class="mini-card live"><span>THERMAL FEED</span><strong id="thermal">OFFLINE</strong></div>
-        <div class="mini-card live"><span>GRID INTEGRITY</span><strong id="grid-integrity">38%</strong></div>
-        <div class="mini-card live"><span>FIELD CONDITION</span><strong id="field-condition">STABLE</strong></div>
+        <div class="mini-card live"><span>КАНАЛ НЧ</span><strong id="channel">OPEN</strong></div>
+        <div class="mini-card live"><span>ЖИВЛЕННЯ</span><strong>BATTERY GRID</strong></div>
+        <div class="mini-card live"><span>ВІТЕР</span><strong id="wind">N/NE 11 KM/H</strong></div>
+        <div class="mini-card live"><span>ТИСК</span><strong id="pressure">1008 HPA</strong></div>
+        <div class="mini-card live"><span>ЦІЛІСНІСТЬ КАМЕР</span><strong id="camera-integrity">31%</strong></div>
+        <div class="mini-card live"><span>ЗАТРИМКА РЕЛЕ</span><strong id="latency">418 MS</strong></div>
+        <div class="mini-card live"><span>ТУМАН</span><strong id="fog">LOW</strong></div>
+        <div class="mini-card live"><span>ТЕРМАЛЬНИЙ КАНАЛ</span><strong id="thermal">OFFLINE</strong></div>
+        <div class="mini-card live"><span>СТАН МЕРЕЖІ</span><strong id="grid-integrity">38%</strong></div>
+        <div class="mini-card live"><span>СТАН ЗОНИ</span><strong id="field-condition">STABLE</strong></div>
       </div>
 
       <div class="card log-card">
-        <div class="card-title">SYSTEM FEED</div>
+        <div class="card-title">СИСТЕМНИЙ ПОТІК</div>
         <div id="system-log">
           <div>[00:00:01] NODE ONLINE</div>
           <div>[00:00:04] PERIMETER DATA SYNC</div>
@@ -159,7 +159,7 @@
         </div>
 
         <div class="file-viewer" id="file-viewer">
-          <div class="card-title">ARCHIVE VIEWER</div>
+          <div class="card-title">ПЕРЕГЛЯД АРХІВУ</div>
 
           <div class="file-header">
             <h3>RELAIS_03</h3>
@@ -185,9 +185,9 @@
   </main>
 
   <footer class="bottom-status">
-    <div>SIGNAL LOSS : <b id="loss">12%</b></div>
-    <div>UPTIME : <b id="uptime">00:00:00</b></div>
-    <div><button id="audio-toggle">AUDIO : OFF</button></div>
+    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
+    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
+    <div><button id="audio-toggle">АУДІО : OFF</button></div>
   </footer>
 </div>
 
