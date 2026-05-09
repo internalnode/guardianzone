@@ -2496,7 +2496,32 @@ button[data-screen="dossier"],
 }
 
 
-/* v72 — restore map from v67 and hide only incident placeholder */
+
+
+
+/* v73 — isolate tabs and stop map bleed */
+.screen{
+  display:none !important;
+}
+
+.screen.active{
+  display:block !important;
+}
+
+#map.screen.active #leaflet-map,
+#map.screen.active .leaflet-container{
+  display:block !important;
+  height:420px !important;
+  min-height:420px !important;
+}
+
+#map:not(.active) #leaflet-map,
+#map:not(.active) .leaflet-container,
+#map:not(.active) .map-card{
+  display:none !important;
+}
+
+/* Remove incident placeholder without touching map containers */
 #map-incident-detail,
 .map-incident-detail{
   display:none !important;
@@ -2509,34 +2534,15 @@ button[data-screen="dossier"],
   overflow:hidden !important;
 }
 
-/* restore map dimensions */
-#leaflet-map,
-.leaflet-container{
-  display:block !important;
-  min-height:420px !important;
-  height:420px !important;
-}
-
-.map-card{
-  display:block !important;
-  min-height:420px !important;
-  height:auto !important;
+/* Prevent old empty spacer effect */
+#map .map-card{
   margin-top:12px !important;
 }
 
-/* keep footer from covering map */
-body{
-  min-height:100vh;
-}
-
 @media(max-width:760px){
-  #leaflet-map,
-  .leaflet-container{
-    min-height:360px !important;
+  #map.screen.active #leaflet-map,
+  #map.screen.active .leaflet-container{
     height:360px !important;
-  }
-
-  .map-card{
     min-height:360px !important;
   }
 }
