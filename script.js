@@ -173,21 +173,21 @@ document.querySelectorAll(".file-entry").forEach(btn=>{
 /* v8 living system */
 const nodeStart = Date.now();
 const previousStates = [
-  "Relay 03 answered before manual login.",
-  "Camera 12 lost image but kept transmitting audio carrier.",
-  "North gate sensor closed without recorded command.",
-  "Two archive files changed state while terminal was offline.",
-  "Low frequency channel opened for 11 seconds, source unknown."
+  "Le relais 03 a répondu avant l’ouverture manuelle du terminal.",
+  "La caméra 12 a perdu l’image mais a continué d’émettre un signal audio.",
+  "Le capteur du portail nord s’est fermé sans commande enregistrée.",
+  "Deux fichiers d’archives ont changé d’état pendant que le terminal était hors ligne.",
+  "Le canal basse fréquence s’est ouvert durant 11 secondes. Source inconnue."
 ];
 
 const rareEvents = [
-  "UNSIGNED MAINTENANCE TRACE — RELAY 03",
-  "THERMAL FEED RETURNED EMPTY",
-  "FIELD MICROPHONE DETECTED METAL IMPACT",
-  "ARCHIVE CHECKSUM MISMATCH",
-  "ACCESS PANEL OPENED — NO USER ID",
-  "OLD CAMERA POWERED FOR 00:00:04",
-  "SENSOR STATE CHANGED BEFORE SYNC"
+  "Trace de maintenance non signée — relais 03",
+  "Le canal thermique a répondu sans image",
+  "Le microphone terrain a détecté un impact métallique",
+  "Erreur de vérification d’archive",
+  "Panneau d’accès ouvert — aucun identifiant détecté",
+  "Ancienne caméra alimentée durant 00:00:04",
+  "État du capteur modifié avant synchronisation"
 ];
 
 let audioOn = false;
@@ -212,7 +212,7 @@ function tickClock(){
   const prevTime = document.getElementById("previous-state-time");
   if(prevTime && prevTime.textContent.includes("pending")){
     const offset = Math.floor(19 + Math.random()*210);
-    prevTime.textContent = `Recovered timestamp : T-${offset} min`;
+    prevTime.textContent = `Horodatage récupéré : T-${offset} min`;
   }
 }
 
