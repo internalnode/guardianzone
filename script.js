@@ -1488,3 +1488,10 @@ function majorPopupHTMLV65(point){
     </div>
   `;
 }
+
+
+/* v69 — popups only, no external incident detail panel */
+function updateIncidentDetailPanelV64(){ return; }
+function renderIncidentDetailV62(){ return; }
+function renderIncidentDetailV61(){ return; }
+function renderIncidentDetailV60(){ return; }

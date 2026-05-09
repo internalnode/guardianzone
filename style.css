@@ -2496,37 +2496,34 @@ button[data-screen="dossier"],
 }
 
 
-/* v68 cleanup */
+/* v69 — restore map, remove selected-incident placeholder only */
 #map-incident-detail,
 .map-incident-detail,
 .incident-detail,
 .selected-incident,
-.incident-placeholder{
-    display:none !important;
-    height:0 !important;
-    min-height:0 !important;
-    margin:0 !important;
-    padding:0 !important;
-    border:none !important;
+.selected-incident-panel{
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
 }
 
-.map-wrapper,
+/* keep Leaflet/map dimensions intact */
 .map-card,
+#leaflet-map,
 .leaflet-container{
-    margin-top:0 !important;
+  min-height:420px;
 }
 
-.map-section{
-    padding-top:0 !important;
-}
-
-/* Remove black void above map */
-.map-container,
-.map-card{
-    min-height:auto !important;
-    height:auto !important;
-}
-
-.leaflet-container{
-    background:#111 !important;
+@media(max-width:760px){
+  .map-card,
+  #leaflet-map,
+  .leaflet-container{
+    min-height:360px;
+  }
 }
