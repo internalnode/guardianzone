@@ -717,3 +717,220 @@ function renderPersistentIncidentsV59(){
 window.addEventListener("load", ()=>{
   setTimeout(renderPersistentIncidentsV59, 100);
 });
+
+
+/* v60 — render persistent incidents on map instead of a separate panel */
+const incidentMapPositionsV60 = {
+  RELAY_03:{x:46,y:43},
+  FOREST_BUNKER:{x:29,y:58},
+  CAMERA_07:{x:55,y:38},
+  NORTH_GATE:{x:38,y:25},
+  RAIL_DEPOT:{x:65,y:69},
+  NODE_01:{x:49,y:42},
+  "NODE-01":{x:49,y:42},
+  TUNNEL_SUD:{x:42,y:63},
+  REPEATER_NODE:{x:58,y:48},
+  NORTH_SHELTER:{x:36,y:29},
+  BLACK_CHANNEL:{x:52,y:53}
+};
+
+function incidentAgeLabelFRV60(startedAt){
+  const elapsed = Math.floor((Date.now() - startedAt) / (1000 * 60 * 60));
+
+  if(elapsed <= 1){
+    return "Statut mis à jour récemment.";
+  }
+
+  return `Statut inchangé depuis ${elapsed} h.`;
+}
+
+function renderIncidentDetailV60(incident){
+  const box = document.getElementById("map-incident-detail");
+  if(!box) return;
+
+  box.innerHTML = `
+    <div class="card-title">INCIDENT DETAIL</div>
+    <h3>${incident.id} // ${incident.sector}</h3>
+
+    <div class="meta">
+      <div>SEVERITY : ${incident.severity}</div>
+      <div>STATUS : ${incident.status}</div>
+    </div>
+
+    <p>${incident.detail}</p>
+    <p class="muted-line">${incidentAgeLabelFRV60(incident.startedAt)}</p>
+  `;
+}
+
+function renderPersistentIncidentsOnMapV60(){
+  const layer = document.getElementById("map-incident-layer");
+  if(!layer) return;
+
+  const incidents =
+    typeof getPersistentIncidentSetV59 === "function"
+      ? getPersistentIncidentSetV59()
+      : [];
+
+  layer.innerHTML = "";
+
+  incidents.forEach((incident, index)=>{
+    const pos = incidentMapPositionsV60[incident.sector] || {x:42 + index*8, y:42 + index*6};
+
+    const marker = document.createElement("button");
+    marker.className = "map-incident-marker";
+    marker.type = "button";
+    marker.style.left = pos.x + "%";
+    marker.style.top = pos.y + "%";
+    marker.title = `${incident.id} // ${incident.sector}`;
+
+    if(incident.severity === "Élevée") marker.classList.add("high");
+    if(incident.severity === "Faible") marker.classList.add("low");
+
+    marker.addEventListener("click", ()=>{
+      document.querySelectorAll(".map-incident-marker").forEach(m=>m.classList.remove("active"));
+      marker.classList.add("active");
+      renderIncidentDetailV60(incident);
+    });
+
+    layer.appendChild(marker);
+  });
+}
+
+/* disable old separate incident panel renderer */
+function renderPersistentIncidentsV59(){
+  renderPersistentIncidentsOnMapV60();
+}
+
+function renderDailyIncidentsV58(){
+  renderPersistentIncidentsOnMapV60();
+}
+
+window.addEventListener("load", ()=>{
+  setTimeout(renderPersistentIncidentsOnMapV60, 250);
+});
+
+
+/* v61 — semi-random credible incident placement */
+const incidentBasePositionsV61 = {
+  RELAY_03:{x:46,y:43,radius:4},
+  FOREST_BUNKER:{x:29,y:58,radius:5},
+  CAMERA_07:{x:55,y:38,radius:4},
+  NORTH_GATE:{x:38,y:25,radius:5},
+  RAIL_DEPOT:{x:65,y:69,radius:5},
+  NODE_01:{x:49,y:42,radius:3},
+  "NODE-01":{x:49,y:42,radius:3},
+  TUNNEL_SUD:{x:42,y:63,radius:4},
+  REPEATER_NODE:{x:58,y:48,radius:4},
+  NORTH_SHELTER:{x:36,y:29,radius:5},
+  BLACK_CHANNEL:{x:52,y:53,radius:6}
+};
+
+function seededRandomV61(seed){
+  let h = 1779033703 ^ seed.length;
+  for(let i=0;i<seed.length;i++){
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+
+  return function(){
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+
+function getIncidentPositionV61(incident, index){
+  const base = incidentBasePositionsV61[incident.sector] || {x:42 + index*7, y:42 + index*5, radius:4};
+
+  // Position stays stable for the current incident cycle, but changes next cycle.
+  const storageRaw = localStorage.getItem("myth_persistent_incidents_v59") || "";
+  let seedSuffix = "default";
+
+  try{
+    const payload = JSON.parse(storageRaw);
+    seedSuffix = String(payload.createdAt || "default");
+  }catch(e){}
+
+  const rand = seededRandomV61(`${incident.id}_${incident.sector}_${seedSuffix}`);
+  const angle = rand() * Math.PI * 2;
+  const distance = rand() * base.radius;
+
+  return {
+    x: Math.max(5, Math.min(95, base.x + Math.cos(angle) * distance)),
+    y: Math.max(5, Math.min(95, base.y + Math.sin(angle) * distance))
+  };
+}
+
+function severityClassV61(severity){
+  if(severity === "Élevée") return "critical";
+  if(severity === "Moyenne") return "medium";
+  return "low";
+}
+
+function renderIncidentDetailV61(incident, pos){
+  const box = document.getElementById("map-incident-detail");
+  if(!box) return;
+
+  box.innerHTML = `
+    <div class="card-title">INCIDENT DETAIL</div>
+    <h3>${incident.id} // ${incident.sector}</h3>
+
+    <div class="meta">
+      <div>SEVERITY : ${incident.severity}</div>
+      <div>STATUS : ${incident.status}</div>
+    </div>
+
+    <p>${incident.detail}</p>
+    <p class="muted-line">${typeof incidentAgeLabelFRV60 === "function" ? incidentAgeLabelFRV60(incident.startedAt) : ""}</p>
+    <p class="coord-line">MAP OFFSET : ${pos.x.toFixed(1)} / ${pos.y.toFixed(1)}</p>
+  `;
+}
+
+function renderPersistentIncidentsOnMapV61(){
+  const layer = document.getElementById("map-incident-layer");
+  if(!layer) return;
+
+  const incidents =
+    typeof getPersistentIncidentSetV59 === "function"
+      ? getPersistentIncidentSetV59()
+      : [];
+
+  layer.innerHTML = "";
+
+  incidents.forEach((incident, index)=>{
+    const pos = getIncidentPositionV61(incident, index);
+
+    const marker = document.createElement("button");
+    marker.className = `map-incident-marker live-drift ${severityClassV61(incident.severity)}`;
+    marker.type = "button";
+    marker.style.left = pos.x + "%";
+    marker.style.top = pos.y + "%";
+    marker.title = `${incident.id} // ${incident.sector}`;
+
+    marker.addEventListener("click", ()=>{
+      document.querySelectorAll(".map-incident-marker").forEach(m=>m.classList.remove("active"));
+      marker.classList.add("active");
+      renderIncidentDetailV61(incident, pos);
+    });
+
+    layer.appendChild(marker);
+  });
+}
+
+/* Override previous renderers to ensure map-only living behavior */
+function renderPersistentIncidentsOnMapV60(){
+  renderPersistentIncidentsOnMapV61();
+}
+
+function renderPersistentIncidentsV59(){
+  renderPersistentIncidentsOnMapV61();
+}
+
+function renderDailyIncidentsV58(){
+  renderPersistentIncidentsOnMapV61();
+}
+
+window.addEventListener("load", ()=>{
+  setTimeout(renderPersistentIncidentsOnMapV61, 350);
+  setInterval(renderPersistentIncidentsOnMapV61, 10 * 60 * 1000);
+});

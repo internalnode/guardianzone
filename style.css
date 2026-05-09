@@ -2010,3 +2010,177 @@ button[data-screen="dossier"],
   letter-spacing:.8px;
   font-family:"IBM Plex Mono",monospace;
 }
+
+
+/* v60 — active incidents directly on map */
+.random-incidents-panel{
+  display:none !important;
+}
+
+.map-card{
+  position:relative;
+}
+
+.map-incident-layer{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  pointer-events:none;
+}
+
+.map-incident-marker{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  width:18px;
+  height:18px;
+  border:2px solid #050605;
+  border-radius:50%;
+  background:#c0a35f;
+  box-shadow:
+    0 0 0 1px rgba(215,221,209,.5),
+    0 0 16px rgba(192,163,95,.65);
+  pointer-events:auto;
+  cursor:pointer;
+}
+
+.map-incident-marker::after{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border:1px solid rgba(192,163,95,.32);
+  border-radius:50%;
+  animation:incidentPulse 3.8s infinite;
+}
+
+.map-incident-marker.high{
+  background:#b86f55;
+  box-shadow:
+    0 0 0 1px rgba(215,221,209,.45),
+    0 0 18px rgba(184,111,85,.72);
+}
+
+.map-incident-marker.low{
+  background:#9aaa7d;
+}
+
+.map-incident-marker.active{
+  outline:2px solid #d7ddd1;
+  outline-offset:4px;
+}
+
+@keyframes incidentPulse{
+  0%{opacity:.2; transform:scale(.7)}
+  50%{opacity:.9; transform:scale(1)}
+  100%{opacity:.2; transform:scale(.7)}
+}
+
+.map-incident-detail{
+  border:1px solid rgba(154,170,125,.18);
+  background:linear-gradient(180deg,rgba(8,10,8,.96),rgba(4,5,4,.98));
+  padding:14px;
+  margin-top:12px;
+  margin-bottom:12px;
+  position:relative;
+}
+
+.map-incident-detail::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:#c0a35f;
+}
+
+.map-incident-detail h3{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:13px;
+  letter-spacing:1.5px;
+  margin:10px 0 8px;
+  color:#d7ddd1;
+}
+
+.map-incident-detail p{
+  margin:0 0 8px;
+  line-height:1.5;
+  color:#bfc6b9;
+}
+
+.map-incident-detail .meta{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin:10px 0;
+}
+
+.map-incident-detail .meta div{
+  border:1px solid rgba(154,170,125,.12);
+  background:rgba(154,170,125,.025);
+  padding:8px;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+}
+
+@media(max-width:420px){
+  .map-incident-marker{
+    width:16px;
+    height:16px;
+  }
+
+  .map-incident-detail .meta{
+    grid-template-columns:1fr;
+  }
+}
+
+
+/* v61 — living map incident automation */
+.map-incident-marker{
+  transition:
+    transform .35s ease,
+    opacity .35s ease,
+    box-shadow .35s ease;
+}
+
+.map-incident-marker.live-drift{
+  animation:
+    incidentPulse 3.8s infinite,
+    incidentDrift 9s ease-in-out infinite;
+}
+
+@keyframes incidentDrift{
+  0%{ transform:translate(-50%,-50%) scale(.96); }
+  50%{ transform:translate(-50%,-50%) scale(1.08); }
+  100%{ transform:translate(-50%,-50%) scale(.96); }
+}
+
+.map-incident-marker.critical{
+  background:#c15f4d;
+  box-shadow:
+    0 0 0 1px rgba(215,221,209,.45),
+    0 0 22px rgba(193,95,77,.76);
+}
+
+.map-incident-marker.medium{
+  background:#c0a35f;
+}
+
+.map-incident-marker.low{
+  background:#9aaa7d;
+}
+
+.map-incident-detail .muted-line{
+  color:#8f9988;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:.8px;
+}
+
+.map-incident-detail .coord-line{
+  color:#c0a35f;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  margin-top:8px;
+}
