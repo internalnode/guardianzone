@@ -585,3 +585,251 @@ window.addEventListener("load", ()=>{
   const activeScreen = document.querySelector(".screen.active");
   activate(targetOf(activeBtn) || activeScreen?.id || "map");
 });
+
+
+/* v79 — disable external selected-point/report panel writes */
+function renderReport(){ return; }
+function renderSelectedPoint(){ return; }
+function updateSelectedPoint(){ return; }
+function renderIncidentDetailV60(){ return; }
+function renderIncidentDetailV61(){ return; }
+function renderIncidentDetailV62(){ return; }
+function updateIncidentDetailPanelV64(){ return; }
+
+
+/* v79 — autonomous persistent incidents on map with GPS popups */
+const INCIDENT_POOL_V79 = [
+  {
+    id:"INC-041",
+    sector:"RELAY_03",
+    status:"Signal intermittent",
+    severity:"Élevée",
+    level:"high",
+    detail:"Réponse courte du relais. Vérification terrain recommandée.",
+    base:{x:46,y:43,lat:51.37700,lng:30.11800,radius:4},
+    recurrence:.46
+  },
+  {
+    id:"INC-052",
+    sector:"FOREST_BUNKER",
+    status:"Accès verrouillé",
+    severity:"Moyenne",
+    level:"medium",
+    detail:"Verrou manuel réengagé. Dernier passage non confirmé.",
+    base:{x:29,y:58,lat:51.35500,lng:30.04500,radius:5},
+    recurrence:.36
+  },
+  {
+    id:"INC-066",
+    sector:"CAMERA_07",
+    status:"Flux indisponible",
+    severity:"Faible",
+    level:"low",
+    detail:"Caméra hors ligne. Capteur de mouvement encore actif.",
+    base:{x:55,y:38,lat:51.39800,lng:30.10500,radius:4},
+    recurrence:.60
+  },
+  {
+    id:"INC-088",
+    sector:"RAIL_DEPOT",
+    status:"Transmission courte",
+    severity:"Élevée",
+    level:"high",
+    detail:"Signal basse fréquence détecté durant 4 secondes.",
+    base:{x:64,y:68,lat:51.33500,lng:30.13500,radius:5},
+    recurrence:.28
+  },
+  {
+    id:"INC-094",
+    sector:"NODE-01",
+    status:"Maintenance non signée",
+    severity:"Moyenne",
+    level:"medium",
+    detail:"Cycle technique exécuté sans identifiant conservé.",
+    base:{x:49,y:42,lat:51.39200,lng:30.08800,radius:3},
+    recurrence:.42
+  },
+  {
+    id:"INC-117",
+    sector:"REPEATER_NODE",
+    status:"Signal perdu puis rétabli",
+    severity:"Moyenne",
+    level:"medium",
+    detail:"Synchronisation instable avec délai réseau anormal.",
+    base:{x:58,y:48,lat:51.37800,lng:30.12500,radius:4},
+    recurrence:.34
+  },
+  {
+    id:"INC-126",
+    sector:"NORTH_SHELTER",
+    status:"Alimentation locale faible",
+    severity:"Faible",
+    level:"low",
+    detail:"Batterie basse. Relais local silencieux.",
+    base:{x:38,y:24,lat:51.42200,lng:30.05000,radius:5},
+    recurrence:.31
+  }
+];
+
+function seededRandomV79(seed){
+  let h = 2166136261 >>> 0;
+  for(let i=0;i<seed.length;i++){
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return function(){
+    h += h << 13; h ^= h >>> 7;
+    h += h << 3; h ^= h >>> 17;
+    h += h << 5;
+    return ((h >>> 0) / 4294967295);
+  };
+}
+
+function getIncidentCycleV79(){
+  const key = "myth_autonomous_incidents_v79";
+
+  try{
+    const stored = JSON.parse(localStorage.getItem(key) || "null");
+    if(stored && stored.expiresAt && Date.now() < stored.expiresAt && Array.isArray(stored.incidents)){
+      return stored;
+    }
+  }catch(e){}
+
+  const pool = [...INCIDENT_POOL_V79].sort(()=>Math.random() - .5);
+  const selected = [];
+
+  while(selected.length < 3 && pool.length){
+    const candidate = pool.shift();
+    if(Math.random() <= candidate.recurrence || selected.length < 2){
+      selected.push({
+        ...candidate,
+        startedAt:Date.now()
+      });
+    }
+  }
+
+  while(selected.length < 3 && pool.length){
+    selected.push({
+      ...pool.shift(),
+      startedAt:Date.now()
+    });
+  }
+
+  const durationHours = 24 + Math.floor(Math.random() * 25); // 24-48 h
+  const payload = {
+    createdAt:Date.now(),
+    expiresAt:Date.now() + durationHours * 60 * 60 * 1000,
+    incidents:selected
+  };
+
+  localStorage.setItem(key, JSON.stringify(payload));
+  return payload;
+}
+
+function placeIncidentV79(incident, cycleCreatedAt){
+  const rand = seededRandomV79(`${incident.id}_${incident.sector}_${cycleCreatedAt}`);
+  const angle = rand() * Math.PI * 2;
+  const dist = rand() * incident.base.radius;
+
+  const x = Math.max(5, Math.min(95, incident.base.x + Math.cos(angle) * dist));
+  const y = Math.max(5, Math.min(95, incident.base.y + Math.sin(angle) * dist));
+
+  // GPS follows the visual offset in a small realistic range
+  const lat = incident.base.lat + (rand() - .5) * 0.018;
+  const lng = incident.base.lng + (rand() - .5) * 0.026;
+
+  return {x,y,lat,lng};
+}
+
+function incidentAgeV79(startedAt){
+  const hours = Math.floor((Date.now() - startedAt) / (1000*60*60));
+  return hours <= 1 ? "Statut mis à jour récemment." : `Statut inchangé depuis ${hours} h.`;
+}
+
+function openIncidentPopupV79(incident, pos){
+  const popup = document.getElementById("incident-popup-v79");
+  const content = document.getElementById("incident-popup-content-v79");
+  if(!popup || !content) return;
+
+  content.innerHTML = `
+    <h3>${incident.id} // ${incident.sector}</h3>
+    <p><strong>${incident.status}</strong></p>
+    <p class="muted">SEVERITY : ${incident.severity}</p>
+    <p>${incident.detail}</p>
+    <p class="muted">${incidentAgeV79(incident.startedAt)}</p>
+    <p class="gps">GPS : ${pos.lat.toFixed(5)} / ${pos.lng.toFixed(5)}</p>
+  `;
+
+  popup.classList.add("active");
+  popup.setAttribute("aria-hidden","false");
+}
+
+function closeIncidentPopupV79(){
+  const popup = document.getElementById("incident-popup-v79");
+  if(!popup) return;
+  popup.classList.remove("active");
+  popup.setAttribute("aria-hidden","true");
+}
+
+function findIncidentLayerV79(){
+  let layer = document.getElementById("dynamic-incident-layer");
+  if(layer) return layer;
+
+  const mapCard =
+    document.querySelector("#map .map-card") ||
+    document.querySelector("#map .map-panel") ||
+    document.querySelector("#map .map-surface");
+
+  if(!mapCard) return null;
+
+  if(getComputedStyle(mapCard).position === "static"){
+    mapCard.style.position = "relative";
+  }
+
+  layer = document.createElement("div");
+  layer.id = "dynamic-incident-layer";
+  layer.className = "dynamic-incident-layer";
+  mapCard.appendChild(layer);
+  return layer;
+}
+
+function renderAutonomousIncidentsV79(){
+  const layer = findIncidentLayerV79();
+  if(!layer) return;
+
+  const cycle = getIncidentCycleV79();
+  layer.innerHTML = "";
+
+  cycle.incidents.forEach((incident)=>{
+    const pos = placeIncidentV79(incident, cycle.createdAt);
+    const marker = document.createElement("button");
+    marker.type = "button";
+    marker.className = `dynamic-incident-marker ${incident.level}`;
+    marker.style.left = pos.x + "%";
+    marker.style.top = pos.y + "%";
+    marker.title = `${incident.id} // ${incident.sector}`;
+
+    marker.addEventListener("click", (event)=>{
+      event.preventDefault();
+      event.stopPropagation();
+      openIncidentPopupV79(incident, pos);
+    });
+
+    layer.appendChild(marker);
+  });
+}
+
+window.addEventListener("load", ()=>{
+  setTimeout(renderAutonomousIncidentsV79, 300);
+  setInterval(renderAutonomousIncidentsV79, 10 * 60 * 1000);
+
+  const close = document.getElementById("incident-popup-close-v79");
+  const popup = document.getElementById("incident-popup-v79");
+
+  if(close) close.addEventListener("click", closeIncidentPopupV79);
+  if(popup){
+    popup.addEventListener("click", (event)=>{
+      if(event.target === popup) closeIncidentPopupV79();
+    });
+  }
+});

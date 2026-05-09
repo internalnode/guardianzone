@@ -66,6 +66,7 @@
       </div>
 
       <div class="map-card">
+<div id="dynamic-incident-layer" class="dynamic-incident-layer"></div>
         <div id="leaflet-map"></div>
         <div class="tactical-grid"></div>
         <div class="map-readout">
@@ -82,7 +83,7 @@
 </div>
 
 <div class="report-card" id="report">
-        <div class="card-title">ОБРАНА ТОЧКА</div>
+        <div class="card-title"></div>
         <h3>ТОЧКУ НЕ ОБРАНО</h3>
         <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
       </div>
@@ -174,6 +175,14 @@
 <script src="script.js"></script>
 
 </section>
+
+
+<div class="incident-popup-v79" id="incident-popup-v79" aria-hidden="true">
+  <div class="popup-box">
+    <button type="button" id="incident-popup-close-v79">×</button>
+    <div id="incident-popup-content-v79"></div>
+  </div>
+</div>
 
 </body>
 </html>

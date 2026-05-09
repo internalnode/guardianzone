@@ -2085,3 +2085,164 @@ button[data-tab="archives"],
   font-size:10px !important;
   letter-spacing:.8px;
 }
+
+
+/* v79 — remove external observation/detail card only */
+#report,
+.report-card,
+.selected-point-panel,
+.observation-card,
+.point-detail,
+.map-detail,
+.detail-card,
+[data-panel="point-detail"],
+[data-panel="incident-detail"]{
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+}
+
+/* hide any remaining card containing the old selected-point text, without affecting map */
+#map .card:has(.selected-title),
+#map .card:has(.point-title){
+  display:none !important;
+}
+
+
+/* v79 — autonomous map incidents */
+.map-card,
+.map-panel,
+.map-surface,
+#map{
+  position:relative;
+}
+
+.dynamic-incident-layer{
+  position:absolute;
+  inset:0;
+  z-index:40;
+  pointer-events:none;
+}
+
+.dynamic-incident-marker{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  border:3px solid #050605;
+  background:#c0a35f;
+  box-shadow:
+    0 0 0 2px rgba(215,221,209,.55),
+    0 0 20px rgba(192,163,95,.76);
+  pointer-events:auto;
+  cursor:pointer;
+}
+
+.dynamic-incident-marker::after{
+  content:"";
+  position:absolute;
+  inset:-12px;
+  border:2px solid rgba(192,163,95,.38);
+  border-radius:50%;
+  animation:incidentPulseV79 3s infinite;
+}
+
+.dynamic-incident-marker.low{
+  width:23px;
+  height:23px;
+  background:#9aaa7d;
+}
+
+.dynamic-incident-marker.medium{
+  width:29px;
+  height:29px;
+  background:#c0a35f;
+}
+
+.dynamic-incident-marker.high{
+  width:34px;
+  height:34px;
+  background:#c15f4d;
+  box-shadow:
+    0 0 0 2px rgba(215,221,209,.58),
+    0 0 28px rgba(193,95,77,.92),
+    0 0 54px rgba(193,95,77,.38);
+}
+
+.dynamic-incident-marker.high::after{
+  inset:-16px;
+  border-color:rgba(193,95,77,.55);
+  animation-duration:2.3s;
+}
+
+@keyframes incidentPulseV79{
+  0%{opacity:.2; transform:scale(.72)}
+  50%{opacity:.9; transform:scale(1)}
+  100%{opacity:.2; transform:scale(.72)}
+}
+
+/* popup used by autonomous incidents */
+.incident-popup-v79{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  place-items:center;
+  padding:20px;
+  background:rgba(0,0,0,.22);
+}
+
+.incident-popup-v79.active{
+  display:grid;
+}
+
+.incident-popup-v79 .popup-box{
+  width:min(520px,92vw);
+  background:#060806;
+  border:1px solid rgba(154,170,125,.35);
+  box-shadow:0 20px 80px rgba(0,0,0,.65);
+  padding:24px;
+  position:relative;
+  font-family:"IBM Plex Mono",monospace;
+  color:#d7ddd1;
+}
+
+.incident-popup-v79 button{
+  position:absolute;
+  right:12px;
+  top:10px;
+  border:0;
+  background:transparent;
+  color:#8f9988;
+  font-size:26px;
+  cursor:pointer;
+}
+
+.incident-popup-v79 h3{
+  margin:0 0 14px;
+  color:#c0a35f;
+  letter-spacing:2px;
+  font-size:17px;
+}
+
+.incident-popup-v79 p{
+  margin:8px 0;
+  line-height:1.55;
+  color:#c9d0c3;
+}
+
+.incident-popup-v79 .muted{
+  color:#8f9988;
+}
+
+.incident-popup-v79 .gps{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(154,170,125,.18);
+  color:#c0a35f;
+}
