@@ -1658,3 +1658,52 @@ main{
     letter-spacing:.7px !important;
   }
 }
+
+
+/* v45 — nav below header */
+.tabs{
+  position:relative !important;
+  top:auto !important;
+  left:auto !important;
+  right:auto !important;
+  height:auto !important;
+  margin-top:10px !important;
+  margin-bottom:12px !important;
+  border-top:none !important;
+  border-bottom:1px solid rgba(154,170,125,.14);
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  background:transparent !important;
+  padding:0 0 12px !important;
+}
+
+.tabs::before{
+  display:none !important;
+}
+
+.tabs button{
+  margin-top:0 !important;
+  height:34px !important;
+  min-height:34px !important;
+  font-size:8px !important;
+  letter-spacing:1px !important;
+}
+
+main{
+  padding-top:0 !important;
+}
+
+@media(max-width:420px){
+
+  .tabs{
+    margin-top:8px !important;
+    margin-bottom:10px !important;
+    gap:5px !important;
+  }
+
+  .tabs button{
+    height:32px !important;
+    min-height:32px !important;
+    font-size:7px !important;
+  }
+}
