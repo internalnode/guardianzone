@@ -2365,3 +2365,45 @@ button[data-screen="dossier"],
   height:1px;
   background:#c0a35f;
 }
+
+
+/* v65 — remove selected-point report card */
+#report,
+.report-card,
+.selected-point-panel{
+  display:none !important;
+}
+
+/* v65 — popup styling for all map points */
+.map-point-popup{
+  font-family:"IBM Plex Mono",monospace;
+  min-width:190px;
+}
+
+.map-point-popup h4{
+  margin:0 0 8px;
+  color:#c0a35f;
+  font-size:12px;
+  letter-spacing:1.2px;
+}
+
+.map-point-popup p{
+  margin:5px 0;
+  font-size:11px;
+  line-height:1.45;
+  color:#d7ddd1;
+}
+
+.map-point-popup .muted{
+  color:#8f9988;
+}
+
+.map-point-popup .severity{
+  color:#b86f55;
+}
+
+/* hide legacy non-popup big markers only if they are overlay elements */
+.severity-marker,
+.map-marker{
+  display:none !important;
+}

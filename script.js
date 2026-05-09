@@ -1306,3 +1306,132 @@ window.addEventListener("load", ()=>{
     }
   }, 300);
 });
+
+
+/* v65 — native Leaflet popups for all major map points */
+const majorMapPointsV65 = [
+  {
+    id:"CENTRALE",
+    latlng:[51.389,30.102],
+    status:"Émission instable",
+    severity:"CRITIQUE",
+    body:[
+      "Alimentation relevée hors cycle prévu autour des structures principales.",
+      "Caméras indisponibles. Vérification terrain prioritaire."
+    ]
+  },
+  {
+    id:"PRIPYAT_BLOCK",
+    latlng:[51.407,30.065],
+    status:"Mouvement non confirmé",
+    severity:"ÉLEVÉE",
+    body:[
+      "Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",
+      "Signal faible : contact porte, vibration brève, perte de flux."
+    ]
+  },
+  {
+    id:"NORTH_RELAY",
+    latlng:[51.423,30.082],
+    status:"Relais instable",
+    severity:"MOYENNE",
+    body:[
+      "Parasitage constant sur bande courte. Origine non isolée.",
+      "Contrôle différé recommandé. Conditions de visibilité insuffisantes."
+    ]
+  },
+  {
+    id:"TUNNEL_SUD",
+    latlng:[51.356,30.072],
+    status:"Contact capteur bref",
+    severity:"FAIBLE",
+    body:[
+      "Signal bref détecté sur fenêtre nocturne.",
+      "Source non attribuée : relais dégradé, transmission courte ou unité mobile."
+    ]
+  },
+  {
+    id:"RELAY_03",
+    latlng:[51.377,30.118],
+    status:"Alimentation hors cycle",
+    severity:"ÉLEVÉE",
+    body:[
+      "Relais alimenté malgré l’arrêt officiel du réseau.",
+      "Réponse irrégulière. Accès terrain classé difficile."
+    ]
+  }
+];
+
+let majorMapLayerV65 = null;
+
+function majorPopupHTMLV65(point){
+  return `
+    <div class="map-point-popup">
+      <h4>${point.id}</h4>
+      <p><strong>${point.status}</strong></p>
+      <p class="severity">SEVERITY : ${point.severity}</p>
+      ${point.body.map(line=>`<p class="muted">${line}</p>`).join("")}
+    </div>
+  `;
+}
+
+function createMajorIconV65(point){
+  const sev = point.severity === "CRITIQUE" || point.severity === "ÉLEVÉE" ? "severity-high" :
+              point.severity === "FAIBLE" ? "severity-low" : "severity-medium";
+
+  return L.divIcon({
+    className:"",
+    html:`<div class="leaflet-incident-marker ${sev}"></div>`,
+    iconSize:[24,24],
+    iconAnchor:[12,12]
+  });
+}
+
+function renderMajorMapPointsV65(){
+  const mapInstance = getMapInstanceV62 ? getMapInstanceV62() : (typeof map !== "undefined" ? map : null);
+  if(!mapInstance || typeof L === "undefined") return false;
+
+  if(majorMapLayerV65){
+    majorMapLayerV65.clearLayers();
+  }else{
+    majorMapLayerV65 = L.layerGroup().addTo(mapInstance);
+  }
+
+  majorMapPointsV65.forEach(point=>{
+    const marker = L.marker(point.latlng, {
+      icon:createMajorIconV65(point),
+      keyboard:false,
+      bubblingMouseEvents:false,
+      riseOnHover:true
+    });
+
+    marker.bindPopup(majorPopupHTMLV65(point), {
+      closeButton:true,
+      autoPan:true,
+      className:"incident-popup-shell"
+    });
+
+    marker.on("click", ()=>{
+      marker.openPopup();
+    });
+
+    marker.addTo(majorMapLayerV65);
+  });
+
+  return true;
+}
+
+/* Neutralize old report rendering if present */
+if(typeof window !== "undefined"){
+  window.renderReport = function(){ return; };
+}
+
+window.addEventListener("load", ()=>{
+  let tries = 0;
+  const timer = setInterval(()=>{
+    tries++;
+    if(renderMajorMapPointsV65() || tries > 30){
+      clearInterval(timer);
+    }
+  }, 300);
+});
