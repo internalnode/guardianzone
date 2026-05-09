@@ -2568,3 +2568,54 @@ div:has(h3):has(p){
   margin:0 !important;
   padding:0 !important;
 }
+
+
+/* v71 — definitive removal of selected incident placeholder */
+#map-incident-detail,
+.map-incident-detail,
+.incident-detail,
+.selected-incident,
+.selected-incident-panel,
+[data-incident-detail],
+[data-panel="incident-detail"]{
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  overflow:hidden !important;
+}
+
+/* Force normal map flow */
+#map .map-card,
+#map .map-wrapper,
+#map #leaflet-map,
+#leaflet-map,
+.leaflet-container{
+  margin-top:0 !important;
+}
+
+/* Remove any oversized empty block inside map screen */
+#map > div:empty,
+#map section:empty,
+#map article:empty{
+  display:none !important;
+  height:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+/* The map must stay visible */
+#leaflet-map{
+  display:block !important;
+  min-height:420px !important;
+}
+
+@media(max-width:760px){
+  #leaflet-map{
+    min-height:360px !important;
+  }
+}
