@@ -3,11 +3,11 @@ const bootLines=document.getElementById("boot-lines");bootMessages.forEach((m,i)
 window.addEventListener("load",()=>setTimeout(()=>{const b=document.getElementById("boot");b.style.opacity="0";setTimeout(()=>b.style.display="none",800)},3900));
 let map,mapReady=false;
 const reports=[
-{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Unstable emission",text:"Fluctuations électriques relevées autour des structures principales.",detail:"Aucune confirmation visuelle. Vérification prioritaire pour MYTH."},
-{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Recent movement",text:"Traces de déplacement possibles dans les bâtiments résidentiels.",detail:"Signal faible : capteur de porte, vibration brève, puis silence."},
-{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Radio interference",text:"Interférences persistantes sur bande courte.",detail:"Vérification recommandée lorsque les conditions météo seront plus stables."},
-{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"LOW",category:"Night signal",text:"Signal court détecté durant la nuit.",detail:"Source inconnue : relais dégradé, transmission brève ou présence mobile."},
-{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Active power",text:"Relais encore alimenté malgré l’arrêt officiel du réseau.",detail:"Données irrégulières. Accès terrain difficile."}
+{coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Unstable emission",text:"Alimentation relevée hors cycle prévu autour des structures principales.",detail:"Caméras indisponibles. Vérification terrain prioritaire."},
+{coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Recent movement",text:"Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",detail:"Signal faible : contact porte, vibration brève, perte de flux."},
+{coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Radio interference",text:"Parasitage constant sur bande courte. Origine non isolée.",detail:"Contrôle différé recommandé. Conditions de visibilité insuffisantes."},
+{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"LOW",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
+{coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
 ];
 function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">SELECTED POINT</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — SEVERITY : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
 function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:12px;color:#9aaa7d;margin-bottom:8px;">SEVERITY : ${r.label}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
@@ -54,10 +54,10 @@ const fileData = {
     power:"LOCAL GRID",
     integrity:"74%",
     content:[
-      "Le relais était déjà alimenté avant l’arrivée sur site.",
-      "Aucune présence détectée à proximité immédiate.",
-      "Aucune trace récente observée autour de l’installation.",
-      "Le système a pourtant été redémarré manuellement."
+      "Relais alimenté hors cycle prévu.",
+      "Présence non détectée dans le rayon immédiat.",
+      "Trace récente non confirmée.",
+      "Redémarrage manuel probable. Signature absente."
     ],
     note:true
   },
@@ -69,10 +69,10 @@ const fileData = {
     power:"OFFLINE",
     integrity:"58%",
     content:[
-      "Détection nocturne signalée près de l’accès sud.",
-      "Le tunnel semble condamné depuis plusieurs années.",
-      "Un capteur de porte a brièvement répondu.",
-      "Aucune confirmation visuelle disponible."
+      "Détection nocturne sur accès sud.",
+      "Tunnel condamné. Scellés anciens.",
+      "Capteur porte : réponse brève.",
+      "Confirmation visuelle indisponible."
     ]
   },
 
@@ -84,9 +84,9 @@ const fileData = {
     integrity:"41%",
     content:[
       "Structure partiellement effondrée.",
-      "Une émission faible persiste sur bande courte.",
-      "Le signal fluctue selon les conditions météo.",
-      "Le secteur reste difficile d’accès."
+      "Émission faible persistante sur bande courte.",
+      "Signal instable selon conditions météo.",
+      "Accès terrain difficile."
     ]
   },
 
@@ -97,9 +97,9 @@ const fileData = {
     power:"UNKNOWN",
     integrity:"12%",
     content:[
-      "Segment image récupéré depuis un ancien terminal.",
-      "Plusieurs portions du fichier sont manquantes.",
-      "Une silhouette apparaît brièvement avant la perte du signal.",
+      "Segment image récupéré depuis terminal ancien.",
+      "Portions manquantes.",
+      "Forme visible avant perte de signal.",
       "Identification impossible."
     ],
     note:true
@@ -402,3 +402,31 @@ window.addEventListener("load", ()=>{
     }
   }, 450);
 });
+
+
+/* v15 — active incidents and credibility layer */
+const incidentStates = [
+  ["RELAY_03","POWERED OUT OF CYCLE"],
+  ["SOUTH_TUNNEL","CONTACT LOST"],
+  ["PRIPYAT_BLOCK","MOTION UNCONFIRMED"],
+  ["CAMERA_07","OFFLINE / SENSOR ACTIVE"],
+  ["NORTH_GATE","LOCKED / PING RECEIVED"],
+  ["ARCHIVE_12","CORRUPTED / RECENT CHANGE"],
+  ["BLACK_CHANNEL","HANDSHAKE FAILED"]
+];
+
+function updateIncidents(){
+  const list = document.getElementById("incident-list");
+  if(!list) return;
+
+  const shuffled = [...incidentStates].sort(()=>Math.random()-.5).slice(0,3);
+  list.innerHTML = shuffled.map(item=>`
+    <div>
+      <span>${item[0]}</span>
+      <strong>${item[1]}</strong>
+    </div>
+  `).join("");
+}
+
+setInterval(updateIncidents, 18000);
+window.addEventListener("load", updateIncidents);

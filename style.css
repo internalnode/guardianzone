@@ -657,3 +657,134 @@ body{
     min-height:68px;
   }
 }
+
+
+/* v15 — final field credibility pass */
+#map.active .map-card{
+  height:58dvh;
+  min-height:390px;
+}
+
+.incident-panel{
+  margin-top:12px;
+  border:1px solid rgba(154,170,125,.28);
+  background:
+    linear-gradient(90deg, rgba(154,170,125,.025), transparent 26%),
+    linear-gradient(180deg,rgba(9,13,9,.96),rgba(4,6,4,.97));
+  padding:16px;
+  position:relative;
+}
+
+.incident-panel::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:var(--accent);
+}
+
+#incident-list{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:8px;
+}
+
+#incident-list div{
+  border:1px solid rgba(154,170,125,.18);
+  background:rgba(154,170,125,.025);
+  padding:11px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+
+#incident-list span{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--muted);
+}
+
+#incident-list strong{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:var(--text);
+  text-align:right;
+}
+
+.file-entry small{
+  display:block;
+  margin-top:8px;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+  color:var(--muted);
+}
+
+.file-content{
+  line-height:1.75;
+}
+
+.file-content p{
+  margin-bottom:10px;
+}
+
+.scanlines{
+  opacity:.095;
+}
+
+.noise{
+  opacity:.048;
+}
+
+.weather-haze{
+  opacity:.07;
+}
+
+.hero-card h1{
+  margin-top:6px;
+  margin-bottom:12px;
+}
+
+.card p,.report-card p,.file-list p{
+  line-height:1.58;
+}
+
+@media(min-width:760px){
+  #map.active{
+    display:grid;
+    grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);
+    gap:12px;
+    align-items:start;
+  }
+
+  #map.active .map-top{
+    grid-column:1 / -1;
+  }
+
+  #map.active .map-card{
+    height:calc(100dvh - 270px);
+    min-height:500px;
+  }
+
+  #map.active .report-card,
+  #map.active .incident-panel{
+    margin-top:0;
+  }
+}
+
+@media(max-width:420px){
+  #incident-list div{
+    display:block;
+  }
+
+  #incident-list strong{
+    display:block;
+    text-align:left;
+    margin-top:6px;
+  }
+}
