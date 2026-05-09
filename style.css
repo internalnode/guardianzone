@@ -947,7 +947,6 @@ height:150px;
   grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
 }
 
-
 /* v31 primary node network */
 .primary-node-panel{
   margin-top:14px;
@@ -1053,7 +1052,6 @@ height:150px;
   }
 }
 
-
 /* v32 safehouses overlay */
 .overlay-panel{
   position:fixed;
@@ -1097,7 +1095,6 @@ height:150px;
 .hidden-panel{
   display:block;
 }
-
 
 /* v33 safehouses as real tab */
 .tabs{
@@ -1269,7 +1266,6 @@ height:150px;
   }
 }
 
-
 /* v34 — smaller tabs and selected safehouse only */
 .tabs button{
   font-size:9px !important;
@@ -1296,7 +1292,6 @@ height:150px;
 .safe-point.active{
   transform:translate(-50%,-50%) scale(1.04);
 }
-
 
 /* v37 safehouse recovered photographs */
 .safehouse-photo{
@@ -1356,12 +1351,10 @@ height:150px;
   }
 }
 
-
 /* v40 — stable removal of FILES */
 .tabs{
   grid-template-columns:repeat(4,1fr) !important;
 }
-
 
 /* v41 — FILES/ARCHIVES fully removed */
 button[data-screen="files"],
@@ -1379,7 +1372,6 @@ button[data-screen="archives"],
 .tabs{
   grid-template-columns:repeat(4,1fr) !important;
 }
-
 
 /* v42 mobile optimization */
 html,body{
@@ -1509,7 +1501,6 @@ main{
   }
 }
 
-
 /* v43 top navigation HUD */
 main{
   padding-top:74px !important;
@@ -1602,7 +1593,6 @@ main{
   }
 }
 
-
 /* v44 — compact top HUD fix */
 main{
   padding-top:46px !important;
@@ -1659,7 +1649,6 @@ main{
   }
 }
 
-
 /* v45 — nav below header */
 .tabs{
   position:relative !important;
@@ -1707,7 +1696,6 @@ main{
     font-size:7px !important;
   }
 }
-
 
 /* v51 — stable recovery */
 body{
@@ -1790,7 +1778,6 @@ main,
     letter-spacing:.7px !important;
   }
 }
-
 
 /* v52 — fixed header/nav + fixed bottom status, measured safely */
 :root{
@@ -1896,7 +1883,6 @@ body.fixed-hud-layout .container{
   }
 }
 
-
 /* v56 — remove narrative/lore blocks */
 .narrative-block,
 .story-block,
@@ -1913,4 +1899,19 @@ body.fixed-hud-layout .container{
 .data-card:has(p),
 .report-panel:has(p){
   display:none !important;
+}
+
+/* v57 — operator removed */
+button[data-screen="operator"],
+button[data-screen="dossier"],
+#operator,
+#dossier,
+.operator-card,
+.operator-panel,
+.hero-card{
+  display:none !important;
+}
+
+.tabs{
+  grid-template-columns:repeat(3,1fr) !important;
 }

@@ -346,7 +346,6 @@ document.querySelectorAll(".safe-point").forEach(btn=>{
   });
 });
 
-
 /* v51 — simple active tab sync */
 window.addEventListener("load", ()=>{
   const buttons = document.querySelectorAll(".tabs button");
@@ -369,7 +368,6 @@ window.addEventListener("load", ()=>{
   });
 });
 
-
 /* v52 — measured fixed HUD spacing */
 function updateFixedHudSpacing(){
   const header = document.querySelector(".app-header, .header, .topbar");
@@ -391,3 +389,14 @@ window.addEventListener("orientationchange", ()=>{
   setTimeout(updateFixedHudSpacing, 250);
 });
 setTimeout(updateFixedHudSpacing, 600);
+
+/* v57 — default to MAP after operator removal */
+window.addEventListener("load", ()=>{
+  const screens = document.querySelectorAll(".screen");
+  const buttons = document.querySelectorAll(".tabs button");
+  const activeScreen = document.querySelector(".screen.active");
+  if(!activeScreen && document.getElementById("map")){
+    document.getElementById("map").classList.add("active");
+    buttons.forEach(b=>b.classList.toggle("active", b.dataset.screen === "map"));
+  }
+});

@@ -43,44 +43,14 @@
   </header>
 
   <nav class="tabs">
-    <button data-screen="dossier">OPERATOR</button>
-    <button class="active" data-screen="map">MAP</button>
+<button class="active" data-screen="map" class="active">MAP</button>
     <button data-screen="systems">SYSTEM</button>
     
   <button data-screen="safehouses">SAFEHOUSES</button>
 </nav>
 
   <main class="screen-wrap">
-    <section id="dossier" class="screen">
-      <div class="card hero-card">
-        <div class="card-title">ДОСЬЄ OPERATORА</div>
-        <h1>MYTH</h1>
-        <div class="tagline">ОСОБОВИЙ ФАЙЛ // RÉCUPÉRATION PARTIELLE</div>
-        <p>Ancien opérateur rattaché au dispositif de confinement. Identité complète absente des registres consultables.</p>
-        <p>Relais, verrous secondaires et capteurs isolés présentent des interventions manuelles récentes. Signature absente.</p>
-      </div>
-
-      <div class="grid-2">
-        <div class="mini-card"><span>STATUS</span><strong>ACTIF / NON CONFIRMÉ</strong></div>
-        <div class="mini-card"><span>AREA</span><strong>PÉRIMÈTRE NORD</strong></div>
-        <div class="mini-card"><span>ROLE</span><strong>SURVEILLANCE CONFINEMENT</strong></div>
-        <div class="mini-card"><span>CONTACT</span><strong>AUCUN</strong></div>
-      </div>
-
-      <div class="card presence-card">
-        <div class="card-title">НЕПІДПИСАНА АКТИВНІСТЬ</div>
-        <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
-        <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
-      </div>
-
-      <div class="card presence-card stale-card">
-        <div class="card-title">ПОПЕРЕДНІЙ СТАН СИСТЕМИ</div>
-        <p id="previous-state">Dernier cycle stable détecté avant l’ouverture du terminal.</p>
-        <p class="muted-line" id="previous-state-time">Recovered timestamp : pending...</p>
-      </div>
-    </section>
-
-    <section id="map" class="screen active">
+<section id="map" class="screen active">
       <div class="map-top">
         <div>
           <div class="card-title">PERIMETER STATUS</div>
