@@ -1915,3 +1915,98 @@ button[data-screen="dossier"],
 .tabs{
   grid-template-columns:repeat(3,1fr) !important;
 }
+
+
+/* v58 — randomized daily incidents */
+.random-incidents-panel{
+  border:1px solid rgba(154,170,125,.18);
+  background:linear-gradient(180deg,rgba(8,10,8,.96),rgba(4,5,4,.98));
+  padding:14px;
+  margin-bottom:12px;
+  position:relative;
+}
+
+.random-incidents-panel::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:#c0a35f;
+}
+
+.random-incident{
+  border:1px solid rgba(154,170,125,.14);
+  background:rgba(154,170,125,.025);
+  padding:10px;
+  margin-top:8px;
+  font-family:"IBM Plex Mono",monospace;
+}
+
+.random-incident-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:6px;
+}
+
+.random-incident-id{
+  color:#c0a35f;
+  font-size:10px;
+  letter-spacing:1.2px;
+}
+
+.random-incident-severity{
+  font-size:9px;
+  letter-spacing:1px;
+  color:#8f9988;
+}
+
+.random-incident-sector{
+  font-size:11px;
+  letter-spacing:1.3px;
+  color:#d7ddd1;
+  margin-bottom:5px;
+}
+
+.random-incident-status{
+  font-size:10px;
+  color:#bfc6b9;
+  line-height:1.5;
+}
+
+.random-incident-detail{
+  margin-top:6px;
+  font-size:10px;
+  color:#8f9988;
+  line-height:1.5;
+}
+
+.random-incident.critical{
+  border-color:rgba(190,88,70,.42);
+}
+
+.random-incident.critical .random-incident-severity{
+  color:#b86f55;
+}
+
+.random-incident.high .random-incident-severity{
+  color:#c0a35f;
+}
+
+@media(max-width:760px){
+  .random-incidents-panel{
+    padding:12px;
+  }
+}
+
+
+/* v59 — incident persistence info */
+.random-incident-age{
+  margin-top:6px;
+  font-size:9px;
+  color:#7f8879;
+  letter-spacing:.8px;
+  font-family:"IBM Plex Mono",monospace;
+}

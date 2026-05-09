@@ -400,3 +400,320 @@ window.addEventListener("load", ()=>{
     buttons.forEach(b=>b.classList.toggle("active", b.dataset.screen === "map"));
   }
 });
+
+
+/* v58 — daily randomized incidents */
+const incidentsPoolV58 = [
+  {
+    id:"INC-041",
+    sector:"RELAY_03",
+    status:"Signal intermittent",
+    severity:"Élevée",
+    weight:8,
+    detail:"Réponse courte du relais. Vérification terrain recommandée."
+  },
+  {
+    id:"INC-052",
+    sector:"FOREST_BUNKER",
+    status:"Accès verrouillé",
+    severity:"Moyenne",
+    weight:5,
+    detail:"Verrou manuel réengagé. Dernier passage non confirmé."
+  },
+  {
+    id:"INC-066",
+    sector:"CAMERA_07",
+    status:"Flux indisponible",
+    severity:"Faible",
+    weight:7,
+    detail:"Caméra hors ligne. Capteur de mouvement encore actif."
+  },
+  {
+    id:"INC-073",
+    sector:"NORTH_GATE",
+    status:"État contradictoire",
+    severity:"Moyenne",
+    weight:4,
+    detail:"Porte signalée verrouillée, mais ping capteur reçu."
+  },
+  {
+    id:"INC-088",
+    sector:"RAIL_DEPOT",
+    status:"Transmission courte",
+    severity:"Élevée",
+    weight:3,
+    detail:"Signal basse fréquence détecté durant 4 secondes."
+  },
+  {
+    id:"INC-094",
+    sector:"NODE-01",
+    status:"Maintenance non signée",
+    severity:"Moyenne",
+    weight:4,
+    detail:"Cycle technique exécuté sans identifiant conservé."
+  },
+  {
+    id:"INC-102",
+    sector:"TUNNEL_SUD",
+    status:"Contact capteur bref",
+    severity:"Faible",
+    weight:5,
+    detail:"Réponse isolée du capteur d’accès sud. Aucun flux visuel."
+  },
+  {
+    id:"INC-117",
+    sector:"REPEATER_NODE",
+    status:"Signal perdu puis rétabli",
+    severity:"Moyenne",
+    weight:4,
+    detail:"Synchronisation instable avec délai réseau anormal."
+  },
+  {
+    id:"INC-126",
+    sector:"NORTH_SHELTER",
+    status:"Alimentation locale faible",
+    severity:"Faible",
+    weight:4,
+    detail:"Batterie basse. Relais local silencieux."
+  },
+  {
+    id:"INC-139",
+    sector:"BLACK_CHANNEL",
+    status:"Tentative d’accès rejetée",
+    severity:"Élevée",
+    weight:2,
+    detail:"Requête non authentifiée. Source non attribuée."
+  }
+];
+
+function seededRandomV58(seed){
+  let h = 2166136261 >>> 0;
+  for(let i=0;i<seed.length;i++){
+    h ^= seed.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return function(){
+    h += h << 13; h ^= h >>> 7;
+    h += h << 3; h ^= h >>> 17;
+    h += h << 5;
+    return ((h >>> 0) / 4294967295);
+  };
+}
+
+function weightedIncidentPickV58(pool, randomFn){
+  const total = pool.reduce((sum, item)=>sum + item.weight, 0);
+  let roll = randomFn() * total;
+
+  for(const item of pool){
+    roll -= item.weight;
+    if(roll <= 0) return item;
+  }
+
+  return pool[0];
+}
+
+function generateDailyIncidentsV58(count = 3){
+  const today = new Date().toISOString().slice(0,10);
+  const key = "myth_daily_incidents_" + today;
+
+  const cached = localStorage.getItem(key);
+  if(cached){
+    try{
+      return JSON.parse(cached);
+    }catch(e){}
+  }
+
+  const randomFn = seededRandomV58(today + "_MYTH_NODE");
+  const available = [...incidentsPoolV58];
+  const selected = [];
+
+  while(selected.length < count && available.length){
+    const picked = weightedIncidentPickV58(available, randomFn);
+    selected.push(picked);
+
+    const idx = available.findIndex(item=>item.id === picked.id);
+    if(idx >= 0) available.splice(idx, 1);
+  }
+
+  // Clean old incident cache keys
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith("myth_daily_incidents_") && k !== key){
+      localStorage.removeItem(k);
+    }
+  });
+
+  localStorage.setItem(key, JSON.stringify(selected));
+  return selected;
+}
+
+function renderDailyIncidentsV58(){
+  const container = document.getElementById("random-incidents");
+  if(!container) return;
+
+  const incidents = generateDailyIncidentsV58(3);
+
+  container.innerHTML = incidents.map(incident=>{
+    const severityClass =
+      incident.severity === "Élevée" ? "high" :
+      incident.severity === "Critique" ? "critical" : "";
+
+    return `
+      <div class="random-incident ${severityClass}">
+        <div class="random-incident-top">
+          <span class="random-incident-id">${incident.id}</span>
+          <span class="random-incident-severity">${incident.severity}</span>
+        </div>
+
+        <div class="random-incident-sector">${incident.sector}</div>
+        <div class="random-incident-status">${incident.status}</div>
+        <div class="random-incident-detail">${incident.detail}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.addEventListener("load", renderDailyIncidentsV58);
+
+
+/* v59 — persistent incidents over 24-48h */
+const incidentPersistencePoolV59 = [
+  {
+    id:"INC-041",
+    sector:"RELAY_03",
+    status:"Signal intermittent",
+    severity:"Élevée",
+    detail:"Réponse courte du relais. Vérification terrain recommandée.",
+    recurrence:0.45
+  },
+  {
+    id:"INC-052",
+    sector:"FOREST_BUNKER",
+    status:"Accès verrouillé",
+    severity:"Moyenne",
+    detail:"Verrou manuel réengagé. Dernier passage non confirmé.",
+    recurrence:0.35
+  },
+  {
+    id:"INC-066",
+    sector:"CAMERA_07",
+    status:"Flux indisponible",
+    severity:"Faible",
+    detail:"Caméra hors ligne. Capteur de mouvement encore actif.",
+    recurrence:0.60
+  },
+  {
+    id:"INC-088",
+    sector:"RAIL_DEPOT",
+    status:"Transmission courte",
+    severity:"Élevée",
+    detail:"Signal basse fréquence détecté durant 4 secondes.",
+    recurrence:0.25
+  },
+  {
+    id:"INC-094",
+    sector:"NODE-01",
+    status:"Maintenance non signée",
+    severity:"Moyenne",
+    detail:"Cycle technique exécuté sans identifiant conservé.",
+    recurrence:0.40
+  },
+  {
+    id:"INC-117",
+    sector:"REPEATER_NODE",
+    status:"Signal perdu puis rétabli",
+    severity:"Moyenne",
+    detail:"Synchronisation instable avec délai réseau anormal.",
+    recurrence:0.32
+  }
+];
+
+function getPersistentIncidentSetV59(){
+  const STORAGE_KEY = "myth_persistent_incidents_v59";
+
+  try{
+    const current = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+
+    if(current && current.expiresAt && Date.now() < current.expiresAt){
+      return current.incidents;
+    }
+  }catch(e){}
+
+  const selected = [];
+  const pool = [...incidentPersistencePoolV59]
+    .sort(()=>Math.random() - 0.5);
+
+  const count = 3 + Math.floor(Math.random() * 2);
+
+  while(selected.length < count && pool.length){
+    const candidate = pool.shift();
+
+    if(Math.random() <= candidate.recurrence){
+      selected.push({
+        ...candidate,
+        startedAt: Date.now()
+      });
+    }
+  }
+
+  // fallback if random selection too strict
+  while(selected.length < 3 && pool.length){
+    selected.push({
+      ...pool.shift(),
+      startedAt: Date.now()
+    });
+  }
+
+  // random persistence between 24h and 48h
+  const durationHours = 24 + Math.floor(Math.random() * 25);
+
+  const payload = {
+    createdAt: Date.now(),
+    expiresAt: Date.now() + (durationHours * 60 * 60 * 1000),
+    incidents: selected
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+
+  return selected;
+}
+
+function incidentAgeLabelV59(startedAt){
+  const elapsed = Math.floor((Date.now() - startedAt) / (1000 * 60 * 60));
+
+  if(elapsed <= 1){
+    return "Status updated recently.";
+  }
+
+  return `Status unchanged for ${elapsed}h.`;
+}
+
+function renderPersistentIncidentsV59(){
+  const container = document.getElementById("random-incidents");
+  if(!container) return;
+
+  const incidents = getPersistentIncidentSetV59();
+
+  container.innerHTML = incidents.map(incident=>{
+    const severityClass =
+      incident.severity === "Élevée" ? "high" :
+      incident.severity === "Critique" ? "critical" : "";
+
+    return `
+      <div class="random-incident ${severityClass}">
+        <div class="random-incident-top">
+          <span class="random-incident-id">${incident.id}</span>
+          <span class="random-incident-severity">${incident.severity}</span>
+        </div>
+
+        <div class="random-incident-sector">${incident.sector}</div>
+        <div class="random-incident-status">${incident.status}</div>
+        <div class="random-incident-detail">${incident.detail}</div>
+        <div class="random-incident-age">${incidentAgeLabelV59(incident.startedAt)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.addEventListener("load", ()=>{
+  setTimeout(renderPersistentIncidentsV59, 100);
+});
