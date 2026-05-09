@@ -21,7 +21,7 @@ const events=[
 "DOSIMETER SPIKE NORMALIZED",
 "SIGNAL DROP — 4 SECONDS",
 "UNSIGNED ACCESS — RELAY 03",
-"ARCHIVE SEGMENT CORRUPTED",
+"ARCHIVE SEGMENT CORROMPU",
 "DOOR SENSOR TRIGGERED — EMPTY FEED",
 "MYTH TASKING PENDING"
 ];
@@ -49,7 +49,7 @@ setInterval(()=>{pushLog();updateSystems()},11000);
 const fileData = {
   relais03:{
     title:"RELAIS_03",
-    status:"ACTIVE",
+    status:"ACTIF",
     access:"INCONNU",
     power:"RÉSEAU LOCAL",
     integrity:"74%",
@@ -64,7 +64,7 @@ const fileData = {
 
   tunnel:{
     title:"TUNNEL_SUD",
-    status:"RESTRICTED",
+    status:"RESTREINT",
     access:"02:14",
     power:"HORS LIGNE",
     integrity:"58%",
@@ -92,7 +92,7 @@ const fileData = {
 
   visual:{
     title:"VISUAL_RECORD",
-    status:"CORRUPTED",
+    status:"CORROMPU",
     access:"FICHIER ENDOMMAGÉ",
     power:"INCONNU",
     integrity:"12%",
@@ -107,9 +107,9 @@ const fileData = {
 
   sector:{
     title:"SECTOR_NOTE",
-    status:"MISSING",
+    status:"MANQUANT",
     access:"ÉCHEC DE RÉCUPÉRATION",
-    power:"N/A",
+    power:"S/O",
     integrity:"0%",
     content:[
       "SEGMENT D’ARCHIVE MANQUANT",
@@ -122,13 +122,13 @@ const fileData = {
   locked:{
     title:"BLACK_CHANNEL",
     status:"VERROUILLÉ",
-    access:"DENIED",
+    access:"REFUSÉ",
     power:"INCONNU",
     integrity:"--",
     content:[
       "ACCÈS REFUSÉ",
       "FRAGMENT DE CLÉ MANQUANT",
-      "LAST HANDSHAKE : INCONNU"
+      "DERNIÈRE LIAISON : INCONNUEE"
     ],
     note:true
   }
@@ -379,7 +379,7 @@ renderFile = function(id){
   if(id === "sector"){
     viewer.innerHTML += `
       <div class="restricted-banner">
-        ВІДНОВЛЕННЯ НЕМОЖЛИВЕ // ENCRYPTED SEGMENT
+        ВІДНОВЛЕННЯ НЕМОЖЛИВЕ // SEGMENT CHIFFRÉ
       </div>
     `;
   }
@@ -387,7 +387,7 @@ renderFile = function(id){
   if(id === "visual"){
     viewer.innerHTML += `
       <div class="restricted-banner">
-        IMAGE FEED // PARTIELLY CORRUPTED
+        FLUX IMAGE // PARTIELLY CORROMPU
       </div>
     `;
   }
@@ -409,9 +409,9 @@ const incidentStates = [
   ["RELAY_03","ALIMENTÉ HORS CYCLE"],
   ["SOUTH_TUNNEL","CONTACT PERDU"],
   ["PRIPYAT_BLOCK","MOUVEMENT NON CONFIRMÉ"],
-  ["CAMERA_07","HORS LIGNE / SENSOR ACTIVE"],
+  ["CAMERA_07","HORS LIGNE / SENSOR ACTIF"],
   ["NORTH_GATE","VERROUILLÉ / PING RECEIVED"],
-  ["ARCHIVE_12","CORRUPTED / RECENT CHANGE"],
+  ["ARCHIVE_12","CORROMPU / RECENT CHANGE"],
   ["BLACK_CHANNEL","HANDSHAKE FAILED"]
 ];
 
