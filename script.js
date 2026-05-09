@@ -586,250 +586,250 @@ window.addEventListener("load", ()=>{
   activate(targetOf(activeBtn) || activeScreen?.id || "map");
 });
 
-
-/* v79 — disable external selected-point/report panel writes */
-function renderReport(){ return; }
-function renderSelectedPoint(){ return; }
-function updateSelectedPoint(){ return; }
-function renderIncidentDetailV60(){ return; }
-function renderIncidentDetailV61(){ return; }
-function renderIncidentDetailV62(){ return; }
-function updateIncidentDetailPanelV64(){ return; }
-
-
-/* v79 — autonomous persistent incidents on map with GPS popups */
-const INCIDENT_POOL_V79 = [
-  {
-    id:"INC-041",
-    sector:"RELAY_03",
-    status:"Signal intermittent",
-    severity:"Élevée",
-    level:"high",
-    detail:"Réponse courte du relais. Vérification terrain recommandée.",
-    base:{x:46,y:43,lat:51.37700,lng:30.11800,radius:4},
-    recurrence:.46
-  },
-  {
-    id:"INC-052",
-    sector:"FOREST_BUNKER",
-    status:"Accès verrouillé",
-    severity:"Moyenne",
-    level:"medium",
-    detail:"Verrou manuel réengagé. Dernier passage non confirmé.",
-    base:{x:29,y:58,lat:51.35500,lng:30.04500,radius:5},
-    recurrence:.36
-  },
-  {
-    id:"INC-066",
-    sector:"CAMERA_07",
-    status:"Flux indisponible",
-    severity:"Faible",
-    level:"low",
-    detail:"Caméra hors ligne. Capteur de mouvement encore actif.",
-    base:{x:55,y:38,lat:51.39800,lng:30.10500,radius:4},
-    recurrence:.60
-  },
-  {
-    id:"INC-088",
-    sector:"RAIL_DEPOT",
-    status:"Transmission courte",
-    severity:"Élevée",
-    level:"high",
-    detail:"Signal basse fréquence détecté durant 4 secondes.",
-    base:{x:64,y:68,lat:51.33500,lng:30.13500,radius:5},
-    recurrence:.28
-  },
-  {
-    id:"INC-094",
-    sector:"NODE-01",
-    status:"Maintenance non signée",
-    severity:"Moyenne",
-    level:"medium",
-    detail:"Cycle technique exécuté sans identifiant conservé.",
-    base:{x:49,y:42,lat:51.39200,lng:30.08800,radius:3},
-    recurrence:.42
-  },
-  {
-    id:"INC-117",
-    sector:"REPEATER_NODE",
-    status:"Signal perdu puis rétabli",
-    severity:"Moyenne",
-    level:"medium",
-    detail:"Synchronisation instable avec délai réseau anormal.",
-    base:{x:58,y:48,lat:51.37800,lng:30.12500,radius:4},
-    recurrence:.34
-  },
-  {
-    id:"INC-126",
-    sector:"NORTH_SHELTER",
-    status:"Alimentation locale faible",
-    severity:"Faible",
-    level:"low",
-    detail:"Batterie basse. Relais local silencieux.",
-    base:{x:38,y:24,lat:51.42200,lng:30.05000,radius:5},
-    recurrence:.31
-  }
+/* v81 — realistic autonomous incidents: random persistence, no full rotation */
+const autonomousIncidentPoolV79 = [
+  {title:"RELAY_03", severity:"medium", label:"MOYEN", category:"PING ANORMAL", text:"Réponse courte détectée hors fenêtre de synchronisation.", detail:"Relais actif par intermittence ; source non attribuée.", coords:[51.3826,30.0917]},
+  {title:"CAMERA_07", severity:"high", label:"ÉLEVÉ", category:"CAPTEUR ACTIF", text:"Capteur de mouvement actif malgré flux vidéo indisponible.", detail:"Contrôle terrain conseillé ; image non récupérable.", coords:[51.4051,30.0612]},
+  {title:"NORTH_GATE", severity:"medium", label:"MOYEN", category:"VERROUILLAGE", text:"Changement d’état enregistré sans commande distante.", detail:"Dernier état : verrouillage confirmé, ping instable.", coords:[51.4484,30.0365]},
+  {title:"EAST_WINDOW", severity:"low", label:"FAIBLE", category:"SIGNAL NOCTURNE", text:"Signal lumineux bref capté sur façade isolée.", detail:"Hypothèse : reflet, relais dégradé ou unité mobile.", coords:[51.2768,30.2236]},
+  {title:"SOUTH_TUNNEL", severity:"critical", label:"CRITIQUE", category:"CONTACT PERDU", text:"Balise basse fréquence disparue pendant le balayage.", detail:"Dernière trame incomplète ; zone à éviter sans escorte.", coords:[51.2462,30.0831]},
+  {title:"PRIPYAT_BLOCK", severity:"high", label:"ÉLEVÉ", category:"MOUVEMENT", text:"Déclenchements multiples dans un bâtiment résidentiel.", detail:"Aucun identifiant associé ; bruit de porte et vibration brève.", coords:[51.4079,30.0579]},
+  {title:"RED_FOREST_EDGE", severity:"medium", label:"MOYEN", category:"INTERFÉRENCE", text:"Parasitage radio relevé sur bande courte.", detail:"Signal large, non vocal, durée inférieure à 18 secondes.", coords:[51.3658,30.0042]},
+  {title:"DRAINAGE_LINE", severity:"low", label:"FAIBLE", category:"SONDE HUMIDE", text:"Variation de pression localisée sur collecteur abandonné.", detail:"Lecture fluctuante ; niveau de fiabilité réduit.", coords:[51.3316,30.1468]},
+  {title:"ARCHIVE_12", severity:"medium", label:"MOYEN", category:"TRACE DONNÉE", text:"Horodatage modifié pendant la synchronisation carte.", detail:"Incident logiciel probable, mais corrélé à un ping terrain.", coords:[51.3914,29.9746]},
+  {title:"BLACK_CHANNEL", severity:"critical", label:"CRITIQUE", category:"HANDSHAKE FAILED", text:"Tentative de liaison non signée rejetée par le nœud.", detail:"Canal fermé automatiquement ; empreinte non reconnue.", coords:[51.2982,29.9129]},
+  {title:"RAIL_SPUR", severity:"medium", label:"MOYEN", category:"ÉCHO MÉTALLIQUE", text:"Vibration brève relevée sur ancienne voie de service.", detail:"Lecture isolée ; possible passage animal ou choc mécanique.", coords:[51.3695,30.1179]},
+  {title:"PUMP_STATION", severity:"high", label:"ÉLEVÉ", category:"PRESSION", text:"Remontée de pression sans activation planifiée.", detail:"Station hors réseau ; télémétrie partielle seulement.", coords:[51.3228,30.1854]}
 ];
 
-function seededRandomV79(seed){
-  let h = 2166136261 >>> 0;
-  for(let i=0;i<seed.length;i++){
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
+const INCIDENT_STORAGE_KEY_V80 = "myth.map.incidents.v81";
+const INCIDENT_MIN_DELAY_V80 = 24 * 60 * 60 * 1000;
+const INCIDENT_MAX_DELAY_V80 = 48 * 60 * 60 * 1000;
+
+let liveIncidentMarkersV79 = [];
+let incidentTimerV79 = null;
+let activeIncidentStateV80 = null;
+let popupAutoplayTimerV80 = null;
+
+function randomBetweenV80(min,max){
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+function weightedPickV81(items){
+  const total = items.reduce((sum,item)=>sum + item.weight,0);
+  let roll = Math.random() * total;
+  for(const item of items){
+    roll -= item.weight;
+    if(roll <= 0) return item.value;
   }
-  return function(){
-    h += h << 13; h ^= h >>> 7;
-    h += h << 3; h ^= h >>> 17;
-    h += h << 5;
-    return ((h >>> 0) / 4294967295);
+  return items[items.length - 1].value;
+}
+
+function jitterCoordV79(coord,scale=1){
+  return [
+    +(coord[0] + (Math.random() - .5) * .018 * scale).toFixed(6),
+    +(coord[1] + (Math.random() - .5) * .026 * scale).toFixed(6)
+  ];
+}
+
+function gpsTextV79(coords){
+  return `${Number(coords[0]).toFixed(6)}, ${Number(coords[1]).toFixed(6)}`;
+}
+
+function nextChangeAtV81(from=Date.now()){
+  return from + randomBetweenV80(INCIDENT_MIN_DELAY_V80, INCIDENT_MAX_DELAY_V80);
+}
+
+function makeIncidentV81(base, now=Date.now()){
+  const confidence = randomBetweenV80(42,91);
+  return {
+    ...base,
+    id:`${base.title}-${now}-${Math.floor(Math.random()*9999)}`,
+    coords:jitterCoordV79(base.coords),
+    createdAt:now - randomBetweenV80(0, 5 * 60 * 60 * 1000),
+    updatedAt:now,
+    confidence,
+    status:confidence < 55 ? "NON CONFIRMÉ" : "ACTIF"
   };
 }
 
-function getIncidentCycleV79(){
-  const key = "myth_autonomous_incidents_v79";
+function buildIncidentStateV80(){
+  const now = Date.now();
+  const amount = randomBetweenV80(2,4);
+  const selected = [...autonomousIncidentPoolV79]
+    .sort(()=>Math.random() - .5)
+    .slice(0, amount)
+    .map(base=>makeIncidentV81(base, now));
+  return {version:81, generatedAt:now, lastMutationAt:now, nextAt:nextChangeAtV81(now), incidents:selected};
+}
 
+function loadIncidentStateV80(){
   try{
-    const stored = JSON.parse(localStorage.getItem(key) || "null");
-    if(stored && stored.expiresAt && Date.now() < stored.expiresAt && Array.isArray(stored.incidents)){
-      return stored;
-    }
-  }catch(e){}
+    const raw = localStorage.getItem(INCIDENT_STORAGE_KEY_V80);
+    if(!raw) return null;
+    const state = JSON.parse(raw);
+    if(!state || !Array.isArray(state.incidents) || !state.nextAt || state.version !== 81) return null;
+    return state;
+  }catch(e){ return null; }
+}
 
-  const pool = [...INCIDENT_POOL_V79].sort(()=>Math.random() - .5);
-  const selected = [];
+function saveIncidentStateV80(state){
+  activeIncidentStateV80 = state;
+  try{ localStorage.setItem(INCIDENT_STORAGE_KEY_V80, JSON.stringify(state)); }catch(e){}
+}
 
-  while(selected.length < 3 && pool.length){
-    const candidate = pool.shift();
-    if(Math.random() <= candidate.recurrence || selected.length < 2){
-      selected.push({
-        ...candidate,
-        startedAt:Date.now()
-      });
+function mutateIncidentStateV81(state){
+  const now = Date.now();
+  const incidents = Array.isArray(state.incidents) ? [...state.incidents] : [];
+  const activeTitles = new Set(incidents.map(i=>i.title));
+  const canAdd = incidents.length < 6 && autonomousIncidentPoolV79.some(i=>!activeTitles.has(i.title));
+  const canResolve = incidents.length > 1;
+  const action = weightedPickV81([
+    {value:"add", weight:canAdd ? 38 : 0},
+    {value:"update", weight:34},
+    {value:"resolve", weight:canResolve ? 18 : 0},
+    {value:"drift", weight:10}
+  ]);
+
+  if(action === "add"){
+    const candidates = autonomousIncidentPoolV79.filter(i=>!activeTitles.has(i.title));
+    incidents.push(makeIncidentV81(candidates[Math.floor(Math.random()*candidates.length)], now));
+  }else if(action === "resolve"){
+    incidents.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    incidents.splice(randomBetweenV80(0, Math.min(2, incidents.length - 1)),1);
+  }else{
+    const target = incidents[Math.floor(Math.random()*incidents.length)];
+    if(target){
+      target.updatedAt = now;
+      target.confidence = Math.max(31, Math.min(96, Number(target.confidence||60) + randomBetweenV80(-14,16)));
+      target.status = target.confidence < 50 ? "À VÉRIFIER" : (target.confidence > 78 ? "CONFIRMÉ" : "ACTIF");
+      if(action === "drift") target.coords = jitterCoordV79(target.coords, .35);
+      target.detail = weightedPickV81([
+        {value:"Signal recoupé par une seconde source, fiabilité en hausse.", weight:25},
+        {value:"Lecture isolée maintenue en observation, aucune patrouille confirmée.", weight:25},
+        {value:"Télémétrie instable ; dernière trame exploitable conservée.", weight:25},
+        {value:target.detail, weight:25}
+      ]);
     }
   }
 
-  while(selected.length < 3 && pool.length){
-    selected.push({
-      ...pool.shift(),
-      startedAt:Date.now()
-    });
+  state.incidents = incidents;
+  state.lastMutationAt = now;
+  state.nextAt = nextChangeAtV81(now);
+  return state;
+}
+
+function ensureIncidentStateV80(force=false){
+  let state = force ? null : loadIncidentStateV80();
+  if(!state) state = buildIncidentStateV80();
+  let safety = 0;
+  while(Date.now() >= Number(state.nextAt) && safety < 4){
+    state = mutateIncidentStateV81(state);
+    safety++;
   }
-
-  const durationHours = 24 + Math.floor(Math.random() * 25); // 24-48 h
-  const payload = {
-    createdAt:Date.now(),
-    expiresAt:Date.now() + durationHours * 60 * 60 * 1000,
-    incidents:selected
-  };
-
-  localStorage.setItem(key, JSON.stringify(payload));
-  return payload;
+  saveIncidentStateV80(state);
+  return state;
 }
 
-function placeIncidentV79(incident, cycleCreatedAt){
-  const rand = seededRandomV79(`${incident.id}_${incident.sector}_${cycleCreatedAt}`);
-  const angle = rand() * Math.PI * 2;
-  const dist = rand() * incident.base.radius;
-
-  const x = Math.max(5, Math.min(95, incident.base.x + Math.cos(angle) * dist));
-  const y = Math.max(5, Math.min(95, incident.base.y + Math.sin(angle) * dist));
-
-  // GPS follows the visual offset in a small realistic range
-  const lat = incident.base.lat + (rand() - .5) * 0.018;
-  const lng = incident.base.lng + (rand() - .5) * 0.026;
-
-  return {x,y,lat,lng};
+function formatDelayV80(ms){
+  const totalMinutes = Math.max(0, Math.ceil(ms / 60000));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}H ${String(minutes).padStart(2,"0")}M`;
 }
 
-function incidentAgeV79(startedAt){
-  const hours = Math.floor((Date.now() - startedAt) / (1000*60*60));
-  return hours <= 1 ? "Statut mis à jour récemment." : `Statut inchangé depuis ${hours} h.`;
+function formatTimeV80(ts){
+  const d = new Date(ts);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function openIncidentPopupV79(incident, pos){
-  const popup = document.getElementById("incident-popup-v79");
-  const content = document.getElementById("incident-popup-content-v79");
-  if(!popup || !content) return;
-
-  content.innerHTML = `
-    <h3>${incident.id} // ${incident.sector}</h3>
-    <p><strong>${incident.status}</strong></p>
-    <p class="muted">SEVERITY : ${incident.severity}</p>
-    <p>${incident.detail}</p>
-    <p class="muted">${incidentAgeV79(incident.startedAt)}</p>
-    <p class="gps">GPS : ${pos.lat.toFixed(5)} / ${pos.lng.toFixed(5)}</p>
+function incidentPopupV79(incident){
+  return `
+    <div class="popup-incident-v79">
+      <div class="popup-title-v79">${incident.title}</div>
+      <div class="popup-meta-v79">GPS : ${gpsTextV79(incident.coords)}</div>
+      <div class="popup-meta-v79">TYPE : ${incident.category} // SEVERITY : ${incident.label}</div>
+      <div class="popup-meta-v79">STATUS : ${incident.status || "ACTIF"} // FIABILITÉ : ${incident.confidence || "--"}%</div>
+      <div class="popup-meta-v79">LAST PING : ${formatTimeV80(incident.updatedAt || Date.now())}</div>
+      <div class="popup-body-v79">${incident.text}</div>
+      <div class="popup-detail-v79">${incident.detail}</div>
+    </div>
   `;
-
-  popup.classList.add("active");
-  popup.setAttribute("aria-hidden","false");
 }
 
-function closeIncidentPopupV79(){
-  const popup = document.getElementById("incident-popup-v79");
-  if(!popup) return;
-  popup.classList.remove("active");
-  popup.setAttribute("aria-hidden","true");
+function clearLiveIncidentsV79(){
+  if(!map) return;
+  liveIncidentMarkersV79.forEach(marker=>map.removeLayer(marker));
+  liveIncidentMarkersV79 = [];
 }
 
-function findIncidentLayerV79(){
-  let layer = document.getElementById("dynamic-incident-layer");
-  if(layer) return layer;
-
-  const mapCard =
-    document.querySelector("#map .map-card") ||
-    document.querySelector("#map .map-panel") ||
-    document.querySelector("#map .map-surface");
-
-  if(!mapCard) return null;
-
-  if(getComputedStyle(mapCard).position === "static"){
-    mapCard.style.position = "relative";
+function updateIncidentHudV80(state){
+  const update = document.getElementById("map-update");
+  if(update) update.textContent = `INCIDENT FEED : RANDOM / AUTONOMOUS`;
+  const stateEl = document.getElementById("incident-cycle-state");
+  if(stateEl){
+    const remaining = Number(state.nextAt) - Date.now();
+    stateEl.textContent = `${state.incidents.length} ACTIVE // NEXT FIELD CHANGE : ${formatDelayV80(remaining)}`;
   }
-
-  layer = document.createElement("div");
-  layer.id = "dynamic-incident-layer";
-  layer.className = "dynamic-incident-layer";
-  mapCard.appendChild(layer);
-  return layer;
 }
 
-function renderAutonomousIncidentsV79(){
-  const layer = findIncidentLayerV79();
-  if(!layer) return;
-
-  const cycle = getIncidentCycleV79();
-  layer.innerHTML = "";
-
-  cycle.incidents.forEach((incident)=>{
-    const pos = placeIncidentV79(incident, cycle.createdAt);
-    const marker = document.createElement("button");
-    marker.type = "button";
-    marker.className = `dynamic-incident-marker ${incident.level}`;
-    marker.style.left = pos.x + "%";
-    marker.style.top = pos.y + "%";
-    marker.title = `${incident.id} // ${incident.sector}`;
-
-    marker.addEventListener("click", (event)=>{
-      event.preventDefault();
-      event.stopPropagation();
-      openIncidentPopupV79(incident, pos);
-    });
-
-    layer.appendChild(marker);
+function renderAutonomousIncidentsV80(forceNew=false){
+  if(!mapReady || !map || typeof L === "undefined") return;
+  clearLiveIncidentsV79();
+  const state = ensureIncidentStateV80(forceNew);
+  state.incidents.forEach(incident=>{
+    const icon = L.divIcon({className:"",html:`<div class="severity-marker ${incident.severity} live-incident-marker"></div>`,iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-13]});
+    const marker = L.marker(incident.coords,{icon}).addTo(map);
+    marker.bindPopup(incidentPopupV79(incident),{closeButton:false,autoPan:true});
+    liveIncidentMarkersV79.push(marker);
   });
+  updateIncidentHudV80(state);
+  schedulePopupAutoplayV80();
 }
 
-window.addEventListener("load", ()=>{
-  setTimeout(renderAutonomousIncidentsV79, 300);
-  setInterval(renderAutonomousIncidentsV79, 10 * 60 * 1000);
+function schedulePopupAutoplayV80(){
+  if(popupAutoplayTimerV80) clearInterval(popupAutoplayTimerV80);
+  if(!liveIncidentMarkersV79.length) return;
+  const openRandom = ()=>{
+    if(!document.getElementById("map")?.classList.contains("active")) return;
+    const marker = liveIncidentMarkersV79[Math.floor(Math.random() * liveIncidentMarkersV79.length)];
+    if(marker) marker.openPopup();
+  };
+  setTimeout(openRandom, randomBetweenV80(1200, 2600));
+  popupAutoplayTimerV80 = setInterval(openRandom, randomBetweenV80(35000, 85000));
+}
 
-  const close = document.getElementById("incident-popup-close-v79");
-  const popup = document.getElementById("incident-popup-v79");
+function startIncidentCycleV79(){
+  if(incidentTimerV79) return;
+  incidentTimerV79 = setInterval(()=>{
+    const before = activeIncidentStateV80?.lastMutationAt;
+    const state = ensureIncidentStateV80(false);
+    if(before !== state.lastMutationAt) renderAutonomousIncidentsV80(false);
+    else updateIncidentHudV80(state);
+  },60000);
+}
 
-  if(close) close.addEventListener("click", closeIncidentPopupV79);
-  if(popup){
-    popup.addEventListener("click", (event)=>{
-      if(event.target === popup) closeIncidentPopupV79();
-    });
-  }
+function spawnAutonomousIncidentsV79(){ renderAutonomousIncidentsV80(false); }
+
+showReport = function(){ return; };
+initMap = function(){
+  if(mapReady || typeof L === "undefined") return;
+  const bounds = L.latLngBounds([51.18,29.75],[51.55,30.45]);
+  map = L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);
+  map.fitBounds(bounds);
+  mapReady = true;
+  setTimeout(()=>map.invalidateSize(),250);
+  renderAutonomousIncidentsV80(false);
+  startIncidentCycleV79();
+};
+
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    if(document.getElementById("map")?.classList.contains("active")){
+      if(!mapReady) initMap();
+      renderAutonomousIncidentsV80(false);
+      startIncidentCycleV79();
+    }
+  },700);
 });

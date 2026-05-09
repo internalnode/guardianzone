@@ -66,7 +66,6 @@
       </div>
 
       <div class="map-card">
-<div id="dynamic-incident-layer" class="dynamic-incident-layer"></div>
         <div id="leaflet-map"></div>
         <div class="tactical-grid"></div>
         <div class="map-readout">
@@ -75,17 +74,9 @@
         </div>
       </div>
 
-      <div class="relay-network-panel" id="relay-network">
-  <div class="card-title">RELAY NETWORK</div>
-  <div class="relay-row"><span>RELAY_03</span><strong id="relay03-state">INSTABLE</strong></div>
-  <div class="relay-row"><span>CAMERA_07</span><strong id="camera07-state">HORS LIGNE</strong></div>
-  <div class="relay-row"><span>NORTH_GATE</span><strong id="northgate-state">VERROUILLÉ</strong></div>
-</div>
-
-<div class="report-card" id="report">
-        <div class="card-title"></div>
-        <h3>ТОЧКУ НЕ ОБРАНО</h3>
-        <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
+      <div class="incident-feed-strip" id="incident-feed-strip">
+        <span>AUTO INCIDENTS : ARMED</span>
+        <strong id="incident-cycle-state">NEXT SCAN : --s</strong>
       </div>
     </section>
 
@@ -175,14 +166,6 @@
 <script src="script.js"></script>
 
 </section>
-
-
-<div class="incident-popup-v79" id="incident-popup-v79" aria-hidden="true">
-  <div class="popup-box">
-    <button type="button" id="incident-popup-close-v79">×</button>
-    <div id="incident-popup-content-v79"></div>
-  </div>
-</div>
 
 </body>
 </html>
