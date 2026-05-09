@@ -15,7 +15,7 @@ function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classL
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>showScreen(btn.dataset.screen)));
 const events=[
 "CAMERA FEED LOST — SECTOR NORTH",
-"FAIBLE FREQUENCY BURST DETECTED",
+"LOW FREQUENCY BURST DETECTED",
 "PERIMETER RELAY 03 RESPONDING",
 "UNCONFIRMED MOVEMENT — RESIDENTIAL BLOCK",
 "DOSIMETER SPIKE NORMALIZED",
@@ -114,7 +114,7 @@ const fileData = {
     content:[
       "SEGMENT D’ARCHIVE MANQUANT",
       "ÉCHEC DE RÉCUPÉRATION",
-      "AUCUNE DONNÉE SUPPLÉMENTAIRE"
+      "NO ADDITIONAL DATA AVAILABLE"
     ],
     note:true
   },
@@ -126,8 +126,8 @@ const fileData = {
     power:"INCONNU",
     integrity:"--",
     content:[
-      "ACCÈS REFUSÉ",
-      "FRAGMENT DE CLÉ MANQUANT",
+      "ACCESS DENIED",
+      "KEY FRAGMENT MISSING",
       "DERNIÈRE LIAISON : INCONNUEE"
     ],
     note:true
@@ -195,7 +195,7 @@ const previousStates = [
 ];
 
 const rareEvents = [
-  "Trace de maintenance non signée — relais 03",
+  "Unsigned maintenance trace — relay 03",
   "Le canal thermique a répondu sans image",
   "Le microphone terrain a détecté un impact métallique",
   "Erreur de vérification d’archive",
