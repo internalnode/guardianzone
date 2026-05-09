@@ -347,42 +347,24 @@ document.querySelectorAll(".safe-point").forEach(btn=>{
 });
 
 
-/* v49 — robust active tab repair */
-function repairActiveNavigation(){
+/* v51 — simple active tab sync */
+window.addEventListener("load", ()=>{
   const buttons = document.querySelectorAll(".tabs button");
   const screens = document.querySelectorAll(".screen");
 
   buttons.forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const target = btn.dataset.screen;
+      if(!target) return;
 
-      buttons.forEach(b=>{
-        b.classList.remove("active");
-        b.removeAttribute("data-active");
-      });
-
+      buttons.forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
-      btn.setAttribute("data-active","true");
 
-      if(target){
-        screens.forEach(screen=>{
-          screen.classList.toggle("active", screen.id === target);
-        });
-      }
+      screens.forEach(screen=>{
+        screen.classList.toggle("active", screen.id === target);
+      });
 
       window.scrollTo({top:0, behavior:"smooth"});
     });
   });
-
-  const activeScreen = document.querySelector(".screen.active");
-  if(activeScreen){
-    buttons.forEach(b=>{
-      const isActive = b.dataset.screen === activeScreen.id;
-      b.classList.toggle("active", isActive);
-      if(isActive) b.setAttribute("data-active","true");
-      else b.removeAttribute("data-active");
-    });
-  }
-}
-
-window.addEventListener("load", repairActiveNavigation);
+});
