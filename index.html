@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="style-v5.css?v=5">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -59,6 +59,12 @@
         <div class="mini-card"><span>ROLE</span><strong>CONTAINMENT WATCH</strong></div>
         <div class="mini-card"><span>CONTACT</span><strong>NONE</strong></div>
       </div>
+
+      <div class="card presence-card">
+        <div class="card-title">UNSIGNED ACTIVITY</div>
+        <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
+        <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
+      </div>
     </section>
 
     <section id="map" class="screen">
@@ -70,7 +76,14 @@
         <div class="chip">FIELD CHECK</div>
       </div>
 
-      <div class="map-card"><div id="leaflet-map"></div></div>
+      <div class="map-card">
+        <div id="leaflet-map"></div>
+        <div class="tactical-grid"></div>
+        <div class="map-readout">
+          <span>GRID 51N-30E</span>
+          <span id="map-update">LAST UPDATE : --:--:--</span>
+        </div>
+      </div>
 
       <div class="report-card" id="report">
         <div class="card-title">SELECTED POINT</div>
@@ -85,6 +98,10 @@
         <div class="mini-card live"><span>DOSIMETER</span><strong id="dosimeter">0.42 µSv/h</strong></div>
         <div class="mini-card live"><span>LOW FREQ CHANNEL</span><strong id="channel">OPEN</strong></div>
         <div class="mini-card live"><span>LOCAL POWER</span><strong>BATTERY GRID</strong></div>
+        <div class="mini-card live"><span>WIND</span><strong id="wind">N/NE 11 KM/H</strong></div>
+        <div class="mini-card live"><span>PRESSURE</span><strong id="pressure">1008 HPA</strong></div>
+        <div class="mini-card live"><span>CAMERA INTEGRITY</span><strong id="camera-integrity">31%</strong></div>
+        <div class="mini-card live"><span>RELAY LATENCY</span><strong id="latency">418 MS</strong></div>
       </div>
 
       <div class="card log-card">
@@ -102,6 +119,8 @@
         <article><span>FILE 01</span><h3>RELAIS 03</h3><p>Ancien relais de surveillance. Retour d’alimentation observé par intermittence.</p></article>
         <article><span>FILE 02</span><h3>TUNNEL SUD</h3><p>Accès fermé après plusieurs détections nocturnes. Origine non confirmée.</p></article>
         <article><span>FILE 03</span><h3>INSTALLATION 12</h3><p>Structure partiellement effondrée. Émission faible relevée sur bande courte.</p></article>
+        <article class="corrupted"><span>FILE 04</span><h3>VISUAL RECORD</h3><p>Segment image récupéré. Données instables. Identification impossible.</p></article>
+        <article class="missing"><span>FILE 05</span><h3>SECTOR NOTE</h3><p>ARCHIVE SEGMENT MISSING // RECOVERY FAILED</p></article>
       </div>
     </section>
   </main>
@@ -114,6 +133,6 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script-v5.js?v=5"></script>
+<script src="script.js"></script>
 </body>
 </html>
