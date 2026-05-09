@@ -10,7 +10,7 @@ const reports=[
 {coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MOYEN",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
 ];
 function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">ОБРАНА ТОЧКА</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — SEVERITY : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
-function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:12px;color:#9aaa7d;margin-bottom:8px;">SEVERITY : ${r.label}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
+function initMap(){if(mapReady||typeof L==="undefined")return;const bounds=L.latLngBounds([51.18,29.75],[51.55,30.45]);map=L.map("leaflet-map",{zoomControl:false,attributionControl:false,scrollWheelZoom:true,doubleClickZoom:true,boxZoom:false,keyboard:false,touchZoom:true,minZoom:9,maxZoom:14,maxBounds:bounds,maxBoundsViscosity:1}).setView([51.389,30.099],10);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,crossOrigin:true}).addTo(map);reports.forEach(r=>{const icon=L.divIcon({className:"",html:`<div class="severity-marker ${r.severity}"></div>`,iconSize:[25,25],iconAnchor:[12,12],popupAnchor:[0,-12]});const marker=L.marker(r.coords,{icon}).addTo(map);marker.bindPopup(`<div style="font-family:IBM Plex Mono,monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;">${r.title}</div><div style="font-size:13px;line-height:1.6;color:#aeb6a8;">${r.text}</div>`);marker.on("click",()=>showReport(r))});map.fitBounds(bounds);mapReady=true;setTimeout(()=>map.invalidateSize(),250)}
 function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.screen===id));if(id==="map"){if(!mapReady)initMap();else setTimeout(()=>map.invalidateSize(),250)}window.scrollTo({top:0,behavior:"smooth"})}
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>showScreen(btn.dataset.screen)));
 const events=[
@@ -325,7 +325,7 @@ function renderSafehouse(id){
       <div><label>POWER</label><p>${data.power}</p></div>
       <div><label>SIGNAL</label><p>${data.signal}</p></div>
       <div><label>LAST ACCESS</label><p>${data.access}</p></div>
-      <div><label>STATUS</label><p>${data.status}</p></div>
+      
     </div>
     <div class="safehouse-photo">
       <img src="${data.image}" alt="${data.title}">
@@ -588,10 +588,10 @@ window.addEventListener("load", ()=>{
 
 /* v81 — realistic autonomous incidents: random persistence, no full rotation */
 const autonomousIncidentPoolV79 = [
-  {title:"RELAY_03", severity:"medium", label:"MOYEN", category:"PING ANORMAL", text:"Réponse courte détectée hors fenêtre de synchronisation.", detail:"Relais actif par intermittence ; source non attribuée.", coords:[51.3826,30.0917]},
-  {title:"CAMERA_07", severity:"high", label:"ÉLEVÉ", category:"CAPTEUR ACTIF", text:"Capteur de mouvement actif malgré flux vidéo indisponible.", detail:"Contrôle terrain conseillé ; image non récupérable.", coords:[51.4051,30.0612]},
-  {title:"NORTH_GATE", severity:"medium", label:"MOYEN", category:"VERROUILLAGE", text:"Changement d’état enregistré sans commande distante.", detail:"Dernier état : verrouillage confirmé, ping instable.", coords:[51.4484,30.0365]},
-  {title:"EAST_WINDOW", severity:"low", label:"FAIBLE", category:"SIGNAL NOCTURNE", text:"Signal lumineux bref capté sur façade isolée.", detail:"Hypothèse : reflet, relais dégradé ou unité mobile.", coords:[51.2768,30.2236]},
+  {title:"RELAY_03", severity:"medium", label:"MOYEN", category:"PING ANORMAL", text:"Câble secondaire sectionné sur relais extérieur.", detail:"Transmission basculée sur ligne de secours.", coords:[51.3826,30.0917]},
+  {title:"CAMERA_07", severity:"high", label:"ÉLEVÉ", category:"CAPTEUR ACTIF", text:"Orientation caméra modifiée manuellement.", detail:"Aucune maintenance autorisée enregistrée.", coords:[51.4051,30.0612]},
+  {title:"NORTH_GATE", severity:"medium", label:"MOYEN", category:"VERROUILLAGE", text:"Badge inconnu utilisé sur accès technique.", detail:"Authentification rejetée automatiquement.", coords:[51.4484,30.0365]},
+  {title:"EAST_WINDOW", severity:"low", label:"FAIBLE", category:"SIGNAL NOCTURNE", text:"Présence thermique détectée près du périmètre sud.", detail:"Signal perdu après 18 secondes.", coords:[51.2768,30.2236]},
   {title:"SOUTH_TUNNEL", severity:"critical", label:"CRITIQUE", category:"CONTACT PERDU", text:"Balise basse fréquence disparue pendant le balayage.", detail:"Dernière trame incomplète ; zone à éviter sans escorte.", coords:[51.2462,30.0831]},
   {title:"PRIPYAT_BLOCK", severity:"high", label:"ÉLEVÉ", category:"MOUVEMENT", text:"Déclenchements multiples dans un bâtiment résidentiel.", detail:"Aucun identifiant associé ; bruit de porte et vibration brève.", coords:[51.4079,30.0579]},
   {title:"RED_FOREST_EDGE", severity:"medium", label:"MOYEN", category:"INTERFÉRENCE", text:"Parasitage radio relevé sur bande courte.", detail:"Signal large, non vocal, durée inférieure à 18 secondes.", coords:[51.3658,30.0042]},
