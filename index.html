@@ -47,7 +47,8 @@
     <button class="active" data-screen="map">ВУЗОЛ</button>
     <button data-screen="systems">СИСТЕМИ</button>
     <button data-screen="archives">АРХІВ</button>
-  </nav>
+  <button class="nav-btn" data-target="safehouses-panel">SAFEHOUSES</button>
+</nav>
 
   <main class="screen-wrap">
     <section id="dossier" class="screen">
@@ -190,7 +191,27 @@
       </div>
     </section>
   
-<section class="primary-node-panel">
+
+
+</main>
+
+  <footer class="bottom-status">
+    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
+    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
+    
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
+<section class="overlay-panel hidden-panel" id="safehouses-panel">
+  <div class="overlay-header">
+    <div class="card-title">СХОВИЩА // SAFEHOUSES</div>
+    <button class="close-overlay" onclick="document.getElementById('safehouses-panel').classList.remove('active')">✕</button>
+  </div>
+
+  <section class="primary-node-panel">
   <div class="card-title">ЦЕНТРАЛЬНИЙ ВУЗОЛ</div>
 
   <div class="node-entry active-node">
@@ -253,17 +274,18 @@
     </div>
   </div>
 </section>
+</section>
 
-</main>
 
-  <footer class="bottom-status">
-    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
-    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
-    
-  </footer>
-</div>
+<script>
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll('[data-target="safehouses-panel"]').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.getElementById("safehouses-panel").classList.add("active");
+    });
+  });
+});
+</script>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
