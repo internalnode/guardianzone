@@ -2,59 +2,213 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EXCLUSION NODE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>MYTH // EXCLUSION NODE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div id="boot">
+  <div class="boot-panel">
+    <div class="boot-kicker">EXCLUSION NODE // COLD START</div>
+    <div id="boot-lines"></div>
+    <div class="boot-bar"><span></span></div>
+    <div class="boot-foot">AUTHORIZATION : LIMITED</div>
+  </div>
+</div>
+
 <div class="noise"></div>
+<div class="scanlines"></div>
+<div class="weather-haze"></div>
+<div class="device-glass"></div>
+<div class="ghost-map-layer"></div>
 
-<header class="topbar">
-  <div>
-    <div class="node">ВУЗОЛ СПОСТЕРЕЖЕННЯ</div>
-    <div class="sub">EXCLUSION NODE</div>
-  </div>
-
-  <div class="status">
-    <span>СИГНАЛ // FAIBLE</span>
-    <span id="clock">--:--</span>
-  </div>
-</header>
-
-<main class="layout">
-  <aside class="panel">
-    <h3>АКТИВНІ ІНЦИДЕНТИ</h3>
-    <div id="incidents">
-      <div class="item"><b>RELAY_03</b><span>ALIMENTÉ HORS CYCLE</span></div>
-      <div class="item"><b>CAMERA_07</b><span>CONTACT PERDU</span></div>
-      <div class="item"><b>NORTH_BLOCK</b><span>MOUVEMENT NON CONFIRMÉ</span></div>
+<div class="app-shell">
+  <header class="app-header">
+    <div>
+      <div class="node">ВУЗОЛ СПОСТЕРЕЖЕННЯ</div>
+      <div class="subnode">EXCLUSION NODE</div>
     </div>
-  </aside>
-
-  <section class="map">
-    <div class="map-overlay"></div>
-    <div class="marker m1"></div>
-    <div class="marker m2"></div>
-    <div class="marker m3"></div>
-  </section>
-
-  <aside class="panel">
-    <h3>АРХІВ</h3>
-    <div class="archive">
-      <div class="item"><b>VISUAL_RECORD</b><span>PARTIEL</span></div>
-      <div class="item"><b>BLACK_CHANNEL</b><span>VERROUILLÉ</span></div>
-      <div class="item"><b>REPEATER_NODE</b><span>INSTABLE</span></div>
+    <div class="header-stack">
+      <div class="signal" id="signal-state">SIGNAL DEGRADED</div>
+      <div class="clock" id="node-clock">--:--:--</div>
     </div>
+  </header>
 
-    <h3>ПОЛЬОВИЙ ПОТІК</h3>
-    <div id="feed">
-      <div class="feed-item">02:14 — Capteur porte : réponse brève.</div>
-      <div class="feed-item">03:02 — Signal basse fréquence détecté.</div>
-      <div class="feed-item">03:51 — Relais 03 inaccessible.</div>
-    </div>
-  </aside>
-</main>
+  <nav class="tabs">
+    <button data-screen="dossier">ОПЕРАТОР</button>
+    <button class="active" data-screen="map">ВУЗОЛ</button>
+    <button data-screen="systems">СИСТЕМИ</button>
+    <button data-screen="archives">АРХІВ</button>
+  </nav>
 
+  <main class="screen-wrap">
+    <section id="dossier" class="screen">
+      <div class="card hero-card">
+        <div class="card-title">ДОСЬЄ ОПЕРАТОРА</div>
+        <h1>MYTH</h1>
+        <div class="tagline">ОСОБОВИЙ ФАЙЛ // RÉCUPÉRATION PARTIELLE</div>
+        <p>Ancien opérateur rattaché au dispositif de confinement. Identité complète absente des registres consultables.</p>
+        <p>Relais, verrous secondaires et capteurs isolés présentent des interventions manuelles récentes. Signature absente.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="mini-card"><span>STATUS</span><strong>ACTIF / NON CONFIRMÉ</strong></div>
+        <div class="mini-card"><span>AREA</span><strong>PÉRIMÈTRE NORD</strong></div>
+        <div class="mini-card"><span>ROLE</span><strong>SURVEILLANCE CONFINEMENT</strong></div>
+        <div class="mini-card"><span>CONTACT</span><strong>AUCUN</strong></div>
+      </div>
+
+      <div class="card presence-card">
+        <div class="card-title">НЕПІДПИСАНА АКТИВНІСТЬ</div>
+        <p>Certains relais se réactivent avant les intrusions signalées. Aucune signature d’accès n’est conservée.</p>
+        <p class="muted-line">Dernière intervention supposée : maintenance manuelle du relais 03.</p>
+      </div>
+
+      <div class="card presence-card stale-card">
+        <div class="card-title">ПОПЕРЕДНІЙ СТАН СИСТЕМИ</div>
+        <p id="previous-state">Dernier cycle stable détecté avant l’ouverture du terminal.</p>
+        <p class="muted-line" id="previous-state-time">Recovered timestamp : pending...</p>
+      </div>
+    </section>
+
+    <section id="map" class="screen active">
+      <div class="map-top">
+        <div>
+          <div class="card-title">СТАН ПЕРИМЕТРА</div>
+          <p>Vue verrouillée sur la zone d’exclusion. Les points indiquent des alertes nécessitant une vérification sur le terrain.</p>
+        </div>
+        <div class="chip">ПОЛЬОВА ПЕРЕВІРКА</div>
+      </div>
+
+      <div class="map-card">
+        <div id="leaflet-map"></div>
+        <div class="tactical-grid"></div>
+        <div class="map-readout">
+          <span>GRID 51N-30E</span>
+          <span id="map-update">LAST UPDATE : --:--:--</span>
+        </div>
+      </div>
+
+      <div class="report-card" id="report">
+        <div class="card-title">ОБРАНА ТОЧКА</div>
+        <h3>ТОЧКУ НЕ ОБРАНО</h3>
+        <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
+      </div>
+
+      <div class="report-card zone-conditions" id="zone-conditions">
+        <div class="card-title">УМОВИ ЗОНИ</div>
+        <div class="env-grid">
+          <div><span>BROUILLARD</span><strong id="fog-state">FAIBLE</strong></div>
+          <div><span>PLUIE</span><strong id="rain-state">AUCUNE</strong></div>
+          <div><span>VISIBILITÉ</span><strong id="visibility-state">STABLE</strong></div>
+          <div><span>RÉSEAU</span><strong id="network-state">INTERMITTENT</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="systems" class="screen">
+      <div class="grid-2">
+        <div class="mini-card live"><span>СИГНАЛ</span><strong id="quality">DEGRADED</strong></div>
+        <div class="mini-card live"><span>DOSIMETER</span><strong id="dosimeter">0.42 µSv/h</strong></div>
+        <div class="mini-card live"><span>КАНАЛ НЧ</span><strong id="channel">OPEN</strong></div>
+        <div class="mini-card live"><span>ЖИВЛЕННЯ</span><strong>RÉSEAU BATTERIE</strong></div>
+        <div class="mini-card live"><span>ВІТЕР</span><strong id="wind">N/NE 11 KM/H</strong></div>
+        <div class="mini-card live"><span>ТИСК</span><strong id="pressure">1008 HPA</strong></div>
+        <div class="mini-card live"><span>ЦІЛІСНІСТЬ КАМЕР</span><strong id="camera-integrity">31%</strong></div>
+        <div class="mini-card live"><span>ЗАТРИМКА РЕЛЕ</span><strong id="latency">418 MS</strong></div>
+        <div class="mini-card live"><span>ТУМАН</span><strong id="fog">FAIBLE</strong></div>
+        <div class="mini-card live"><span>ТЕРМАЛЬНИЙ КАНАЛ</span><strong id="thermal">HORS LIGNE</strong></div>
+        <div class="mini-card live"><span>СТАН МЕРЕЖІ</span><strong id="grid-integrity">38%</strong></div>
+        <div class="mini-card live"><span>СТАН ЗОНИ</span><strong id="field-condition">STABLE</strong></div>
+      </div>
+
+      <div class="card log-card">
+        <div class="card-title">СИСТЕМНИЙ ПОТІК</div>
+        <div id="system-log">
+          <div>[00:00:01] NODE ONLINE</div>
+          <div>[00:00:04] PERIMETER DATA SYNC</div>
+          <div>[00:00:08] WARNING : SIGNAL DEGRADATION</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="archives" class="screen">
+      <div class="files-layout">
+
+        <div class="files-list">
+          <button class="file-entry active critical-file" data-file="relais03">
+            <span>FILE 01</span>
+            <em>[CRITICAL] // SRC: RELAY</em><strong>RELAIS_03</strong><small>T-42 MIN // REL: 0.74</small>
+          </button>
+
+          <button class="file-entry" data-file="tunnel">
+            <span>FILE 02</span>
+            <strong>TUNNEL_SUD</strong><small>T-03 H // REL: 0.58</small>
+          </button>
+
+          <button class="file-entry" data-file="install12">
+            <span>FILE 03</span>
+            <strong>INSTALLATION_12</strong><small>T-11 H // REL: 0.41</small>
+          </button>
+
+          <button class="file-entry corrupted partial-file" data-file="visual">
+            <span>FILE 04</span>
+            <em>[PARTIEL] // SRC: CAMERA</em><strong>VISUAL_RECORD</strong><small>T-19 MIN // REL: 0.12</small>
+          </button>
+
+          <button class="file-entry missing locked-file" data-file="sector">
+            <span>FILE 05</span>
+            <em>[ARCHIVE LOST]</em><strong>SECTOR_NOTE</strong><small>NO TIMESTAMP // REL: 0.00</small>
+          </button>
+
+          <button class="file-entry missing locked-file" data-file="locked">
+            <span>FILE 06</span>
+            <em>[VERROUILLÉ]</em><strong>BLACK_CHANNEL</strong><small>ACCESS DENIED // REL: --</small>
+          </button>
+        </div>
+
+        <div class="file-viewer" id="file-viewer">
+          <div class="card-title">ПЕРЕГЛЯД АРХІВУ</div>
+
+          <div class="file-header">
+            <h3>RELAIS_03</h3>
+            <div class="file-state">STATUS : ACTIVE</div>
+          </div>
+
+          <div class="file-meta">
+            <div><span>LAST ACCESS</span><strong>UNKNOWN</strong></div>
+            <div><span>POWER SOURCE</span><strong>LOCAL GRID</strong></div>
+            <div><span>ARCHIVE INTEGRITY</span><strong>74%</strong></div>
+          </div>
+
+          <div class="file-content">
+            <p>Le relais était déjà alimenté avant l’arrivée sur site.</p>
+            <p>Aucune présence détectée à proximité immédiate.</p>
+            <p>Aucune trace récente observée autour de l’installation.</p>
+            <p class="terminal-note">Le système a pourtant été redémarré manuellement.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="bottom-status">
+    <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
+    <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
+    <div><button id="audio-toggle">АУДІО : OFF</button></div>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
