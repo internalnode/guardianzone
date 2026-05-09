@@ -1379,3 +1379,132 @@ button[data-screen="archives"],
 .tabs{
   grid-template-columns:repeat(4,1fr) !important;
 }
+
+
+/* v42 mobile optimization */
+html,body{
+  overflow-x:hidden;
+}
+
+main{
+  padding-bottom:88px;
+}
+
+/* Bottom app navigation */
+.tabs{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:999;
+  background:rgba(4,5,4,.94);
+  backdrop-filter:blur(8px);
+  border-top:1px solid rgba(154,170,125,.16);
+  padding:8px;
+  gap:6px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr) !important;
+}
+
+.tabs button{
+  min-height:46px;
+  border:1px solid rgba(154,170,125,.12);
+  background:#080908;
+  font-size:8px !important;
+  letter-spacing:1px !important;
+  border-radius:0;
+}
+
+.screen{
+  min-height:auto !important;
+  padding-bottom:20px;
+}
+
+/* Compact cards */
+.card,
+.system-card,
+.safehouse-detail,
+.safehouse-map-panel,
+.primary-node-panel,
+.node-entry{
+  margin-bottom:10px !important;
+}
+
+/* Compact text */
+.node-description p,
+.archive-text p,
+.feed-entry,
+.system-log-entry-live{
+  font-size:13px !important;
+  line-height:1.45 !important;
+  margin-bottom:8px !important;
+}
+
+/* Compact images */
+.safehouse-photo img{
+  height:150px !important;
+}
+
+.archive-photo img{
+  height:150px !important;
+}
+
+/* Compact map */
+.safehouse-map{
+  height:260px !important;
+}
+
+/* Compact metadata */
+.node-meta,
+.archive-meta{
+  gap:6px !important;
+}
+
+.node-meta div,
+.archive-meta div{
+  padding:8px !important;
+}
+
+/* One-screen feel */
+@media(max-width:760px){
+
+  body{
+    font-size:14px;
+  }
+
+  .screen{
+    padding-top:10px !important;
+  }
+
+  .map-panel,
+  .safehouses-layout,
+  .system-layout{
+    gap:8px !important;
+  }
+
+  .card-title{
+    font-size:10px !important;
+    letter-spacing:1.5px !important;
+  }
+
+  h1,h2,h3{
+    margin-top:8px !important;
+    margin-bottom:10px !important;
+  }
+
+  /* Incident feed compact */
+  .incident-entry,
+  .feed-entry{
+    padding:10px !important;
+  }
+
+  /* Reduce giant spacing */
+  section{
+    margin-bottom:10px !important;
+  }
+
+  /* App style viewport */
+  .screen.active{
+    animation:none !important;
+  }
+}
