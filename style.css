@@ -2494,3 +2494,179 @@ button[data-screen="dossier"],
   font-size:10px !important;
   letter-spacing:.8px;
 }
+
+
+/* v75 — clean rebuild / definitive tab isolation */
+html, body{
+  overflow-x:hidden !important;
+}
+
+.screen{
+  display:none !important;
+  visibility:hidden !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+
+.screen.active{
+  display:block !important;
+  visibility:visible !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:visible !important;
+  padding-bottom:18px !important;
+}
+
+.tabs{
+  grid-template-columns:repeat(3,1fr) !important;
+}
+
+.tabs button{
+  border-color:rgba(154,170,125,.14) !important;
+  color:#d7ddd1 !important;
+  background:linear-gradient(180deg, rgba(12,15,12,.96), rgba(6,7,6,.98)) !important;
+  box-shadow:none !important;
+}
+
+.tabs button.active{
+  border-color:#c0a35f !important;
+  color:#c0a35f !important;
+  background:rgba(192,163,95,.06) !important;
+  box-shadow:0 0 18px rgba(192,163,95,.08) !important;
+}
+
+#map.active .map-card{
+  display:block !important;
+  position:relative !important;
+  height:420px !important;
+  min-height:420px !important;
+  max-height:420px !important;
+  margin-top:12px !important;
+  overflow:hidden !important;
+}
+
+#leaflet-map{
+  display:block !important;
+  width:100% !important;
+  height:420px !important;
+  min-height:420px !important;
+  max-height:420px !important;
+  background:#090b09 !important;
+}
+
+#map:not(.active) .map-card,
+#map:not(.active) #leaflet-map{
+  display:none !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+}
+
+#report,
+.report-card,
+#map-incident-detail,
+.map-incident-detail,
+.incident-detail,
+.selected-incident,
+.selected-incident-panel{
+  display:none !important;
+  height:0 !important;
+  min-height:0 !important;
+  max-height:0 !important;
+  visibility:hidden !important;
+  overflow:hidden !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+}
+
+.leaflet-popup-content-wrapper{
+  background:#060806 !important;
+  color:#d7ddd1 !important;
+  border:1px solid rgba(154,170,125,.3) !important;
+  border-radius:0 !important;
+}
+
+.leaflet-popup-tip{
+  background:#060806 !important;
+}
+
+.incident-popup,
+.map-point-popup{
+  font-family:"IBM Plex Mono",monospace;
+  min-width:190px;
+}
+
+.incident-popup h4,
+.map-point-popup h4{
+  margin:0 0 8px;
+  color:#c0a35f;
+  font-size:12px;
+  letter-spacing:1.2px;
+}
+
+.incident-popup p,
+.map-point-popup p{
+  margin:5px 0;
+  font-size:11px;
+  line-height:1.45;
+  color:#d7ddd1;
+}
+
+.incident-popup .muted,
+.map-point-popup .muted{
+  color:#8f9988;
+}
+
+.gps-line{
+  margin-top:8px !important;
+  padding-top:7px;
+  border-top:1px solid rgba(154,170,125,.18);
+  color:#c0a35f !important;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px !important;
+  letter-spacing:.8px;
+}
+
+.leaflet-incident-marker{
+  width:26px !important;
+  height:26px !important;
+  border-radius:50%;
+  border:3px solid #050605 !important;
+  background:#c0a35f;
+  box-shadow:
+    0 0 0 2px rgba(215,221,209,.55),
+    0 0 18px rgba(192,163,95,.72),
+    inset 0 0 10px rgba(255,255,255,.08) !important;
+}
+
+.leaflet-incident-marker.severity-high,
+.leaflet-incident-marker.critical{
+  width:34px !important;
+  height:34px !important;
+  background:#c15f4d !important;
+  box-shadow:
+    0 0 0 2px rgba(215,221,209,.6),
+    0 0 24px rgba(193,95,77,.9),
+    0 0 42px rgba(193,95,77,.35) !important;
+}
+
+.leaflet-incident-marker.severity-low{
+  width:23px !important;
+  height:23px !important;
+  background:#9aaa7d !important;
+}
+
+@media(max-width:760px){
+  #map.active .map-card,
+  #leaflet-map{
+    height:360px !important;
+    min-height:360px !important;
+    max-height:360px !important;
+  }
+}

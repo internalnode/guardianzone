@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="fixed-hud-layout">
 
 <div id="boot">
@@ -28,7 +29,6 @@
 <div class="scanlines"></div>
 <div class="weather-haze"></div>
 <div class="device-glass"></div>
-<div class="ghost-map-layer"></div>
 
 <div class="app-shell">
   <header class="app-header">
@@ -43,14 +43,13 @@
   </header>
 
   <nav class="tabs">
-<button class="active" data-screen="map" class="active">MAP</button>
+    <button class="active" data-screen="map">MAP</button>
     <button data-screen="systems">SYSTEM</button>
-    
-  <button data-screen="safehouses">SAFEHOUSES</button>
-</nav>
+    <button data-screen="safehouses">SAFEHOUSES</button>
+  </nav>
 
   <main class="screen-wrap">
-<section id="map" class="screen active">
+    <section id="map" class="screen active">
       <div class="map-top">
         <div>
           <div class="card-title">PERIMETER STATUS</div>
@@ -58,11 +57,8 @@
         </div>
         <div class="chip">FIELD CHECK</div>
       </div>
-<h3>Aucun incident sélectionné</h3>
-  <p>Sélectionne un marqueur sur la carte.</p>
-</div>
 
-<div class="map-card">
+      <div class="map-card">
         <div id="leaflet-map"></div>
         <div class="tactical-grid"></div>
         <div class="map-readout">
@@ -70,19 +66,13 @@
           <span id="map-update">LAST UPDATE : --:--:--</span>
         </div>
       </div>
-
-      <div class="report-card" id="report">
-        <div class="card-title">ОБРАНА ТОЧКА</div>
-        <h3>ТОЧКУ НЕ ОБРАНО</h3>
-        <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
-      </div>
     </section>
 
     <section id="systems" class="screen">
       <div class="grid-2">
-        <div class="mini-card live"><span>SIGNAL</span><strong id="quality">DEGRADED</strong></div>
+        <div class="mini-card live"><span>SIGNAL</span><strong id="quality">DÉGRADÉ</strong></div>
         <div class="mini-card live"><span>DOSIMETER</span><strong id="dosimeter">0.42 µSv/h</strong></div>
-        <div class="mini-card live"><span>LOW FREQ CHANNEL</span><strong id="channel">OPEN</strong></div>
+        <div class="mini-card live"><span>LOW FREQ CHANNEL</span><strong id="channel">OUVERT</strong></div>
         <div class="mini-card live"><span>POWER</span><strong>RÉSEAU BATTERIE</strong></div>
         <div class="mini-card live"><span>WIND</span><strong id="wind">N/NE 11 KM/H</strong></div>
         <div class="mini-card live"><span>PRESSURE</span><strong id="pressure">1008 HPA</strong></div>
@@ -103,67 +93,40 @@
         </div>
       </div>
     </section>
-<section id="safehouses" class="screen">
-  <div class="safehouses-layout">
 
-    <div class="safehouse-map-panel">
-      <div class="card-title">SAFEHOUSES // SAFEHOUSE NETWORK</div>
+    <section id="safehouses" class="screen">
+      <div class="safehouses-layout">
+        <div class="safehouse-map-panel">
+          <div class="card-title">SAFEHOUSES // SAFEHOUSE NETWORK</div>
 
-      <div class="safehouse-map">
-        <div class="zone-ring ring-a"></div>
-        <div class="zone-ring ring-b"></div>
+          <div class="safehouse-map">
+            <div class="zone-ring ring-a"></div>
+            <div class="zone-ring ring-b"></div>
 
-        <button class="safe-point primary" data-node="node01" style="left:48%;top:42%;">NODE-01</button>
-        <button class="safe-point unstable" data-node="forest" style="left:29%;top:58%;">FOREST</button>
-        <button class="safe-point restricted" data-node="rail" style="left:64%;top:68%;">RAIL</button>
-        <button class="safe-point sealed" data-node="north" style="left:38%;top:24%;">NORTH</button>
+            <button class="safe-point sealed" data-node="north" style="left:38%;top:24%;">NORTH</button>
+            <button class="safe-point primary" data-node="node01" style="left:48%;top:42%;">NODE-01</button>
+            <button class="safe-point unstable" data-node="forest" style="left:29%;top:58%;">FOREST</button>
+            <button class="safe-point restricted" data-node="rail" style="left:64%;top:68%;">RAIL</button>
 
-        <div class="safe-grid-label top-left">GRID 51N</div>
-        <div class="safe-grid-label bottom-right">LOGISTICS MAP // APPROX.</div>
+            <div class="safe-grid-label top-left">GRID 51N</div>
+            <div class="safe-grid-label bottom-right">LOGISTICS MAP // APPROX.</div>
+          </div>
+
+          <div class="safehouse-warning">Carte volontairement imprécise.</div>
+        </div>
+
+        <div class="safehouse-detail" id="safehouse-detail"></div>
       </div>
-
-      <div class="safehouse-warning">
-        Carte volontairement imprécise.
-      </div>
-    </div>
-
-    <div class="safehouse-detail" id="safehouse-detail">
-      <div class="card-title">SELECTED CACHE</div>
-      <h3>NODE-01 // PRIMARY RELAY</h3>
-      <div class="node-meta">
-        <div><label>POWER</label><p>RÉSEAU LOCAL</p></div>
-        <div><label>SIGNAL</label><p>STABLE</p></div>
-        <div><label>LAST ACCESS</label><p>01:42</p></div>
-        <div><label>STATUS</label><p>ACTIF</p></div>
-      </div>
-      <div class="safehouse-photo">
-        <img src="https://images.unsplash.com/photo-1513828583688-c52646db42da?q=80&w=1200&auto=format&fit=crop" alt="NODE-01">
-        <div class="photo-caption">NODE-01 // cliché récupéré depuis caméra interne — image partielle</div>
-      </div>
-
-      <div class="node-description">
-        <p>Ancien site technique réutilisé.</p>
-        <p>Relais longue portée actif.</p>
-        <p>Réserve opérationnelle maintenue.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-</main>
+    </section>
+  </main>
 
   <footer class="bottom-status">
     <div>ВТРАТА СИГНАЛУ : <b id="loss">12%</b></div>
     <div>ЧАС РОБОТИ : <b id="uptime">00:00:00</b></div>
-    
   </footer>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="script.js"></script>
-
-</section>
-
 </body>
 </html>
