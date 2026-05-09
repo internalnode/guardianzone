@@ -6,7 +6,7 @@ const reports=[
 {coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITICAL",category:"Unstable emission",text:"Alimentation relevée hors cycle prévu autour des structures principales.",detail:"Caméras indisponibles. Vérification terrain prioritaire."},
 {coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"HIGH",category:"Recent movement",text:"Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",detail:"Signal faible : contact porte, vibration brève, perte de flux."},
 {coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MEDIUM",category:"Radio interference",text:"Parasitage constant sur bande courte. Origine non isolée.",detail:"Contrôle différé recommandé. Conditions de visibilité insuffisantes."},
-{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"LOW",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
+{coords:[51.2750,30.2210],title:"OBSERVATION EAST",severity:"low",label:"FAIBLE",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
 {coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MEDIUM",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
 ];
 function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">SELECTED POINT</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — SEVERITY : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
@@ -15,7 +15,7 @@ function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classL
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>showScreen(btn.dataset.screen)));
 const events=[
 "CAMERA FEED LOST — SECTOR NORTH",
-"LOW FREQUENCY BURST DETECTED",
+"FAIBLE FREQUENCY BURST DETECTED",
 "PERIMETER RELAY 03 RESPONDING",
 "UNCONFIRMED MOVEMENT — RESIDENTIAL BLOCK",
 "DOSIMETER SPIKE NORMALIZED",
@@ -30,10 +30,10 @@ function pushLog(){const log=document.getElementById("system-log");if(!log)retur
 function updateSystems(){
 const q=document.getElementById("quality"),d=document.getElementById("dosimeter"),c=document.getElementById("channel"),s=document.getElementById("signal-state"),l=document.getElementById("loss");
 const wind=document.getElementById("wind"),pressure=document.getElementById("pressure"),cam=document.getElementById("camera-integrity"),lat=document.getElementById("latency"),mu=document.getElementById("map-update");
-const qualities=["DEGRADED","UNSTABLE","WEAK","RESTORED"],quality=qualities[Math.floor(Math.random()*qualities.length)];
-if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="UNSTABLE"||quality==="WEAK")}
+const qualities=["DEGRADED","UNSTABLE","FAIBLE","RESTORED"],quality=qualities[Math.floor(Math.random()*qualities.length)];
+if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="UNSTABLE"||quality==="FAIBLE")}
 if(s)s.textContent="SIGNAL "+quality;
-if(c)c.textContent=["OPEN","NOISY","PARTIAL","DELAYED"][Math.floor(Math.random()*4)];
+if(c)c.textContent=["OPEN","PARASITÉ","PARTIEL","DELAYED"][Math.floor(Math.random()*4)];
 if(d)d.textContent=(0.28+Math.random()*0.46).toFixed(2)+" µSv/h";
 if(l)l.textContent=Math.floor(8+Math.random()*19)+"%";
 if(wind)wind.textContent=["N/NE 11 KM/H","E 07 KM/H","NW 18 KM/H","CALM","S 14 KM/H"][Math.floor(Math.random()*5)];
@@ -66,7 +66,7 @@ const fileData = {
     title:"TUNNEL_SUD",
     status:"RESTRICTED",
     access:"02:14",
-    power:"OFFLINE",
+    power:"HORS LIGNE",
     integrity:"58%",
     content:[
       "Détection nocturne sur accès sud.",
@@ -80,7 +80,7 @@ const fileData = {
     title:"INSTALLATION_12",
     status:"UNSTABLE",
     access:"UNKNOWN",
-    power:"PARTIAL",
+    power:"PARTIEL",
     integrity:"41%",
     content:[
       "Structure partiellement effondrée.",
@@ -121,7 +121,7 @@ const fileData = {
 
   locked:{
     title:"BLACK_CHANNEL",
-    status:"LOCKED",
+    status:"VERROUILLÉ",
     access:"DENIED",
     power:"UNKNOWN",
     integrity:"--",
@@ -241,14 +241,14 @@ function updateEnvironment(){
   const grid = document.getElementById("grid-integrity");
   const field = document.getElementById("field-condition");
 
-  if(fog) fog.textContent = ["LOW","MEDIUM","DENSE","PATCHY"][Math.floor(Math.random()*4)];
+  if(fog) fog.textContent = ["FAIBLE","MEDIUM","DENSE","PATCHY"][Math.floor(Math.random()*4)];
   if(thermal){
-    const value = ["OFFLINE","NO IMAGE","PARTIAL","NOISE ONLY"][Math.floor(Math.random()*4)];
+    const value = ["HORS LIGNE","NO IMAGE","PARTIEL","NOISE ONLY"][Math.floor(Math.random()*4)];
     thermal.textContent = value;
     thermal.classList.toggle("system-critical", value === "NO IMAGE" || value === "NOISE ONLY");
   }
   if(grid) grid.textContent = Math.floor(25 + Math.random()*31) + "%";
-  if(field) field.textContent = ["STABLE","WET","LOW VISIBILITY","INTERFERENCE"][Math.floor(Math.random()*4)];
+  if(field) field.textContent = ["STABLE","WET","FAIBLE VISIBILITY","INTERFERENCE"][Math.floor(Math.random()*4)];
 }
 
 function rareSystemEvent(){
@@ -387,7 +387,7 @@ renderFile = function(id){
   if(id === "visual"){
     viewer.innerHTML += `
       <div class="restricted-banner">
-        IMAGE FEED // PARTIALLY CORRUPTED
+        IMAGE FEED // PARTIELLY CORRUPTED
       </div>
     `;
   }
@@ -406,11 +406,11 @@ window.addEventListener("load", ()=>{
 
 /* v15 — active incidents and credibility layer */
 const incidentStates = [
-  ["RELAY_03","POWERED OUT OF CYCLE"],
-  ["SOUTH_TUNNEL","CONTACT LOST"],
-  ["PRIPYAT_BLOCK","MOTION UNCONFIRMED"],
-  ["CAMERA_07","OFFLINE / SENSOR ACTIVE"],
-  ["NORTH_GATE","LOCKED / PING RECEIVED"],
+  ["RELAY_03","ALIMENTÉ HORS CYCLE"],
+  ["SOUTH_TUNNEL","CONTACT PERDU"],
+  ["PRIPYAT_BLOCK","MOUVEMENT NON CONFIRMÉ"],
+  ["CAMERA_07","HORS LIGNE / SENSOR ACTIVE"],
+  ["NORTH_GATE","VERROUILLÉ / PING RECEIVED"],
   ["ARCHIVE_12","CORRUPTED / RECENT CHANGE"],
   ["BLACK_CHANNEL","HANDSHAKE FAILED"]
 ];
