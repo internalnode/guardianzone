@@ -1530,3 +1530,9 @@ height:150px;
     height:180px;
   }
 }
+
+
+/* v39 tabs cleanup after files removal */
+.tabs{
+  grid-template-columns:repeat(4,1fr) !important;
+}
