@@ -417,7 +417,6 @@ window.addEventListener("load", ()=>{
   }, 45000);
 });
 
-
 /* v31 primary node dynamics */
 const nodeUpdates = [
   "Maintenance trace detected near NODE-01.",
@@ -449,7 +448,6 @@ function injectNodeUpdate(){
 window.addEventListener("load", ()=>{
   setInterval(injectNodeUpdate, 120000);
 });
-
 
 /* v33 safehouses tab */
 const safehouseData = {
@@ -542,7 +540,4 @@ document.querySelectorAll(".safe-point").forEach(btn=>{
     btn.classList.add("active");
     renderSafehouse(btn.dataset.node);
   });
-});
-
-
 });
