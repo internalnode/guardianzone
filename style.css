@@ -1895,3 +1895,136 @@ body.fixed-hud-layout .container{
     font-size:9px !important;
   }
 }
+
+
+/* v53 — true terminal behavior layer */
+.terminal-state-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin:8px 0 12px;
+}
+
+.terminal-state-strip div{
+  border:1px solid rgba(154,170,125,.14);
+  background:rgba(154,170,125,.025);
+  padding:8px;
+}
+
+.terminal-state-strip span{
+  display:block;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:8px;
+  letter-spacing:1.3px;
+  color:#7f8879;
+  margin-bottom:5px;
+}
+
+.terminal-state-strip strong{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  color:#d7ddd1;
+}
+
+.relay-network-panel{
+  border:1px solid rgba(154,170,125,.18);
+  background:linear-gradient(180deg,rgba(8,10,8,.96),rgba(4,5,4,.98));
+  padding:14px;
+  margin-bottom:12px;
+  position:relative;
+}
+
+.relay-network-panel::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:32%;
+  height:1px;
+  background:#c0a35f;
+}
+
+.relay-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  border:1px solid rgba(154,170,125,.12);
+  background:rgba(154,170,125,.025);
+  padding:9px;
+  margin-top:8px;
+  font-family:"IBM Plex Mono",monospace;
+}
+
+.relay-row span{
+  font-size:10px;
+  letter-spacing:1.3px;
+  color:#bfc6b9;
+}
+
+.relay-row strong{
+  font-size:10px;
+  letter-spacing:1px;
+  color:#c0a35f;
+}
+
+.safehouse-logistics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:12px 0;
+}
+
+.safehouse-logistics div{
+  border:1px solid rgba(154,170,125,.12);
+  background:rgba(154,170,125,.025);
+  padding:9px;
+}
+
+.safehouse-logistics label{
+  display:block;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:8px;
+  letter-spacing:1.2px;
+  color:#7f8879;
+  margin-bottom:6px;
+}
+
+.safehouse-logistics p{
+  margin:0;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:10px;
+  letter-spacing:1px;
+  color:#d7ddd1;
+}
+
+.net-warning{ color:#c0a35f!important; }
+.net-fail{ color:#b86f55!important; }
+
+.terminal-wait::after{
+  content:"_";
+  animation:cursorBlink 1s infinite;
+}
+
+@keyframes cursorBlink{
+  0%,45%{opacity:1}
+  46%,100%{opacity:0}
+}
+
+.querying{
+  opacity:.72;
+  filter:brightness(.86);
+}
+
+@media(max-width:760px){
+  .terminal-state-strip{ grid-template-columns:repeat(2,1fr); }
+  .safehouse-logistics{ grid-template-columns:repeat(2,1fr); }
+}
+
+@media(max-width:420px){
+  .terminal-state-strip div{ padding:7px; }
+  .terminal-state-strip strong,
+  .relay-row strong,
+  .relay-row span{ font-size:9px; }
+}

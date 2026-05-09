@@ -391,3 +391,150 @@ window.addEventListener("orientationchange", ()=>{
   setTimeout(updateFixedHudSpacing, 250);
 });
 setTimeout(updateFixedHudSpacing, 600);
+
+
+/* v53 — true terminal behavior layer */
+const terminalStartTimeV53 = Date.now();
+
+function v53Pad(n){
+  return String(n).padStart(2,"0");
+}
+
+function v53Rand(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function updateTerminalStateV53(){
+  const elapsed = Math.floor((Date.now() - terminalStartTimeV53) / 1000);
+  const uptime = document.getElementById("terminal-uptime");
+  const loss = document.getElementById("packet-loss");
+  const ping = document.getElementById("relay-ping");
+  const power = document.getElementById("grid-power");
+
+  if(uptime){
+    const h = v53Pad(Math.floor(elapsed / 3600));
+    const m = v53Pad(Math.floor((elapsed % 3600) / 60));
+    const s = v53Pad(elapsed % 60);
+    uptime.textContent = `${h}:${m}:${s}`;
+  }
+
+  if(loss){
+    const value = Math.floor(6 + Math.random()*22);
+    loss.textContent = `${value}%`;
+    loss.classList.toggle("net-warning", value > 18);
+  }
+
+  if(ping){
+    const value = Math.floor(180 + Math.random()*640);
+    ping.textContent = `${value} MS`;
+    ping.classList.toggle("net-warning", value > 520);
+  }
+
+  if(power){
+    power.textContent = Math.random() > .82 ? "SECONDAIRE" : "LOCAL";
+  }
+}
+
+function updateRelayNetworkV53(){
+  const relayStates = ["ACTIF","INSTABLE","HORS LIGNE","PING REÇU","RÉPONSE LENTE"];
+  const cameraStates = ["HORS LIGNE","CAPTEUR ACTIF","AUCUNE IMAGE","SYNCHRO PERDUE"];
+  const gateStates = ["VERROUILLÉ","PING REÇU","CONTACT PERDU","ÉTAT INCOHÉRENT"];
+
+  const r = document.getElementById("relay03-state");
+  const c = document.getElementById("camera07-state");
+  const g = document.getElementById("northgate-state");
+
+  if(r){
+    r.textContent = v53Rand(relayStates);
+    r.classList.toggle("net-fail", r.textContent === "HORS LIGNE");
+  }
+
+  if(c){
+    c.textContent = v53Rand(cameraStates);
+    c.classList.toggle("net-fail", c.textContent === "HORS LIGNE" || c.textContent === "AUCUNE IMAGE");
+  }
+
+  if(g){
+    g.textContent = v53Rand(gateStates);
+    g.classList.toggle("net-warning", g.textContent === "ÉTAT INCOHÉRENT");
+  }
+}
+
+function addRealisticSystemLogV53(){
+  const log = document.getElementById("system-log");
+  if(!log) return;
+
+  const messages = [
+    "SYNC FAILED — retrying relay connection.",
+    "PACKET LOSS ABOVE THRESHOLD.",
+    "CAMERA_07 offline, motion sensor still active.",
+    "RELAY_03 response delayed.",
+    "SECONDARY POWER CHECK COMPLETED.",
+    "MANUAL LOCK STATE CHANGED.",
+    "FIELD NODE QUERY TIMED OUT."
+  ];
+
+  const now = new Date();
+  const line = document.createElement("div");
+  line.className = "system-log-entry-live terminal-wait";
+  line.textContent = `[${v53Pad(now.getHours())}:${v53Pad(now.getMinutes())}:${v53Pad(now.getSeconds())}] ${v53Rand(messages)}`;
+  log.appendChild(line);
+
+  while(log.children.length > 7){
+    log.removeChild(log.firstElementChild);
+  }
+
+  setTimeout(()=>line.classList.remove("terminal-wait"), 2500);
+}
+
+function enrichSafehouseRenderingV53(){
+  if(typeof renderSafehouse !== "function") return;
+
+  const original = renderSafehouse;
+  window.renderSafehouse = function(id){
+    original(id);
+
+    const detail = document.getElementById("safehouse-detail");
+    if(!detail || detail.querySelector(".safehouse-logistics")) return;
+
+    const logistics = {
+      node01:["ACTIF","42%","FAIBLE","31%"],
+      forest:["HORS LIGNE","18%","INTERMITTENT","78%"],
+      rail:["PARTIEL","34%","FAIBLE","46%"],
+      north:["BATTERIE","12%","TRÈS FAIBLE","63%"]
+    }[id] || ["INCONNU","--","INCONNU","--"];
+
+    const block = document.createElement("div");
+    block.className = "safehouse-logistics";
+    block.innerHTML = `
+      <div><label>GENERATOR</label><p>${logistics[0]}</p></div>
+      <div><label>FUEL</label><p>${logistics[1]}</p></div>
+      <div><label>RADIO</label><p>${logistics[2]}</p></div>
+      <div><label>HUMIDITY</label><p>${logistics[3]}</p></div>
+    `;
+
+    const desc = detail.querySelector(".node-description");
+    if(desc) detail.insertBefore(block, desc);
+    else detail.appendChild(block);
+  }
+}
+
+function queryDelayOnClicksV53(){
+  document.querySelectorAll(".safe-point, .severity-marker, .tabs button").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      document.body.classList.add("querying");
+      setTimeout(()=>document.body.classList.remove("querying"), 220);
+    });
+  });
+}
+
+window.addEventListener("load", ()=>{
+  updateTerminalStateV53();
+  updateRelayNetworkV53();
+  enrichSafehouseRenderingV53();
+  queryDelayOnClicksV53();
+
+  setInterval(updateTerminalStateV53, 5000);
+  setInterval(updateRelayNetworkV53, 22000);
+  setInterval(addRealisticSystemLogV53, 65000);
+});

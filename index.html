@@ -49,6 +49,12 @@
     
   <button data-screen="safehouses">SAFEHOUSES</button>
 </nav>
+<div class="terminal-state-strip" id="terminal-state-strip">
+  <div><span>UPTIME</span><strong id="terminal-uptime">00:00:00</strong></div>
+  <div><span>NET LOSS</span><strong id="packet-loss">12%</strong></div>
+  <div><span>RELAY PING</span><strong id="relay-ping">418 MS</strong></div>
+  <div><span>POWER</span><strong id="grid-power">LOCAL</strong></div>
+</div>
 
   <main class="screen-wrap">
     <section id="dossier" class="screen">
@@ -98,7 +104,14 @@
         </div>
       </div>
 
-      <div class="report-card" id="report">
+      <div class="relay-network-panel" id="relay-network">
+  <div class="card-title">RELAY NETWORK</div>
+  <div class="relay-row"><span>RELAY_03</span><strong id="relay03-state">INSTABLE</strong></div>
+  <div class="relay-row"><span>CAMERA_07</span><strong id="camera07-state">HORS LIGNE</strong></div>
+  <div class="relay-row"><span>NORTH_GATE</span><strong id="northgate-state">VERROUILLÉ</strong></div>
+</div>
+
+<div class="report-card" id="report">
         <div class="card-title">ОБРАНА ТОЧКА</div>
         <h3>ТОЧКУ НЕ ОБРАНО</h3>
         <p>Sélectionne un marqueur pour afficher les éléments récupérés.</p>
