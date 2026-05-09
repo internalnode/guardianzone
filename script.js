@@ -126,9 +126,9 @@ const fileData = {
     power:"INCONNU",
     integrity:"--",
     content:[
-      "ACCESS DENIED",
-      "KEY FRAGMENT MISSING",
-      "DERNIÈRE LIAISON : INCONNUEE"
+      "ACCÈS REFUSÉ",
+      "FRAGMENT DE CLÉ MANQUANT",
+      "DERNIÈRE LIAISON : INCONNUE"
     ],
     note:true
   }
