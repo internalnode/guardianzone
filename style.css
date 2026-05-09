@@ -1707,3 +1707,88 @@ main{
     font-size:7px !important;
   }
 }
+
+
+/* v46 — persistent HUD header + navigation */
+.app-header,
+.header,
+.topbar{
+  position:sticky !important;
+  top:0 !important;
+  z-index:9998 !important;
+  background:rgba(4,5,4,.94) !important;
+  backdrop-filter:blur(8px);
+  margin-top:0 !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.36);
+}
+
+.tabs{
+  position:sticky !important;
+  top:112px !important;
+  z-index:9997 !important;
+  background:rgba(4,5,4,.94) !important;
+  backdrop-filter:blur(8px) !important;
+  padding:8px 0 10px !important;
+  margin-top:0 !important;
+  margin-bottom:14px !important;
+  border-bottom:1px solid rgba(154,170,125,.16) !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.28) !important;
+}
+
+/* keep content readable under sticky blocks */
+main{
+  padding-top:0 !important;
+}
+
+/* compact persistent footer/status if it exists */
+.bottom-status,
+.footer-status,
+.system-footer{
+  position:sticky !important;
+  bottom:0 !important;
+  z-index:9996 !important;
+  background:rgba(4,5,4,.94) !important;
+  backdrop-filter:blur(8px);
+}
+
+/* mobile-specific sticky offsets */
+@media(max-width:760px){
+
+  .app-header,
+  .header,
+  .topbar{
+    top:0 !important;
+  }
+
+  .tabs{
+    top:104px !important;
+  }
+}
+
+@media(max-width:420px){
+
+  .app-header,
+  .header,
+  .topbar{
+    transform:none !important;
+  }
+
+  .tabs{
+    top:96px !important;
+    padding:7px 0 9px !important;
+  }
+
+  .tabs button{
+    height:32px !important;
+    min-height:32px !important;
+  }
+}
+
+/* Safari/iOS safe area */
+@supports(padding:max(0px)){
+  .app-header,
+  .header,
+  .topbar{
+    padding-top:max(0px, env(safe-area-inset-top)) !important;
+  }
+}
