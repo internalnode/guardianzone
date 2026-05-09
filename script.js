@@ -6,7 +6,7 @@ const reports=[
 {coords:[51.3890,30.0990],title:"CENTRALE",severity:"critical",label:"CRITIQUE",category:"Unstable emission",text:"Alimentation relevée hors cycle prévu autour des structures principales.",detail:"Caméras indisponibles. Vérification terrain prioritaire."},
 {coords:[51.4048,30.0569],title:"PRIPYAT",severity:"high",label:"ÉLEVÉ",category:"Recent movement",text:"Déclenchements capteurs relevés dans plusieurs bâtiments résidentiels.",detail:"Signal faible : contact porte, vibration brève, perte de flux."},
 {coords:[51.3180,30.0710],title:"SECTEUR ROUGE",severity:"medium",label:"MOYEN",category:"Radio interference",text:"Parasitage constant sur bande courte. Origine non isolée.",detail:"Contrôle différé recommandé. Conditions de visibilité insuffisantes."},
-{coords:[51.2750,30.2210],title:"OBSERVATIACTIF EAST",severity:"low",label:"СЛАБКИЙ",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
+{coords:[51.2750,30.2210],title:"OBSERVATIACTIF EAST",severity:"low",label:"FAIBLE",category:"Night signal",text:"Signal bref détecté sur fenêtre nocturne.",detail:"Source non attribuée : relais dégradé, transmission courte ou unité mobile."},
 {coords:[51.3530,29.9800],title:"ANCIEN RELAIS",severity:"medium",label:"MOYEN",category:"Active power",text:"Relais alimenté malgré l’arrêt officiel du réseau.",detail:"Réponse irrégulière. Accès terrain classé difficile."}
 ];
 function showReport(r){document.getElementById("report").innerHTML=`<div class="card-title">ОБРАНА ТОЧКА</div><h3>${r.title}</h3><p><strong>${r.category}</strong> — GRAVITÉ : ${r.label}</p><p>${r.text}</p><p style="color:#778070">${r.detail}</p>`}
@@ -15,11 +15,11 @@ function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classL
 document.querySelectorAll(".tabs button").forEach(btn=>btn.addEventListener("click",()=>showScreen(btn.dataset.screen)));
 const events=[
 "CAMERA FEED LOST — SECTOR NORTH",
-"СЛАБКИЙ FREQUENCY BURST DETECTED",
+"FAIBLE FREQUENCY BURST DETECTED",
 "PERIMETER RELAY 03 RESPACTIFDING",
 "UNCACTIFFIRMED MOVEMENT — RESIDENTIAL BLOCK",
-"ДОЗИМЕТР SPIKE NORMALIZED",
-"СИГНАЛ DROP — 4 SECACTIFDS",
+"DOSIMETER SPIKE NORMALIZED",
+"SIGNAL DROP — 4 SECACTIFDS",
 "UNSIGNED ACCESS — RELAY 03",
 "ARCHIVE SEGMENT CORROMPU",
 "DOOR SENSOR TRIGGERED — EMPTY FEED",
@@ -30,10 +30,10 @@ function pushLog(){const log=document.getElementById("system-log");if(!log)retur
 function updateSystems(){
 const q=document.getElementById("quality"),d=document.getElementById("dosimeter"),c=document.getElementById("channel"),s=document.getElementById("signal-state"),l=document.getElementById("loss");
 const wind=document.getElementById("wind"),pressure=document.getElementById("pressure"),cam=document.getElementById("camera-integrity"),lat=document.getElementById("latency"),mu=document.getElementById("map-update");
-const qualities=["DÉGRADÉ","INSTABLE","СЛАБКИЙ","RÉTABLI"],quality=qualities[Math.floor(Math.random()*qualities.length)];
-if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="INSTABLE"||quality==="СЛАБКИЙ")}
-if(s)s.textContent="СИГНАЛ "+quality;
-if(c)c.textContent=["OUVERT","PARASITÉ","ЧАСТКОВИЙ","RETARDÉ"][Math.floor(Math.random()*4)];
+const qualities=["DÉGRADÉ","INSTABLE","FAIBLE","RÉTABLI"],quality=qualities[Math.floor(Math.random()*qualities.length)];
+if(q){q.textContent=quality;q.classList.toggle("flash-warn",quality==="INSTABLE"||quality==="FAIBLE")}
+if(s)s.textContent="SIGNAL "+quality;
+if(c)c.textContent=["OUVERT","PARASITÉ","PARTIEL","RETARDÉ"][Math.floor(Math.random()*4)];
 if(d)d.textContent=(0.28+Math.random()*0.46).toFixed(2)+" µSv/h";
 if(l)l.textContent=Math.floor(8+Math.random()*19)+"%";
 if(wind)wind.textContent=["N/NE 11 KM/H","E 07 KM/H","NW 18 KM/H","CALME","S 14 KM/H"][Math.floor(Math.random()*5)];
@@ -80,7 +80,7 @@ const fileData = {
     title:"INSTALLATIACTIF_12",
     status:"INSTABLE",
     access:"INCACTIFNU",
-    power:"ЧАСТКОВИЙ",
+    power:"PARTIEL",
     integrity:"41%",
     content:[
       "Structure partiellement effondrée.",
@@ -121,7 +121,7 @@ const fileData = {
 
   locked:{
     title:"BLACK_CHANNEL",
-    status:"ЗАБЛОКОВАНО",
+    status:"VERROUILLÉ",
     access:"REFUSÉ",
     power:"INCACTIFNU",
     integrity:"--",
@@ -149,22 +149,22 @@ function renderFile(id){
 
     <div class="file-header">
       <h3>${data.title}</h3>
-      <div class="file-state">СТАТУС : ${data.status}</div>
+      <div class="file-state">STATUS : ${data.status}</div>
     </div>
 
     <div class="file-meta">
       <div>
-        <span>ОСТАННІЙ ДОСТУП</span>
+        <span>LAST ACCESS</span>
         <strong>${data.access}</strong>
       </div>
 
       <div>
-        <span>ДЖЕРЕЛО ЖИВЛЕННЯ</span>
+        <span>POWER SOURCE</span>
         <strong>${data.power}</strong>
       </div>
 
       <div>
-        <span>ЦІЛІСНІСТЬ АРХІВУ</span>
+        <span>ARCHIVE INTEGRITY</span>
         <strong>${data.integrity}</strong>
       </div>
     </div>
@@ -241,14 +241,14 @@ function updateEnvironment(){
   const grid = document.getElementById("grid-integrity");
   const field = document.getElementById("field-condition");
 
-  if(fog) fog.textContent = ["СЛАБКИЙ","MOYEN","ГУСТИЙ","IRRÉGULIER"][Math.floor(Math.random()*4)];
+  if(fog) fog.textContent = ["FAIBLE","MOYEN","DENSE","IRRÉGULIER"][Math.floor(Math.random()*4)];
   if(thermal){
-    const value = ["HORS LIGNE","AUCUNE IMAGE","ЧАСТКОВИЙ","PARASITES SEULS"][Math.floor(Math.random()*4)];
+    const value = ["HORS LIGNE","AUCUNE IMAGE","PARTIEL","PARASITES SEULS"][Math.floor(Math.random()*4)];
     thermal.textContent = value;
     thermal.classList.toggle("system-critical", value === "AUCUNE IMAGE" || value === "PARASITES SEULS");
   }
   if(grid) grid.textContent = Math.floor(25 + Math.random()*31) + "%";
-  if(field) field.textContent = ["STABLE","HUMIDE","СЛАБКИЙ VISIBILITY","INTERFÉRENCES"][Math.floor(Math.random()*4)];
+  if(field) field.textContent = ["STABLE","HUMIDE","FAIBLE VISIBILITY","INTERFÉRENCES"][Math.floor(Math.random()*4)];
 }
 
 function rareSystemEvent(){
@@ -308,7 +308,7 @@ function setupAudioToggle(){
 
   btn.addEventListener("click", ()=>{
     audioOn = !audioOn;
-    btn.textContent = audioOn ? "АУДІО : ACTIF" : "АУДІО : COUPÉ";
+    btn.textContent = audioOn ? "АУДІО : actif" : "АУДІО : coupé";
     if(audioOn) startAudio();
     else stopAudio();
   });
@@ -387,7 +387,7 @@ renderFile = function(id){
   if(id === "visual"){
     viewer.innerHTML += `
       <div class="restricted-banner">
-        IMAGE FEED // ЧАСТКОВИЙLY CORROMPU
+        IMAGE FEED // PARTIELLY CORROMPU
       </div>
     `;
   }
@@ -410,7 +410,7 @@ const incidentStates = [
   ["SOUTH_TUNNEL","Contact perdu"],
   ["PRIPYAT_BLOCK","Mouvement non confirmé"],
   ["CAMERA_07","HORS LIGNE / SENSOR ACTIF"],
-  ["NORTH_GATE","ЗАБЛОКОВАНО / PING RECEIVED"],
+  ["NORTH_GATE","VERROUILLÉ / PING RECEIVED"],
   ["ARCHIVE_12","CORROMPU / MODIFICATIACTIF RÉCENTE"],
   ["BLACK_CHANNEL","ÉCHEC DE LIAISACTIF"]
 ];
@@ -485,7 +485,7 @@ window.addEventListener("load", ()=>{
 const restoredZoneConditions = {
   fog:["FAIBLE","MOYEN","DENSE"],
   rain:["AUCUNE","FAIBLE","FORTE"],
-  visibility:["STABLE","ОБМЕЖЕНА","TRÈS СЛАБКИЙ"],
+  visibility:["STABLE","RÉDUITE","TRÈS FAIBLE"],
   network:["INTERMITTENT","INSTABLE","DÉGRADÉ","PARTIEL"]
 };
 
