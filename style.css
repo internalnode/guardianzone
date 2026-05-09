@@ -1508,3 +1508,96 @@ main{
     animation:none !important;
   }
 }
+
+
+/* v43 top navigation HUD */
+main{
+  padding-top:74px !important;
+  padding-bottom:24px !important;
+}
+
+.tabs{
+  position:fixed !important;
+  top:0 !important;
+  left:0;
+  right:0;
+  bottom:auto !important;
+  z-index:9999;
+  background:rgba(4,5,4,.92) !important;
+  backdrop-filter:blur(10px);
+  border-top:none !important;
+  border-bottom:1px solid rgba(154,170,125,.16);
+  padding:10px 10px 12px !important;
+  display:grid;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:6px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.35),
+    inset 0 -1px 0 rgba(154,170,125,.06);
+}
+
+.tabs::before{
+  content:"NODE // SURVEILLANCE INTERFACE";
+  position:absolute;
+  top:2px;
+  left:12px;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:8px;
+  letter-spacing:1.8px;
+  color:#78806f;
+}
+
+.tabs button{
+  min-height:40px !important;
+  margin-top:8px;
+  border:1px solid rgba(154,170,125,.12);
+  background:
+    linear-gradient(180deg, rgba(12,15,12,.96), rgba(6,7,6,.98));
+  color:#d7ddd1;
+  font-size:8px !important;
+  letter-spacing:1.25px !important;
+  border-radius:0;
+  transition:.2s;
+}
+
+.tabs button:hover,
+.tabs button.active{
+  border-color:#c0a35f;
+  color:#c0a35f;
+  box-shadow:0 0 18px rgba(192,163,95,.08);
+}
+
+@media(max-width:760px){
+
+  main{
+    padding-top:78px !important;
+  }
+
+  .tabs{
+    padding:8px 8px 10px !important;
+  }
+
+  .tabs button{
+    font-size:7px !important;
+    letter-spacing:.8px !important;
+    min-height:38px !important;
+  }
+}
+
+@media(max-width:420px){
+
+  main{
+    padding-top:74px !important;
+  }
+
+  .tabs::before{
+    font-size:7px;
+    letter-spacing:1.3px;
+  }
+
+  .tabs button{
+    font-size:6.8px !important;
+    padding-left:2px;
+    padding-right:2px;
+  }
+}
