@@ -1437,3 +1437,7 @@ window.addEventListener("load",()=>{
 
   window.addEventListener("load", initOperator);
 })();
+
+
+/* v96 ensure operator visible */
+document.addEventListener("DOMContentLoaded",()=>{const op=document.getElementById("operator-panel"); if(op) op.classList.remove("hidden");});

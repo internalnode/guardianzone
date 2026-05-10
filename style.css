@@ -2369,3 +2369,9 @@ button[data-screen="operator"]{
     letter-spacing:.25px !important;
   }
 }
+
+
+/* v96 operator hard fix */
+#operator{display:none;}
+#operator.active{display:block !important; padding-bottom:120px;}
+#systems:not(.active),#map:not(.active),#safehouses:not(.active){display:none !important;}
