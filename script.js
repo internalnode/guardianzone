@@ -867,7 +867,7 @@ window.addEventListener("load",()=>{
   },700);
 });
 
-/* v88 — selective persistence / realistic temporal layers
+/* v89 — selective persistence / realistic temporal layers + packet/latency model
    ATMOSPHERE: persistent and slow. Weather, wind, pressure, visibility and field atmosphere
    drift over hours and survive refreshes.
    SYSTEM: semi-volatile. Network/cameras/radio fluctuate more often, but still according to
@@ -875,8 +875,8 @@ window.addEventListener("load",()=>{
    INCIDENTS: kept by the existing 24-48h autonomous incident layer. */
 (function(){
   const ATMOS_KEY = "myth_atmosphere_state_v88";
-  const TECH_KEY = "myth_technical_state_v88";
-  const LEGACY_KEYS = ["myth_system_state_v87","myth_system_state_v86"];
+  const TECH_KEY = "myth_technical_state_v89";
+  const LEGACY_KEYS = ["myth_technical_state_v88","myth_system_state_v87","myth_system_state_v86"];
   const now = () => Date.now();
   const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
   const pick = arr => arr[Math.floor(Math.random()*arr.length)];
@@ -933,16 +933,21 @@ window.addEventListener("load",()=>{
     const t = now();
     const profile = pick(["quiet","degraded","maintenance","suspicious"]);
     return {
-      version:88,
+      version:89,
       profile,
       signal: profile === "quiet" ? "STABLE" : "DÉGRADÉ",
       channel:"PARTIEL",
       power:"LOCAL",
       dosimeter:0.38,
       camera:rand(42,72),
-      latency:rand(260,520),
+      latency:rand(62,118),
+      latencyTarget:rand(62,118),
+      relayLoad:rand(28,58),
+      packetTx:rand(620,940),
+      packetRx:rand(612,936),
+      packetHistory:[],
       grid:rand(45,76),
-      loss:rand(6,15),
+      loss:Number((Math.random()*1.8+0.3).toFixed(1)),
       thermal:"PARTIEL",
       logs:[],
       createdAt:t,
@@ -983,11 +988,13 @@ window.addEventListener("load",()=>{
 
   function loadTechnical(){
     const saved = readJson(TECH_KEY);
-    if(saved && saved.version === 88) return Object.assign(createTechnical(), saved, {logs:Array.isArray(saved.logs)?saved.logs.slice(-8):[]});
+    if(saved && saved.version === 89) return Object.assign(createTechnical(), saved, {logs:Array.isArray(saved.logs)?saved.logs.slice(-8):[], packetHistory:Array.isArray(saved.packetHistory)?saved.packetHistory.slice(-60):[]});
     const legacy = loadLegacy();
     if(legacy){
       const t = createTechnical();
-      ["profile","signal","channel","power","dosimeter","camera","latency","grid","loss","thermal"].forEach(k=>{ if(legacy[k] !== undefined) t[k] = legacy[k]; });
+      ["profile","signal","channel","power","dosimeter","camera","grid","thermal"].forEach(k=>{ if(legacy[k] !== undefined) t[k] = legacy[k]; });
+      if(typeof legacy.latency === "number") t.latency = clamp(legacy.latency, 55, 180);
+      if(typeof legacy.loss === "number") t.loss = clamp(legacy.loss, .1, 7.5);
       t.logs = Array.isArray(legacy.logs) ? legacy.logs.slice(-8) : [];
       return t;
     }
@@ -1053,8 +1060,8 @@ window.addEventListener("load",()=>{
     const penalty = weatherPenalty();
     const stress = tech.profile === "suspicious" ? 1.25 : tech.profile === "degraded" ? 1.1 : tech.profile === "maintenance" ? .85 : .55;
 
-    tech.latency = Math.round(clamp(tech.latency + rand(-45,65)*stress + penalty*12, 140, 980));
-    tech.loss = Math.round(clamp(tech.loss + rand(-3,4)*stress + penalty, 1, 35));
+    const loadDrift = rand(-7,9) * stress + penalty * 1.8;
+    tech.relayLoad = Math.round(clamp((tech.relayLoad ?? 45) + loadDrift, 18, 92));
     tech.camera = Math.round(clamp(tech.camera + rand(-6,5) - penalty, 14, 92));
     tech.grid = Math.round(clamp(tech.grid + rand(-4,5), 22, 90));
     tech.dosimeter = clamp(tech.dosimeter + (Math.random()-.50)*0.05, .21, .91);
@@ -1132,6 +1139,46 @@ window.addEventListener("load",()=>{
     });
   }
 
+  function activeIncidentPenalty(){
+    try{
+      const inc = JSON.parse(localStorage.getItem("myth_active_incidents_v81") || localStorage.getItem("myth_active_incidents_v80") || "[]");
+      return Array.isArray(inc) && inc.length ? Math.min(45, inc.length * 9) : 0;
+    }catch(e){ return 0; }
+  }
+
+  function recalcLatencyTarget(){
+    const penalty = weatherPenalty();
+    const incident = activeIncidentPenalty();
+    const load = clamp(tech.relayLoad ?? 45, 15, 95);
+    const loss = clamp(Number(tech.loss) || 0, 0, 12);
+    tech.latencyTarget = clamp(44 + load * 0.82 + loss * 15 + penalty * 7 + incident, 48, 460);
+  }
+
+  function packetSecondTick(){
+    const penalty = weatherPenalty();
+    const load = clamp(tech.relayLoad ?? 45, 15, 95);
+    const stress = tech.profile === "suspicious" ? 1.3 : tech.profile === "degraded" ? 1.15 : tech.profile === "maintenance" ? .85 : .55;
+
+    // TX/RX are live telemetry: they can move every second.
+    const baseline = clamp(940 - load * 4.2 - penalty * 18 + rand(-85,85), 210, 1120);
+    const burst = Math.random() > .93 ? rand(80,210) : 0;
+    tech.packetTx = Math.round(clamp(baseline + burst, 160, 1280));
+
+    // Packet loss is measured as a moving average, not a new random value.
+    const rawLoss = clamp((load - 35) * 0.055 + penalty * 0.34 + (stress - .5) * 0.55 + (Math.random() > .96 ? rand(8,32)/10 : 0) + (Math.random()-.5)*0.75, 0, 14);
+    tech.packetHistory = Array.isArray(tech.packetHistory) ? tech.packetHistory.slice(-59) : [];
+    tech.packetHistory.push(rawLoss);
+    const avgLoss = tech.packetHistory.reduce((a,b)=>a+b,0) / tech.packetHistory.length;
+    tech.loss = Number(avgLoss.toFixed(1));
+    tech.packetRx = Math.round(clamp(tech.packetTx * (1 - tech.loss / 100) - rand(0,9), 0, tech.packetTx));
+
+    recalcLatencyTarget();
+    // Latency follows the packet layer, but is smoothed so it does not jump every second.
+    const jitter = (Math.random() - .5) * (5 + tech.loss * 1.4);
+    tech.latency = clamp((Number(tech.latency) || tech.latencyTarget) + (tech.latencyTarget - tech.latency) * 0.12 + jitter, 42, 520);
+    tech.lastTechAt = now();
+  }
+
   function renderSystem(){
     const sigWarn = ["INSTABLE","DÉGRADÉ","FAIBLE"].includes(tech.signal);
     setText("quality", tech.signal, sigWarn);
@@ -1141,14 +1188,17 @@ window.addEventListener("load",()=>{
     setText("wind", windLabel(), false);
     setText("pressure", Math.round(atmos.pressure) + " HPA", atmos.pressure < 1000 || atmos.pressure > 1020);
     setText("camera-integrity", Math.round(tech.camera) + "%", tech.camera < 35);
-    setText("latency", Math.round(tech.latency) + " MS", tech.latency > 650);
-    setText("relay-ping", Math.round(tech.latency) + " MS", tech.latency > 650);
+    setText("latency", Math.round(tech.latency) + " MS", tech.latency > 260);
+    setText("relay-ping", Math.round(tech.latency) + " MS", tech.latency > 260);
+    setText("packet-rate", `${Math.round(tech.packetTx || 0)} / ${Math.round(tech.packetRx || 0)} PKT/S`, false);
+    setText("relay-load", Math.round(tech.relayLoad || 0) + "%", (tech.relayLoad || 0) > 78);
     setText("fog", atmos.fog, atmos.fog === "DENSE");
     setText("thermal", tech.thermal, ["AUCUNE IMAGE","PARASITES SEULS","HORS LIGNE"].includes(tech.thermal));
     setText("grid-integrity", Math.round(tech.grid) + "%", tech.grid < 40);
     setText("field-condition", atmos.field, ["INTERFÉRENCES","VISIBILITÉ RÉDUITE"].includes(atmos.field));
-    setText("packet-loss", Math.round(tech.loss) + "%", tech.loss > 20);
-    setText("loss", Math.round(tech.loss) + "%", tech.loss > 20);
+    setText("packet-loss", Number(tech.loss).toFixed(1) + "%", tech.loss > 5.5);
+    setText("packet-loss-system", Number(tech.loss).toFixed(1) + "%", tech.loss > 5.5);
+    setText("loss", Number(tech.loss).toFixed(1) + "%", tech.loss > 5.5);
     setText("grid-power", tech.power, tech.power !== "LOCAL");
     const mu = document.getElementById("map-update");
     if(mu) mu.textContent = `ATMOS ${fmt(atmos.lastAtmosAt)} // SYSTEM ${fmt(tech.lastTechAt)}`;
@@ -1156,10 +1206,9 @@ window.addEventListener("load",()=>{
   }
 
   function autonomousTick(){
-    const beforeAtmos = atmos.lastAtmosAt;
-    const beforeTech = tech.lastTechAt;
+    packetSecondTick();
     catchUp();
-    if(beforeAtmos !== atmos.lastAtmosAt || beforeTech !== tech.lastTechAt) renderSystem();
+    renderSystem();
   }
 
   // Public hooks used by older parts of the project. They now respect the layered scheduler.
@@ -1174,7 +1223,9 @@ window.addEventListener("load",()=>{
       tech.logs.push({ts:tech.lastTechAt, msg:`Telemetry restored — ATMOS ${atmos.weather.toUpperCase()} / SYSTEM ${tech.profile.toUpperCase()}.`});
       saveTechnical();
     }
+    packetSecondTick();
     renderSystem();
-    setInterval(autonomousTick, 60000);
+    setInterval(autonomousTick, 1000);
+    setInterval(()=>{ saveTechnical(); }, 15000);
   });
 })();
