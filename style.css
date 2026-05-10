@@ -2314,3 +2314,58 @@ button[data-tab="archives"],
 @media(max-width:820px){
   .operator-layout,.operator-grid{grid-template-columns:1fr;}
 }
+
+
+/* v92 — LOG tab guaranteed visible on mobile */
+.tabs,
+#main-tabs,
+body.fixed-hud-layout .tabs{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  width:100% !important;
+  max-width:100% !important;
+  overflow:visible !important;
+}
+.tabs button,
+#main-tabs button,
+body.fixed-hud-layout .tabs button{
+  min-width:0 !important;
+  width:auto !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+  box-sizing:border-box !important;
+}
+button[data-screen="operator"]{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+@media(max-width:520px){
+  .tabs,
+  #main-tabs,
+  body.fixed-hud-layout .tabs{
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:5px !important;
+  }
+  .tabs button,
+  #main-tabs button,
+  body.fixed-hud-layout .tabs button{
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 2px !important;
+    font-size:6.6px !important;
+    letter-spacing:.45px !important;
+  }
+}
+@media(max-width:360px){
+  .tabs,
+  #main-tabs,
+  body.fixed-hud-layout .tabs{ gap:4px !important; }
+  .tabs button,
+  #main-tabs button,
+  body.fixed-hud-layout .tabs button{
+    font-size:6px !important;
+    letter-spacing:.25px !important;
+  }
+}
