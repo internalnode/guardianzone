@@ -42,7 +42,7 @@ if(cam)cam.textContent=Math.floor(22+Math.random()*31)+"%";
 if(lat)lat.textContent=Math.floor(240+Math.random()*390)+" MS";
 if(mu){const now=new Date();mu.textContent=`LAST UPDATE : ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`}
 }
-setInterval(()=>{pushLog();updateSystems()},11000);
+// v87: disabled legacy random refresh loop; SYSTEM is now persistent/autonomous.
 
 /* v8 living system */
 const nodeStart = Date.now();
@@ -119,13 +119,13 @@ function rareSystemEvent(){
 }
 
 setInterval(tickClock, 1000);
-setInterval(updateEnvironment, 14000);
+// v87: disabled legacy environment dice-roll loop; handled by persistent SYSTEM scheduler.
 setInterval(rareSystemEvent, 22000);
 
 window.addEventListener("load", ()=>{
   seedPreviousState();
   tickClock();
-  updateEnvironment();
+  // v87: environment is rendered from saved autonomous state, not recalculated on refresh.
 });
 
 function pushSystemLog(message){
@@ -867,20 +867,25 @@ window.addEventListener("load",()=>{
   },700);
 });
 
-/* v86 — realistic autonomous SYSTEM telemetry with coherent weather drift */
+/* v87 — persistent autonomous SYSTEM telemetry
+   Refresh does not reroll values. The state is saved in localStorage and only evolves
+   when its own scheduled timers expire. Weather uses gradual drift, never hard jumps. */
 (function(){
-  const STORAGE_KEY = "myth_system_state_v86";
+  const STORAGE_KEY = "myth_system_state_v87";
+  const LEGACY_KEY = "myth_system_state_v86";
   const now = () => Date.now();
   const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
   const pick = arr => arr[Math.floor(Math.random()*arr.length)];
-  const pad2 = n => String(n).padStart(2,"0");
-  const time = ts => { const d = new Date(ts || Date.now()); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
   const rand = (min,max)=>Math.floor(min+Math.random()*(max-min+1));
+  const pad2 = n => String(n).padStart(2,"0");
+  const fmt = ts => { const d = new Date(ts || Date.now()); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
+  const hours = h => h * 60 * 60 * 1000;
+  const minutes = m => m * 60 * 1000;
 
-  const incidentProfiles = {
+  const profiles = {
     quiet: {
-      signal:["STABLE","RÉTABLI","FAIBLE"], channel:["OUVERT","RETARDÉ","PARTIEL"], power:["LOCAL","BATTERIE SECOURS"], field:["STABLE","HUMIDE","VISIBILITÉ RÉDUITE"], thermal:["PARTIEL","AUCUNE IMAGE","HORS LIGNE"], fog:["FAIBLE","IRRÉGULIER"],
-      log:["Passive scan completed.","Relay heartbeat received.","Camera cache synchronized.","No perimeter confirmation.","Archive checksum unchanged."]
+      signal:["STABLE","RÉTABLI","FAIBLE"], channel:["OUVERT","RETARDÉ","PARTIEL"], power:["LOCAL","BATTERIE SECOURS"], field:["STABLE","HUMIDE","VISIBILITÉ RÉDUITE"], thermal:["PARTIEL","HORS LIGNE"], fog:["FAIBLE","IRRÉGULIER"],
+      log:["Passive scan completed.","Relay heartbeat received.","No perimeter confirmation.","Archive checksum unchanged.","Camera cache synchronized."]
     },
     degraded: {
       signal:["DÉGRADÉ","INSTABLE","FAIBLE"], channel:["PARASITÉ","PARTIEL","RETARDÉ"], power:["LOCAL","BATTERIE SECOURS","SECONDAIRE"], field:["INTERFÉRENCES","VISIBILITÉ RÉDUITE","HUMIDE"], thermal:["HORS LIGNE","PARASITES SEULS","AUCUNE IMAGE"], fog:["MOYEN","DENSE","IRRÉGULIER"],
@@ -888,7 +893,7 @@ window.addEventListener("load",()=>{
     },
     maintenance: {
       signal:["RÉTABLI","FAIBLE","PARTIEL"], channel:["OUVERT","PARTIEL","RETARDÉ"], power:["LOCAL","SECONDAIRE","RÉSEAU BATTERIE"], field:["STABLE","MAINTENANCE","VISIBILITÉ RÉDUITE"], thermal:["PARTIEL","HORS LIGNE"], fog:["FAIBLE","MOYEN"],
-      log:["Scheduled diagnostic window active.","Battery rail switched for load test.","Camera index rebuilt from cache.","Relay service port closed.","Maintenance trace verified." ]
+      log:["Scheduled diagnostic window active.","Battery rail switched for load test.","Camera index rebuilt from cache.","Relay service port closed.","Maintenance trace verified."]
     },
     suspicious: {
       signal:["INSTABLE","DÉGRADÉ","FAIBLE"], channel:["PARASITÉ","RETARDÉ","BLACKOUT COURT"], power:["BATTERIE SECOURS","SECONDAIRE","LOCAL"], field:["INTERFÉRENCES","MOUVEMENT NON CONFIRMÉ","VISIBILITÉ RÉDUITE"], thermal:["PARASITES SEULS","PARTIEL","AUCUNE IMAGE"], fog:["DENSE","IRRÉGULIER","MOYEN"],
@@ -898,92 +903,127 @@ window.addEventListener("load",()=>{
 
   function defaultState(){
     const t = now();
+    const profile = pick(["quiet","degraded","maintenance","suspicious"]);
     return {
-      profile: pick(["quiet","degraded","maintenance","suspicious"]),
-      nextProfileAt: t + rand(6,18)*60*60*1000,
-      lastSlowUpdate: 0,
-      drift: rand(-4,4),
+      version: 87,
+      profile,
       signal: "DÉGRADÉ",
       channel: "PARTIEL",
       power: "LOCAL",
       dosimeter: 0.39,
-      camera: rand(34,58),
-      latency: rand(280,620),
-      grid: rand(38,66),
-      loss: rand(7,19),
+      camera: rand(38,62),
+      latency: rand(280,560),
+      grid: rand(42,70),
+      loss: rand(7,17),
       windDeg: rand(0,359),
-      windSpeed: rand(4,19),
+      windSpeed: rand(4,17),
       windTrendDeg: null,
       windTrendUntil: 0,
-      pressure: rand(1002,1017),
+      pressure: rand(1004,1016),
       fog: "FAIBLE",
       thermal: "PARTIEL",
       field: "STABLE",
-      logs: []
+      logs: [],
+      createdAt: t,
+      lastChangedAt: t,
+      nextMinorAt: t + minutes(rand(25,75)),
+      nextProfileAt: t + hours(rand(12,36)),
+      nextLogAt: t + minutes(rand(8,28))
     };
   }
 
   function loadState(){
     try{
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if(!saved || !saved.nextProfileAt) return defaultState();
-      if(typeof saved.windTrendDeg !== "number") saved.windTrendDeg = saved.windDeg;
-      if(!saved.windTrendUntil) saved.windTrendUntil = 0;
-      return saved;
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY));
+      if(!saved) return defaultState();
+      const base = Object.assign(defaultState(), saved);
+      base.version = 87;
+      base.logs = Array.isArray(base.logs) ? base.logs.slice(-7) : [];
+      if(typeof base.windTrendDeg !== "number") base.windTrendDeg = base.windDeg;
+      if(!base.nextMinorAt) base.nextMinorAt = now() + minutes(rand(25,75));
+      if(!base.nextProfileAt) base.nextProfileAt = now() + hours(rand(12,36));
+      if(!base.nextLogAt) base.nextLogAt = now() + minutes(rand(8,28));
+      if(!base.lastChangedAt) base.lastChangedAt = now();
+      return base;
     }catch(e){ return defaultState(); }
   }
-  function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 
   let state = loadState();
 
-  function maybeChangeProfile(){
-    if(now() < state.nextProfileAt) return;
+  function angleDelta(from, to){ return ((to - from + 540) % 360) - 180; }
+
+  function scheduleWindTrend(){
+    if(!state.windTrendUntil || now() > state.windTrendUntil || typeof state.windTrendDeg !== "number"){
+      state.windTrendDeg = (state.windDeg + rand(-28,28) + 360) % 360;
+      state.windTrendUntil = now() + hours(rand(5,14));
+    }
+  }
+
+  function evolveWind(){
+    scheduleWindTrend();
+    const delta = clamp(angleDelta(state.windDeg, state.windTrendDeg), -6, 6);
+    state.windDeg = (state.windDeg + delta + rand(-2,2) + 360) % 360;
+    state.windSpeed = clamp(state.windSpeed + rand(-2,2), 0, 29);
+  }
+
+  function evolveMinor(){
+    const profile = profiles[state.profile] || profiles.degraded;
+    const stress = state.profile === "suspicious" ? 1.25 : state.profile === "degraded" ? 1.1 : state.profile === "maintenance" ? .85 : .55;
+
+    state.latency = Math.round(clamp(state.latency + rand(-35,55)*stress, 160, 940));
+    state.loss = Math.round(clamp(state.loss + rand(-2,3)*stress, 2, 32));
+    state.camera = Math.round(clamp(state.camera + rand(-4,4), 18, 86));
+    state.grid = Math.round(clamp(state.grid + rand(-3,4), 24, 88));
+    state.dosimeter = clamp(state.dosimeter + (Math.random()-.48)*0.04, .22, .86);
+    state.pressure = clamp(state.pressure + rand(-1,1), 997, 1023);
+    evolveWind();
+
+    if(Math.random() > .60) state.signal = pick(profile.signal);
+    if(Math.random() > .68) state.channel = pick(profile.channel);
+    if(Math.random() > .82) state.power = pick(profile.power);
+    if(Math.random() > .72) state.fog = pick(profile.fog);
+    if(Math.random() > .76) state.thermal = pick(profile.thermal);
+    if(Math.random() > .74) state.field = pick(profile.field);
+
+    state.lastChangedAt = now();
+    state.nextMinorAt = now() + minutes(rand(25,75));
+  }
+
+  function evolveProfile(){
     const old = state.profile;
     const options = ["quiet","degraded","maintenance","suspicious"].filter(p=>p!==old);
     state.profile = pick(options);
-    state.nextProfileAt = now() + rand(8,36)*60*60*1000;
-    addSystemLine(`Operating profile changed: ${old.toUpperCase()} -> ${state.profile.toUpperCase()}.`);
+    state.nextProfileAt = now() + hours(rand(12,36));
+    state.lastChangedAt = now();
+    addSystemLine(`Operating profile changed: ${old.toUpperCase()} -> ${state.profile.toUpperCase()}.`, true);
+    evolveMinor();
   }
 
-  function angleDelta(from, to){
-    return ((to - from + 540) % 360) - 180;
+  function addSystemLine(msg, persistOnly=false){
+    const entry = {ts: now(), msg};
+    state.logs.push(entry);
+    state.logs = state.logs.slice(-7);
+    if(!persistOnly) renderLogs();
+    save();
   }
 
-  function evolveWind(slow=false){
-    // Wind must feel like weather, not dice-rolls: it follows a temporary trend,
-    // then drifts by only a few degrees per update. No sudden N -> S jumps.
-    if(!state.windTrendUntil || now() > state.windTrendUntil || typeof state.windTrendDeg !== "number"){
-      state.windTrendDeg = (state.windDeg + rand(-35,35) + 360) % 360;
-      state.windTrendUntil = now() + rand(4,12) * 60 * 60 * 1000;
-    }
-
-    const maxTurn = slow ? 8 : 3;
-    const delta = clamp(angleDelta(state.windDeg, state.windTrendDeg), -maxTurn, maxTurn);
-    const turbulence = rand(slow ? -3 : -1, slow ? 3 : 1);
-    state.windDeg = (state.windDeg + delta + turbulence + 360) % 360;
-
-    const speedStep = slow ? rand(-2,2) : rand(-1,1);
-    state.windSpeed = clamp(state.windSpeed + speedStep, 0, 31);
+  function maybeAutonomousLog(){
+    const profile = profiles[state.profile] || profiles.degraded;
+    addSystemLine(pick(profile.log), true);
+    state.nextLogAt = now() + minutes(rand(8,28));
+    state.lastChangedAt = now();
   }
 
-  function evolveNumbers(slow=false){
-    const profile = incidentProfiles[state.profile] || incidentProfiles.degraded;
-    const stress = state.profile === "suspicious" ? 1.35 : state.profile === "degraded" ? 1.15 : state.profile === "maintenance" ? .9 : .65;
-
-    state.latency = clamp(state.latency + rand(-45,70)*stress, 160, 980);
-    state.loss = clamp(state.loss + rand(-3,4)*stress, 3, 34);
-    state.camera = clamp(state.camera + rand(-5,4), 18, 86);
-    state.grid = clamp(state.grid + rand(-4,5), 24, 88);
-    state.dosimeter = clamp(state.dosimeter + (Math.random()-.48)*0.07, .22, .89);
-    evolveWind(slow);
-    state.pressure = clamp(state.pressure + rand(slow ? -1 : 0, slow ? 1 : 0), 996, 1024);
-
-    if(slow || Math.random() > .62) state.signal = pick(profile.signal);
-    if(slow || Math.random() > .70) state.channel = pick(profile.channel);
-    if(slow || Math.random() > .82) state.power = pick(profile.power);
-    if(slow || Math.random() > .75) state.fog = pick(profile.fog);
-    if(slow || Math.random() > .78) state.thermal = pick(profile.thermal);
-    if(slow || Math.random() > .76) state.field = pick(profile.field);
+  function catchUpAutonomousState(){
+    // On refresh: do not reroll. Only apply missed autonomous steps that were due while offline.
+    let guard = 0;
+    while(now() >= state.nextProfileAt && guard++ < 3) evolveProfile();
+    guard = 0;
+    while(now() >= state.nextMinorAt && guard++ < 12) evolveMinor();
+    guard = 0;
+    while(now() >= state.nextLogAt && guard++ < 8) maybeAutonomousLog();
+    save();
   }
 
   function windLabel(){
@@ -997,6 +1037,18 @@ window.addEventListener("load",()=>{
     el.textContent = value;
     el.classList.toggle("net-warning", !!warn);
     el.classList.toggle("system-critical", !!warn);
+  }
+
+  function renderLogs(){
+    const log = document.getElementById("system-log");
+    if(!log) return;
+    log.innerHTML = "";
+    state.logs.slice(-7).forEach(item=>{
+      const line = document.createElement("div");
+      line.className = "system-log-entry-live";
+      line.textContent = `[${fmt(item.ts)}] ${item.msg}`;
+      log.appendChild(line);
+    });
   }
 
   function renderSystem(){
@@ -1017,49 +1069,29 @@ window.addEventListener("load",()=>{
     setText("packet-loss", Math.round(state.loss) + "%", state.loss > 20);
     setText("loss", Math.round(state.loss) + "%", state.loss > 20);
     setText("grid-power", state.power, state.power !== "LOCAL");
-
     const mu = document.getElementById("map-update");
-    if(mu) mu.textContent = `LAST UPDATE : ${time()}`;
+    if(mu) mu.textContent = `LAST SYSTEM UPDATE : ${fmt(state.lastChangedAt)}`;
+    renderLogs();
   }
 
-  function addSystemLine(msg){
-    const log = document.getElementById("system-log");
-    if(!log) return;
-    const line = document.createElement("div");
-    line.className = "system-log-entry-live";
-    line.textContent = `[${time()}] ${msg}`;
-    log.appendChild(line);
-    while(log.children.length > 7) log.removeChild(log.firstElementChild);
+  function autonomousTick(){
+    const before = state.lastChangedAt;
+    catchUpAutonomousState();
+    if(state.lastChangedAt !== before) renderSystem();
   }
 
-  function maybeLog(){
-    const profile = incidentProfiles[state.profile] || incidentProfiles.degraded;
-    if(Math.random() < (state.profile === "quiet" ? .35 : .68)) addSystemLine(pick(profile.log));
-  }
-
-  function slowUpdate(){
-    maybeChangeProfile();
-    evolveNumbers(true);
-    maybeLog();
-    saveState(state);
-    renderSystem();
-  }
-
-  function fastUpdate(){
-    evolveNumbers(false);
-    renderSystem();
-    saveState(state);
-  }
-
-  window.updateSystems = slowUpdate;
-  window.updateEnvironment = slowUpdate;
-  window.pushLog = function(){ maybeLog(); };
-  window.pushSystemLog = addSystemLine;
+  window.updateSystems = function(){ autonomousTick(); renderSystem(); };
+  window.updateEnvironment = window.updateSystems;
+  window.pushLog = function(){ maybeAutonomousLog(); renderSystem(); };
+  window.pushSystemLog = function(message){ addSystemLine(message); renderSystem(); };
 
   window.addEventListener("load",()=>{
-    slowUpdate();
-    addSystemLine(`Telemetry restored — profile ${state.profile.toUpperCase()}, next autonomous change pending.`);
-    setInterval(fastUpdate, 9000);
-    setInterval(slowUpdate, rand(42000, 78000));
+    catchUpAutonomousState();
+    if(!state.logs.length){
+      state.logs.push({ts: state.lastChangedAt, msg:`Telemetry restored — profile ${state.profile.toUpperCase()}.`});
+      save();
+    }
+    renderSystem();
+    setInterval(autonomousTick, 60000);
   });
 })();
