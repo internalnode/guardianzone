@@ -866,3 +866,200 @@ window.addEventListener("load",()=>{
     }
   },700);
 });
+
+/* v86 — realistic autonomous SYSTEM telemetry with coherent weather drift */
+(function(){
+  const STORAGE_KEY = "myth_system_state_v86";
+  const now = () => Date.now();
+  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+  const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+  const pad2 = n => String(n).padStart(2,"0");
+  const time = ts => { const d = new Date(ts || Date.now()); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`; };
+  const rand = (min,max)=>Math.floor(min+Math.random()*(max-min+1));
+
+  const incidentProfiles = {
+    quiet: {
+      signal:["STABLE","RÉTABLI","FAIBLE"], channel:["OUVERT","RETARDÉ","PARTIEL"], power:["LOCAL","BATTERIE SECOURS"], field:["STABLE","HUMIDE","VISIBILITÉ RÉDUITE"], thermal:["PARTIEL","AUCUNE IMAGE","HORS LIGNE"], fog:["FAIBLE","IRRÉGULIER"],
+      log:["Passive scan completed.","Relay heartbeat received.","Camera cache synchronized.","No perimeter confirmation.","Archive checksum unchanged."]
+    },
+    degraded: {
+      signal:["DÉGRADÉ","INSTABLE","FAIBLE"], channel:["PARASITÉ","PARTIEL","RETARDÉ"], power:["LOCAL","BATTERIE SECOURS","SECONDAIRE"], field:["INTERFÉRENCES","VISIBILITÉ RÉDUITE","HUMIDE"], thermal:["HORS LIGNE","PARASITES SEULS","AUCUNE IMAGE"], fog:["MOYEN","DENSE","IRRÉGULIER"],
+      log:["Packet loss above normal baseline.","Relay response delayed, retry scheduled.","Thermal feed unstable after reconnect.","Camera feed compressed by fallback link.","Grid sync completed with missing frames."]
+    },
+    maintenance: {
+      signal:["RÉTABLI","FAIBLE","PARTIEL"], channel:["OUVERT","PARTIEL","RETARDÉ"], power:["LOCAL","SECONDAIRE","RÉSEAU BATTERIE"], field:["STABLE","MAINTENANCE","VISIBILITÉ RÉDUITE"], thermal:["PARTIEL","HORS LIGNE"], fog:["FAIBLE","MOYEN"],
+      log:["Scheduled diagnostic window active.","Battery rail switched for load test.","Camera index rebuilt from cache.","Relay service port closed.","Maintenance trace verified." ]
+    },
+    suspicious: {
+      signal:["INSTABLE","DÉGRADÉ","FAIBLE"], channel:["PARASITÉ","RETARDÉ","BLACKOUT COURT"], power:["BATTERIE SECOURS","SECONDAIRE","LOCAL"], field:["INTERFÉRENCES","MOUVEMENT NON CONFIRMÉ","VISIBILITÉ RÉDUITE"], thermal:["PARASITES SEULS","PARTIEL","AUCUNE IMAGE"], fog:["DENSE","IRRÉGULIER","MOYEN"],
+      log:["Unauthorized panel contact recorded.","Manual camera angle variance detected.","Unscheduled access trace rejected.","Relay casing vibration registered.","Secondary line cutover without operator input."]
+    }
+  };
+
+  function defaultState(){
+    const t = now();
+    return {
+      profile: pick(["quiet","degraded","maintenance","suspicious"]),
+      nextProfileAt: t + rand(6,18)*60*60*1000,
+      lastSlowUpdate: 0,
+      drift: rand(-4,4),
+      signal: "DÉGRADÉ",
+      channel: "PARTIEL",
+      power: "LOCAL",
+      dosimeter: 0.39,
+      camera: rand(34,58),
+      latency: rand(280,620),
+      grid: rand(38,66),
+      loss: rand(7,19),
+      windDeg: rand(0,359),
+      windSpeed: rand(4,19),
+      windTrendDeg: null,
+      windTrendUntil: 0,
+      pressure: rand(1002,1017),
+      fog: "FAIBLE",
+      thermal: "PARTIEL",
+      field: "STABLE",
+      logs: []
+    };
+  }
+
+  function loadState(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if(!saved || !saved.nextProfileAt) return defaultState();
+      if(typeof saved.windTrendDeg !== "number") saved.windTrendDeg = saved.windDeg;
+      if(!saved.windTrendUntil) saved.windTrendUntil = 0;
+      return saved;
+    }catch(e){ return defaultState(); }
+  }
+  function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+  let state = loadState();
+
+  function maybeChangeProfile(){
+    if(now() < state.nextProfileAt) return;
+    const old = state.profile;
+    const options = ["quiet","degraded","maintenance","suspicious"].filter(p=>p!==old);
+    state.profile = pick(options);
+    state.nextProfileAt = now() + rand(8,36)*60*60*1000;
+    addSystemLine(`Operating profile changed: ${old.toUpperCase()} -> ${state.profile.toUpperCase()}.`);
+  }
+
+  function angleDelta(from, to){
+    return ((to - from + 540) % 360) - 180;
+  }
+
+  function evolveWind(slow=false){
+    // Wind must feel like weather, not dice-rolls: it follows a temporary trend,
+    // then drifts by only a few degrees per update. No sudden N -> S jumps.
+    if(!state.windTrendUntil || now() > state.windTrendUntil || typeof state.windTrendDeg !== "number"){
+      state.windTrendDeg = (state.windDeg + rand(-35,35) + 360) % 360;
+      state.windTrendUntil = now() + rand(4,12) * 60 * 60 * 1000;
+    }
+
+    const maxTurn = slow ? 8 : 3;
+    const delta = clamp(angleDelta(state.windDeg, state.windTrendDeg), -maxTurn, maxTurn);
+    const turbulence = rand(slow ? -3 : -1, slow ? 3 : 1);
+    state.windDeg = (state.windDeg + delta + turbulence + 360) % 360;
+
+    const speedStep = slow ? rand(-2,2) : rand(-1,1);
+    state.windSpeed = clamp(state.windSpeed + speedStep, 0, 31);
+  }
+
+  function evolveNumbers(slow=false){
+    const profile = incidentProfiles[state.profile] || incidentProfiles.degraded;
+    const stress = state.profile === "suspicious" ? 1.35 : state.profile === "degraded" ? 1.15 : state.profile === "maintenance" ? .9 : .65;
+
+    state.latency = clamp(state.latency + rand(-45,70)*stress, 160, 980);
+    state.loss = clamp(state.loss + rand(-3,4)*stress, 3, 34);
+    state.camera = clamp(state.camera + rand(-5,4), 18, 86);
+    state.grid = clamp(state.grid + rand(-4,5), 24, 88);
+    state.dosimeter = clamp(state.dosimeter + (Math.random()-.48)*0.07, .22, .89);
+    evolveWind(slow);
+    state.pressure = clamp(state.pressure + rand(slow ? -1 : 0, slow ? 1 : 0), 996, 1024);
+
+    if(slow || Math.random() > .62) state.signal = pick(profile.signal);
+    if(slow || Math.random() > .70) state.channel = pick(profile.channel);
+    if(slow || Math.random() > .82) state.power = pick(profile.power);
+    if(slow || Math.random() > .75) state.fog = pick(profile.fog);
+    if(slow || Math.random() > .78) state.thermal = pick(profile.thermal);
+    if(slow || Math.random() > .76) state.field = pick(profile.field);
+  }
+
+  function windLabel(){
+    const dirs = ["N","N/NE","NE","E/NE","E","E/SE","SE","S/SE","S","S/SW","SW","W/SW","W","W/NW","NW","N/NW"];
+    return `${dirs[Math.round(state.windDeg/22.5)%16]} ${Math.round(state.windSpeed)} KM/H`;
+  }
+
+  function setText(id, value, warn=false){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = value;
+    el.classList.toggle("net-warning", !!warn);
+    el.classList.toggle("system-critical", !!warn);
+  }
+
+  function renderSystem(){
+    const sigWarn = ["INSTABLE","DÉGRADÉ","FAIBLE"].includes(state.signal);
+    setText("quality", state.signal, sigWarn);
+    setText("signal-state", "SIGNAL " + state.signal, sigWarn);
+    setText("channel", state.channel, ["PARASITÉ","BLACKOUT COURT"].includes(state.channel));
+    setText("dosimeter", state.dosimeter.toFixed(2) + " µSv/h", state.dosimeter > .72);
+    setText("wind", windLabel(), false);
+    setText("pressure", Math.round(state.pressure) + " HPA", state.pressure < 1000 || state.pressure > 1020);
+    setText("camera-integrity", Math.round(state.camera) + "%", state.camera < 35);
+    setText("latency", Math.round(state.latency) + " MS", state.latency > 650);
+    setText("relay-ping", Math.round(state.latency) + " MS", state.latency > 650);
+    setText("fog", state.fog, state.fog === "DENSE");
+    setText("thermal", state.thermal, ["AUCUNE IMAGE","PARASITES SEULS","HORS LIGNE"].includes(state.thermal));
+    setText("grid-integrity", Math.round(state.grid) + "%", state.grid < 40);
+    setText("field-condition", state.field, ["INTERFÉRENCES","MOUVEMENT NON CONFIRMÉ"].includes(state.field));
+    setText("packet-loss", Math.round(state.loss) + "%", state.loss > 20);
+    setText("loss", Math.round(state.loss) + "%", state.loss > 20);
+    setText("grid-power", state.power, state.power !== "LOCAL");
+
+    const mu = document.getElementById("map-update");
+    if(mu) mu.textContent = `LAST UPDATE : ${time()}`;
+  }
+
+  function addSystemLine(msg){
+    const log = document.getElementById("system-log");
+    if(!log) return;
+    const line = document.createElement("div");
+    line.className = "system-log-entry-live";
+    line.textContent = `[${time()}] ${msg}`;
+    log.appendChild(line);
+    while(log.children.length > 7) log.removeChild(log.firstElementChild);
+  }
+
+  function maybeLog(){
+    const profile = incidentProfiles[state.profile] || incidentProfiles.degraded;
+    if(Math.random() < (state.profile === "quiet" ? .35 : .68)) addSystemLine(pick(profile.log));
+  }
+
+  function slowUpdate(){
+    maybeChangeProfile();
+    evolveNumbers(true);
+    maybeLog();
+    saveState(state);
+    renderSystem();
+  }
+
+  function fastUpdate(){
+    evolveNumbers(false);
+    renderSystem();
+    saveState(state);
+  }
+
+  window.updateSystems = slowUpdate;
+  window.updateEnvironment = slowUpdate;
+  window.pushLog = function(){ maybeLog(); };
+  window.pushSystemLog = addSystemLine;
+
+  window.addEventListener("load",()=>{
+    slowUpdate();
+    addSystemLine(`Telemetry restored — profile ${state.profile.toUpperCase()}, next autonomous change pending.`);
+    setInterval(fastUpdate, 9000);
+    setInterval(slowUpdate, rand(42000, 78000));
+  });
+})();
