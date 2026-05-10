@@ -1141,8 +1141,9 @@ window.addEventListener("load",()=>{
 
   function activeIncidentPenalty(){
     try{
-      const inc = JSON.parse(localStorage.getItem("myth_active_incidents_v81") || localStorage.getItem("myth_active_incidents_v80") || "[]");
-      return Array.isArray(inc) && inc.length ? Math.min(45, inc.length * 9) : 0;
+      const stored = JSON.parse(localStorage.getItem("myth.map.incidents.v81") || "{}");
+      const inc = Array.isArray(stored.incidents) ? stored.incidents : [];
+      return inc.length ? Math.min(45, inc.length * 9) : 0;
     }catch(e){ return 0; }
   }
 
@@ -1228,4 +1229,211 @@ window.addEventListener("load",()=>{
     setInterval(autonomousTick, 1000);
     setInterval(()=>{ saveTechnical(); }, 15000);
   });
+})();
+
+/* v90 — MYTH intervention operator panel
+   Local-only control layer: lets the operator stage believable field actions without editing code. */
+(function(){
+  const INCIDENT_KEY = "myth.map.incidents.v81";
+  const HISTORY_KEY = "myth.operator.history.v90";
+  const AUTH_KEY = "myth.operator.auth.v90";
+  const DEFAULT_CODE = "MYTH";
+
+  const actionLabels = {
+    assigned:"MYTH ASSIGNED",
+    enroute:"EN ROUTE",
+    arrived:"ARRIVAL CONFIRMED",
+    visual:"VISUAL CONFIRMATION",
+    sabotage:"SABOTAGE CONFIRMED",
+    repaired:"TEMPORARY REPAIR",
+    cleared:"AREA CLEARED",
+    false_positive:"FALSE POSITIVE",
+    contact_lost:"CONTACT LOST",
+    closed:"INCIDENT CLOSED"
+  };
+
+  const actionEffects = {
+    assigned:{detail:"Intervention terrain assignée. Aucun retour visuel pour le moment.", severity:null},
+    enroute:{detail:"MYTH en déplacement vers les dernières coordonnées connues.", severity:null},
+    arrived:{detail:"Arrivée secteur confirmée. Inspection locale en cours.", severity:null},
+    visual:{detail:"Confirmation visuelle partielle obtenue depuis le secteur.", severity:"medium"},
+    sabotage:{detail:"Sabotage physique confirmé. Relevés et sécurisation en cours.", severity:"high"},
+    repaired:{detail:"Réparation temporaire appliquée. Surveillance maintenue.", severity:"medium"},
+    cleared:{detail:"Zone contrôlée. Aucun contact actif constaté.", severity:"low"},
+    false_positive:{detail:"Faux positif probable. Incident conservé en archive locale.", severity:"low"},
+    contact_lost:{detail:"Contact terrain interrompu. Dernière position conservée.", severity:"critical"},
+    closed:{detail:"Incident clôturé après intervention terrain.", severity:"low"}
+  };
+
+  function fmt(ts){ const d = new Date(ts); return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`; }
+  function readJson(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(e){ return fallback; } }
+  function writeJson(key, value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
+  function getIncidentState(){
+    const state = readJson(INCIDENT_KEY, null);
+    if(state && Array.isArray(state.incidents)) return state;
+    return {version:81, incidents:[], nextAt:Date.now()+86400000, generatedAt:Date.now(), lastMutationAt:Date.now()};
+  }
+  function saveIncidentState(state){ writeJson(INCIDENT_KEY, state); }
+  function getHistory(){ return readJson(HISTORY_KEY, []); }
+  function saveHistory(history){ writeJson(HISTORY_KEY, history.slice(-80)); }
+  function gpsText(coords){ return Array.isArray(coords) ? `${Number(coords[0]).toFixed(6)}, ${Number(coords[1]).toFixed(6)}` : "--"; }
+
+  function buildTimelineLine(entry){
+    const note = entry.note ? ` — ${entry.note}` : "";
+    return `<div><b>${fmt(entry.ts)}</b> — ${entry.action}${note}</div>`;
+  }
+
+  // Override popup rendering so field intervention history appears directly on map pop-ups.
+  try{
+    incidentPopupV79 = function(incident){
+      const timeline = Array.isArray(incident.timeline) && incident.timeline.length
+        ? `<div class="popup-timeline-v90">${incident.timeline.slice(-4).map(buildTimelineLine).join("")}</div>`
+        : "";
+      return `
+        <div class="popup-incident-v79">
+          <div class="popup-title-v79">${incident.title}</div>
+          <div class="popup-meta-v79">GPS : ${gpsText(incident.coords)}</div>
+          <div class="popup-meta-v79">LAST PING : ${fmt(incident.updatedAt || Date.now())}</div>
+          <div class="popup-body-v79">${incident.text || "Incident actif."}</div>
+          <div class="popup-detail-v79">${incident.detail || "Observation maintenue."}</div>
+          ${timeline}
+        </div>
+      `;
+    };
+  }catch(e){}
+
+  function renderIncidentOptions(){
+    const select = document.getElementById("operator-incident");
+    if(!select) return;
+    const state = getIncidentState();
+    select.innerHTML = "";
+    if(!state.incidents.length){
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "NO ACTIVE INCIDENT";
+      select.appendChild(opt);
+      return;
+    }
+    state.incidents.forEach(inc=>{
+      const opt = document.createElement("option");
+      opt.value = inc.id || inc.title;
+      opt.textContent = `${inc.title} // ${gpsText(inc.coords)}`;
+      select.appendChild(opt);
+    });
+  }
+
+  function renderHistory(){
+    const box = document.getElementById("operator-history");
+    if(!box) return;
+    const history = getHistory().slice().reverse();
+    if(!history.length){ box.innerHTML = '<div class="operator-empty">Aucune intervention enregistrée.</div>'; return; }
+    box.innerHTML = history.slice(0,28).map(item=>`
+      <div class="operator-history-entry">
+        <strong>${item.incidentTitle} // ${item.action}</strong>
+        <span>${new Date(item.ts).toLocaleDateString("fr-FR")} ${fmt(item.ts)} // GPS ${item.gps || "--"}</span>
+        <p>${item.note || item.effect || "Mise à jour opérateur enregistrée."}</p>
+      </div>
+    `).join("");
+  }
+
+  function pushSystem(message){
+    if(typeof window.pushSystemLog === "function") window.pushSystemLog(message);
+    else if(typeof window.pushLog === "function") window.pushLog(message);
+  }
+
+  function applyAction(){
+    const incidentSelect = document.getElementById("operator-incident");
+    const actionSelect = document.getElementById("operator-action");
+    const noteField = document.getElementById("operator-note");
+    if(!incidentSelect || !actionSelect) return;
+    const incidentId = incidentSelect.value;
+    if(!incidentId) return;
+    const actionKey = actionSelect.value;
+    const action = actionLabels[actionKey] || actionKey.toUpperCase();
+    const note = (noteField?.value || "").trim();
+    const now = Date.now();
+    const state = getIncidentState();
+    const idx = state.incidents.findIndex(i => (i.id || i.title) === incidentId);
+    if(idx < 0) return;
+
+    const inc = state.incidents[idx];
+    const effect = actionEffects[actionKey] || {};
+    const entry = {ts:now, action, note};
+    inc.timeline = Array.isArray(inc.timeline) ? inc.timeline : [];
+    inc.timeline.push(entry);
+    inc.updatedAt = now;
+    inc.detail = note || effect.detail || inc.detail;
+    inc.operatorTouched = true;
+    inc.lastOperatorAction = action;
+    if(effect.severity) inc.severity = effect.severity;
+
+    if(actionKey === "sabotage"){
+      inc.text = inc.text && !/confirmé/i.test(inc.text) ? inc.text : "Sabotage physique confirmé sur site.";
+    }
+    if(actionKey === "repaired"){
+      inc.text = "Liaison restaurée partiellement après intervention terrain.";
+    }
+    if(actionKey === "cleared" || actionKey === "false_positive"){
+      inc.text = actionKey === "cleared" ? "Contrôle secteur terminé." : "Déclenchement probablement erroné.";
+    }
+
+    // Closing does not instantly erase the story: it removes the active marker but keeps the field history.
+    if(actionKey === "closed"){
+      state.incidents.splice(idx, 1);
+    }else{
+      state.incidents[idx] = inc;
+    }
+    state.lastMutationAt = now;
+    saveIncidentState(state);
+
+    const history = getHistory();
+    history.push({
+      ts:now,
+      incidentId:inc.id || inc.title,
+      incidentTitle:inc.title,
+      action,
+      note,
+      effect:effect.detail,
+      gps:gpsText(inc.coords)
+    });
+    saveHistory(history);
+
+    pushSystem(`MYTH FIELD LOG // ${inc.title} // ${action}`);
+    if(actionKey === "sabotage") pushSystem(`SECURITY NOTE // sabotage confirmed at ${inc.title}`);
+    if(actionKey === "repaired") pushSystem(`RELAY NOTE // temporary field repair applied at ${inc.title}`);
+    if(actionKey === "contact_lost") pushSystem(`WARNING // operator contact lost near ${inc.title}`);
+
+    noteField.value = "";
+    renderIncidentOptions();
+    renderHistory();
+    if(typeof renderAutonomousIncidentsV80 === "function") renderAutonomousIncidentsV80(false);
+  }
+
+  function unlock(){
+    const code = (document.getElementById("operator-code")?.value || "").trim().toUpperCase();
+    if(code !== DEFAULT_CODE) return;
+    localStorage.setItem(AUTH_KEY, "1");
+    const lock = document.getElementById("operator-lock");
+    const panel = document.getElementById("operator-panel");
+    if(lock) lock.style.display = "none";
+    if(panel) panel.classList.remove("hidden");
+    renderIncidentOptions();
+    renderHistory();
+  }
+
+  function initOperator(){
+    const unlockBtn = document.getElementById("operator-unlock");
+    const code = document.getElementById("operator-code");
+    const push = document.getElementById("operator-push");
+    const refresh = document.getElementById("operator-refresh");
+    unlockBtn?.addEventListener("click", unlock);
+    code?.addEventListener("keydown", e=>{ if(e.key === "Enter") unlock(); });
+    push?.addEventListener("click", applyAction);
+    refresh?.addEventListener("click", ()=>{ renderIncidentOptions(); renderHistory(); });
+    if(localStorage.getItem(AUTH_KEY) === "1") unlock();
+    renderHistory();
+    setInterval(renderIncidentOptions, 30000);
+  }
+
+  window.addEventListener("load", initOperator);
 })();

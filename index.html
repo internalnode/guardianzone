@@ -45,7 +45,7 @@
   <nav class="tabs">
 <button class="active" data-screen="map">MAP</button>
     <button data-screen="systems">SYSTEM</button>
-    
+    <button data-screen="operator">LOG</button>
   <button data-screen="safehouses">SAFEHOUSES</button>
 </nav>
 <div class="terminal-state-strip" id="terminal-state-strip">
@@ -108,6 +108,61 @@
         </div>
       </div>
     </section>
+
+<section id="operator" class="screen">
+  <div class="operator-layout">
+    <div class="card operator-card">
+      <div class="card-title">MYTH INTERVENTION LOG</div>
+      <p class="operator-muted">Accès opérateur local. Utilise ce panneau pour simuler une intervention terrain sans modifier le code.</p>
+
+      <div id="operator-lock" class="operator-lock">
+        <label>OPERATOR CODE</label>
+        <input id="operator-code" type="password" autocomplete="off" placeholder="••••••">
+        <button id="operator-unlock" type="button">UNLOCK LOG</button>
+        <small>Code par défaut : MYTH</small>
+      </div>
+
+      <div id="operator-panel" class="operator-panel hidden">
+        <div class="operator-grid">
+          <label>ACTIVE INCIDENT
+            <select id="operator-incident"></select>
+          </label>
+          <label>FIELD ACTION
+            <select id="operator-action">
+              <option value="assigned">MYTH ASSIGNED</option>
+              <option value="enroute">EN ROUTE</option>
+              <option value="arrived">ARRIVAL CONFIRMED</option>
+              <option value="visual">VISUAL CONFIRMATION</option>
+              <option value="sabotage">SABOTAGE CONFIRMED</option>
+              <option value="repaired">TEMPORARY REPAIR</option>
+              <option value="cleared">AREA CLEARED</option>
+              <option value="false_positive">FALSE POSITIVE</option>
+              <option value="contact_lost">CONTACT LOST</option>
+              <option value="closed">INCIDENT CLOSED</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="operator-note-label">OPERATOR NOTE
+          <textarea id="operator-note" rows="4" placeholder="Ex : câble secondaire sectionné confirmé, relais basculé sur ligne de secours."></textarea>
+        </label>
+
+        <div class="operator-actions">
+          <button id="operator-push" type="button">PUSH TO TERMINAL</button>
+          <button id="operator-refresh" type="button">REFRESH INCIDENTS</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card operator-card">
+      <div class="card-title">FIELD HISTORY</div>
+      <div id="operator-history" class="operator-history">
+        <div class="operator-empty">Aucune intervention enregistrée.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="safehouses" class="screen">
   <div class="safehouses-layout">
 
